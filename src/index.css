@@ -1,84 +1,81 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Chakra+Petch:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 230 20% 98%;
+    --foreground: 228 19% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 228 19% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 228 19% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 259 70% 75%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 228 6% 90%;
+    --secondary-foreground: 228 19% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 228 6% 90%;
+    --muted-foreground: 228 10% 50%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 228 6% 90%;
+    --accent-foreground: 228 19% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 228 16% 84%;
+    --input: 228 16% 84%;
+    --ring: 259 70% 75%;
 
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 228 19% 15%;
+    --foreground: 228 6% 90%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 228 19% 15%;
+    --card-foreground: 228 6% 90%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 228 19% 15%;
+    --popover-foreground: 228 6% 90%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 259 70% 75%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 228 10% 22%;
+    --secondary-foreground: 228 6% 90%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 228 10% 22%;
+    --muted-foreground: 228 6% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 228 10% 22%;
+    --accent-foreground: 228 6% 90%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 228 10% 22%;
+    --input: 228 10% 22%;
+    --ring: 259 70% 75%;
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -94,8 +91,77 @@
   * {
     @apply border-border;
   }
-
+  
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-chakra;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-vt323;
+  }
+
+  .pixel-corners {
+    clip-path: polygon(
+      0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 
+      100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 
+      4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+    );
+  }
+
+  .pixelated {
+    image-rendering: pixelated;
+  }
+}
+
+@layer components {
+  .pixel-btn {
+    @apply relative px-6 py-2 font-vt323 text-lg uppercase tracking-wider border-2 bg-opacity-90 pixel-corners transition-all duration-300;
+  }
+
+  .pixel-btn-primary {
+    @apply pixel-btn border-cow-purple bg-cow-purple text-white hover:bg-cow-purple-dark;
+  }
+
+  .pixel-btn-secondary {
+    @apply pixel-btn border-cow-purple text-cow-purple hover:bg-cow-purple hover:text-white;
+  }
+
+  .pixel-card {
+    @apply bg-card border-2 border-primary/50 pixel-corners p-4 shadow-lg transition-all duration-300 hover:shadow-xl;
+  }
+
+  .pixel-input {
+    @apply bg-input border-2 border-primary/50 pixel-corners p-2 focus:outline-none focus:ring-2 focus:ring-primary;
+  }
+
+  .neon-border {
+    @apply border-2 animate-pulse-neon;
+  }
+
+  .cow-grid-bg {
+    background-image: linear-gradient(rgba(155, 135, 245, 0.1) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(155, 135, 245, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .parallax-hero {
+    @apply relative overflow-hidden;
+  }
+
+  .parallax-layer {
+    @apply absolute w-full h-full top-0 left-0;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+}
+
+.font-pixel {
+  font-family: 'Press Start 2P', cursive;
+}
+
+.font-vt323 {
+  font-family: 'VT323', monospace;
+}
+
+.font-chakra {
+  font-family: 'Chakra Petch', sans-serif;
 }
