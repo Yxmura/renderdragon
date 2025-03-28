@@ -1,26 +1,17 @@
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, ExternalLink } from 'lucide-react';
+import { ShoppingCart, ExternalLink, Github, Twitter, Youtube } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 
-interface Language {
-  code: string;
-  name: string;
-  flag: string;
-}
-
-const languages: Language[] = [
-  { code: 'en', name: 'English', flag: '🇺🇸' },
-  { code: 'nl', name: 'Dutch', flag: '🇳🇱' },
-  { code: 'es', name: 'Spanish', flag: '🇪🇸' }
-];
-
 const Footer = () => {
-  const [language, setLanguage] = useState(languages[0]);
+  const [cartClicked, setCartClicked] = useState(false);
+  const cartButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleCartClick = () => {
+    if (cartClicked) return;
+    
     const canvas = document.createElement('canvas');
     canvas.style.position = 'fixed';
     canvas.style.inset = '0';
@@ -50,10 +41,17 @@ const Footer = () => {
       position: "bottom-center",
       duration: 3000,
     });
+    
+    setCartClicked(true);
+    
+    // Animate the cart off screen
+    if (cartButtonRef.current) {
+      cartButtonRef.current.style.transform = 'translateX(150%)';
+    }
   };
 
   return (
-    <footer className="bg-cow-dark text-white">
+    <footer className="bg-cow-dark text-white overflow-x-hidden">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
@@ -65,7 +63,7 @@ const Footer = () => {
             </Link>
             
             <p className="text-white/70 mb-6 max-w-md">
-              Empowering content creators with free resources, tools, and guides.
+              Empowering Minecraft content creators with free resources, tools, and guides.
               100% free, no strings attached.
             </p>
             
@@ -75,8 +73,11 @@ const Footer = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
+                aria-label="Discord"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M14.5 8.5c-.5-1-1.5-2-2.5-2s-2 1-2.5 2-1.5 3.5-1.5 3.5 1 .5 2 .5 2-.5 3-.5 2 .5 2 .5z"/><path d="M7 15c-.5-1-1.5-2-2-3"/><path d="M17 15c.5-1 1.5-2 2-3"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                  <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.39-.444.976-.608 1.413a18.273 18.273 0 0 0-5.487 0 12.675 12.675 0 0 0-.617-1.413.077.077 0 0 0-.079-.036 19.146 19.146 0 0 0-4.885 1.49.07.07 0 0 0-.032.028C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055c1.997 1.464 3.949 2.378 5.945 2.95a.08.08 0 0 0 .088-.028c.379-.508.716-1.038 1.005-1.589a.076.076 0 0 0-.041-.106 12.37 12.37 0 0 1-1.838-.878.077.077 0 0 1-.009-.125c.125-.093.25-.19.368-.289a.074.074 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.074.074 0 0 1 .078.009c.12.099.245.198.366.29a.077.077 0 0 1-.006.125c-.598.344-1.22.635-1.841.88a.076.076 0 0 0-.041.106c.29.55.626 1.08 1.004 1.589a.078.078 0 0 0 .086.028c2.003-.572 3.954-1.486 5.952-2.95a.077.077 0 0 0 .032-.055c.502-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z"/>
+                </svg>
               </a>
               
               <a 
@@ -84,8 +85,9 @@ const Footer = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
+                aria-label="Twitter"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+                <Twitter className="h-5 w-5" />
               </a>
               
               <a 
@@ -93,8 +95,9 @@ const Footer = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
+                aria-label="YouTube"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
+                <Youtube className="h-5 w-5" />
               </a>
               
               <a 
@@ -102,8 +105,9 @@ const Footer = () => {
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
+                aria-label="GitHub"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+                <Github className="h-5 w-5" />
               </a>
             </div>
           </div>
@@ -162,27 +166,7 @@ const Footer = () => {
         </div>
         
         <div className="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
-          <div className="flex items-center space-x-2 mb-4 md:mb-0">
-            <div className="relative group">
-              <button className="flex items-center space-x-2 bg-white/10 px-3 py-1.5 rounded-md">
-                <span>{language.flag}</span>
-                <span>{language.name}</span>
-              </button>
-              
-              <div className="absolute bottom-full mb-2 left-0 bg-cow-darker border border-white/10 rounded-md shadow-lg w-32 hidden group-hover:block z-10">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    className="flex items-center w-full space-x-2 px-3 py-2 hover:bg-white/10 text-left"
-                    onClick={() => setLanguage(lang)}
-                  >
-                    <span>{lang.flag}</span>
-                    <span>{lang.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            
+          <div className="flex items-center space-x-4 mb-4 md:mb-0">
             <Link to="/faq" className="text-white/70 hover:text-white transition-colors">
               FAQ
             </Link>
@@ -202,8 +186,11 @@ const Footer = () => {
             </p>
             
             <button 
+              ref={cartButtonRef}
               onClick={handleCartClick}
-              className="ml-4 p-2 bg-white/10 hover:bg-white/20 rounded-md transition-all hover:translate-x-1"
+              className="ml-4 p-2 bg-white/10 hover:bg-white/20 rounded-md transition-all duration-1000"
+              aria-label="Easter egg"
+              disabled={cartClicked}
             >
               <ShoppingCart className="h-5 w-5" />
             </button>

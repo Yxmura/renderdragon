@@ -36,9 +36,10 @@ export function ThemeToggle({ className }: { className?: string }) {
         "relative overflow-hidden transition-colors animate-glow rounded-full", 
         className
       )}
+      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
     >
-      <Sun className={`h-5 w-5 transition-all ${theme === 'light' ? 'scale-100 rotate-0' : 'scale-0 -rotate-90'}`} />
-      <Moon className={`absolute h-5 w-5 transition-all ${theme === 'dark' ? 'scale-100 rotate-0' : 'scale-0 rotate-90'}`} />
+      <Sun className={`h-5 w-5 absolute transition-all duration-300 ${theme === 'light' ? 'opacity-100 transform scale-100 rotate-0' : 'opacity-0 transform scale-0 -rotate-90'}`} />
+      <Moon className={`h-5 w-5 absolute transition-all duration-300 ${theme === 'dark' ? 'opacity-100 transform scale-100 rotate-0' : 'opacity-0 transform scale-0 rotate-90'}`} />
       <span className="sr-only">Toggle theme</span>
     </Button>
   );

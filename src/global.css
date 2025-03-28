@@ -1,0 +1,202 @@
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--cow-purple, #9b87f5);
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--cow-purple-dark, #7E69AB);
+}
+
+/* For Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cow-purple, #9b87f5) rgba(0, 0, 0, 0.1);
+}
+
+/* Add this to your global styles */
+html, body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cow-purple, #9b87f5) rgba(0, 0, 0, 0.1);
+}
+
+body::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--cow-purple, #9b87f5);
+  border-radius: 3px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--cow-purple-dark, #7E69AB);
+}
+
+/* Pixel corners utility class */
+.pixel-corners {
+  clip-path: polygon(
+    0% 4px, 4px 4px, 4px 0%, calc(100% - 4px) 0%, calc(100% - 4px) 4px, 100% 4px, 
+    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 
+    4px calc(100% - 4px), 0% calc(100% - 4px)
+  );
+}
+
+/* Pixel cards */
+.pixel-card {
+  @apply bg-card border border-border rounded-md p-4 shadow-sm hover:shadow-md transition-shadow pixel-corners;
+}
+
+/* Pixel buttons */
+.pixel-btn-primary {
+  @apply font-pixel bg-cow-purple hover:bg-cow-purple-dark text-white font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
+}
+
+.pixel-btn-secondary {
+  @apply font-pixel bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
+}
+
+.pixel-input {
+  @apply bg-background border border-input rounded-md px-3 py-2 pixel-corners;
+}
+
+/* Grid background */
+.cow-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(155, 135, 245, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(155, 135, 245, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  background-position: 0 0;
+}
+
+/* Animation glow */
+@keyframes animate-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(155, 135, 245, 0.8), 0 0 30px rgba(155, 135, 245, 0.5);
+  }
+}
+
+.animate-glow {
+  animation: animate-glow 2s infinite;
+}
+
+/* Audio player styles */
+.audio-player-container {
+  @apply bg-background/60 backdrop-blur-sm rounded-md p-3 border border-border;
+}
+
+.audio-player-progress {
+  @apply h-1.5 bg-background rounded-full overflow-hidden cursor-pointer;
+}
+
+.audio-player-progress-fill {
+  @apply h-full bg-cow-purple transition-all duration-100;
+}
+
+.audio-visualizer {
+  @apply flex items-end h-12 gap-[2px] my-2;
+}
+
+.audio-visualizer-bar {
+  @apply w-1 bg-cow-purple/70 rounded-t-sm transition-all duration-150;
+}
+
+/* Fix nav dropdown issue */
+.dropdown-menu-fix {
+  transform: translateZ(0);
+}
+
+/* Audio visualizer animation */
+@keyframes equalize {
+  0% { height: 20%; }
+  10% { height: 60%; }
+  20% { height: 40%; }
+  30% { height: 75%; }
+  40% { height: 30%; }
+  50% { height: 90%; }
+  60% { height: 40%; }
+  70% { height: 70%; }
+  80% { height: 50%; }
+  90% { height: 80%; }
+  100% { height: 20%; }
+}
+
+.audio-visualizer-animated .audio-visualizer-bar {
+  animation: equalize 1.5s ease-in-out infinite;
+  animation-play-state: paused;
+}
+
+.audio-visualizer-animated.playing .audio-visualizer-bar {
+  animation-play-state: running;
+}
+
+.audio-visualizer-bar:nth-child(1) { animation-delay: -1.2s; }
+.audio-visualizer-bar:nth-child(2) { animation-delay: -1.1s; }
+.audio-visualizer-bar:nth-child(3) { animation-delay: -1.0s; }
+.audio-visualizer-bar:nth-child(4) { animation-delay: -0.9s; }
+.audio-visualizer-bar:nth-child(5) { animation-delay: -0.8s; }
+.audio-visualizer-bar:nth-child(6) { animation-delay: -0.7s; }
+.audio-visualizer-bar:nth-child(7) { animation-delay: -0.6s; }
+.audio-visualizer-bar:nth-child(8) { animation-delay: -0.5s; }
+.audio-visualizer-bar:nth-child(9) { animation-delay: -0.4s; }
+.audio-visualizer-bar:nth-child(10) { animation-delay: -0.3s; }
+.audio-visualizer-bar:nth-child(11) { animation-delay: -0.2s; }
+.audio-visualizer-bar:nth-child(12) { animation-delay: -0.1s; }
+.audio-visualizer-bar:nth-child(13) { animation-delay: 0s; }
+.audio-visualizer-bar:nth-child(14) { animation-delay: 0.1s; }
+.audio-visualizer-bar:nth-child(15) { animation-delay: 0.2s; }
+.audio-visualizer-bar:nth-child(16) { animation-delay: 0.3s; }
+
+/* Video player styles */
+.video-player-container {
+  @apply rounded-md overflow-hidden bg-black/90 relative;
+}
+
+.video-player-controls {
+  @apply absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 flex items-center gap-2 transition-opacity duration-300 opacity-0 hover:opacity-100;
+}
+
+.video-player-progress {
+  @apply h-1 bg-white/20 rounded-full overflow-hidden flex-grow cursor-pointer;
+}
+
+.video-player-progress-fill {
+  @apply h-full bg-cow-purple transition-all duration-100;
+}
+
+/* Guide steps */
+.guide-step {
+  @apply relative border border-border rounded-md p-6 mb-8;
+}
+
+.guide-step-number {
+  @apply absolute top-0 transform -translate-y-1/2 bg-cow-purple text-white font-pixel w-10 h-10 flex items-center justify-center rounded-full text-xl;
+}
+
+.guide-step:nth-child(odd) .guide-step-number {
+  @apply right-6;
+}
+
+.guide-step:nth-child(even) .guide-step-number {
+  @apply left-6;
+}

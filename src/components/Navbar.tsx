@@ -1,6 +1,6 @@
 
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   ChevronDown, 
   Menu, 
@@ -13,7 +13,9 @@ import {
   Download, 
   Music, 
   Bot, 
-  Image
+  Image,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -24,6 +26,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface NavLink {
   name: string;
@@ -63,9 +71,13 @@ const mainLinks: (NavLink | NavDropdown)[] = [
 ];
 
 const Navbar = () => {
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const siteOverlayRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -89,7 +101,61 @@ const Navbar = () => {
     };
   }, []);
 
-  const isMobile = windowWidth < 768;
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location]);
+
+  // Handle click outside to close mobile menu
+  useEffect(() => {
+    if (!mobileMenuOpen || !siteOverlayRef.current) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (siteOverlayRef.current && event.target === siteOverlayRef.current) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
+
+  // Disable body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  const handleDropdownMouseEnter = (dropdownName: string) => {
+    if (!isMobile) {
+      setActiveDropdown(dropdownName);
+    }
+  };
+
+  const handleDropdownMouseLeave = () => {
+    if (!isMobile) {
+      setActiveDropdown(null);
+    }
+  };
+
+  const isLinkActive = (path: string) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  const isDropdownActive = (dropdown: NavDropdown) => {
+    return dropdown.links.some(link => isLinkActive(link.path));
+  };
 
   return (
     <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'py-2 backdrop-blur-md bg-background/90 shadow-md' : 'py-4'}`}>
@@ -113,36 +179,52 @@ const Navbar = () => {
               <Link 
                 key={index} 
                 to={link.path} 
-                className="flex items-center space-x-1 text-foreground hover:text-primary transition-colors"
+                className={`flex items-center space-x-1 transition-colors ${isLinkActive(link.path) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
               >
                 <link.icon className="w-4 h-4" />
                 <span>{link.name}</span>
               </Link>
             ) : (
-              <DropdownMenu key={index}>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center space-x-1 text-foreground hover:text-primary transition-colors">
-                    <link.icon className="w-4 h-4" />
-                    <span>{link.name}</span>
-                    <ChevronDown className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-popover border border-border">
-                  <DropdownMenuGroup>
-                    {link.links.map((subLink, subIndex) => (
-                      <DropdownMenuItem key={subIndex} asChild>
-                        <Link 
-                          to={subLink.path} 
-                          className="flex items-center space-x-2 px-2 py-2 cursor-pointer"
-                        >
-                          <subLink.icon className="w-4 h-4" />
-                          <span>{subLink.name}</span>
-                        </Link>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div 
+                key={index}
+                className="relative"
+                onMouseEnter={() => handleDropdownMouseEnter(link.name)}
+                onMouseLeave={handleDropdownMouseLeave}
+              >
+                <DropdownMenu
+                  open={activeDropdown === link.name}
+                  onOpenChange={(open) => {
+                    if (!open) setActiveDropdown(null);
+                    if (open) setActiveDropdown(link.name);
+                  }}
+                >
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      className={`flex items-center space-x-1 transition-colors ${isDropdownActive(link) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
+                    >
+                      <link.icon className="w-4 h-4" />
+                      <span>{link.name}</span>
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 bg-popover border border-border">
+                    <DropdownMenuGroup>
+                      {link.links.map((subLink, subIndex) => (
+                        <DropdownMenuItem key={subIndex} asChild>
+                          <Link 
+                            to={subLink.path} 
+                            className={`flex items-center space-x-2 px-2 py-2 cursor-pointer ${isLinkActive(subLink.path) ? 'text-primary bg-accent/50' : ''}`}
+                          >
+                            <subLink.icon className="w-4 h-4" />
+                            <span>{subLink.name}</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             )
           ))}
         </nav>
@@ -164,47 +246,92 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Site Overlay when Mobile Menu is Open */}
+      {mobileMenuOpen && (
+        <div 
+          ref={siteOverlayRef}
+          className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40 pt-16 md:hidden"
+          onClick={(e) => {
+            if (e.target === siteOverlayRef.current) {
+              setMobileMenuOpen(false);
+            }
+          }}
+        >
+          {/* This empty div allows clicking outside the menu to close it */}
+        </div>
+      )}
+
       {/* Mobile Menu */}
       <div 
-        className={`fixed inset-0 bg-background z-40 pt-20 transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-0 pt-16 bg-background z-40 transition-transform duration-300 ease-in-out ${
           mobileMenuOpen ? 'transform translate-x-0' : 'transform translate-x-full'
         } md:hidden`}
+        style={{ height: 'calc(100vh)' }}
       >
-        <nav className="h-full overflow-y-auto flex flex-col p-6 space-y-6">
+        {/* Close button */}
+        <div className="absolute top-4 right-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileMenuOpen(false)}
+            className="h-8 w-8"
+          >
+            <X className="h-5 w-5" />
+            <span className="sr-only">Close menu</span>
+          </Button>
+        </div>
+
+        <nav className="h-full overflow-y-auto custom-scrollbar flex flex-col p-6 space-y-6 pb-20">
           {mainLinks.map((link, index) => (
             'path' in link ? (
               <Link 
                 key={index} 
                 to={link.path} 
-                className="flex items-center space-x-3 text-lg py-2 border-b border-border"
+                className={`flex items-center space-x-3 text-lg py-2 border-b border-border ${isLinkActive(link.path) ? 'text-primary' : ''}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <link.icon className="w-5 h-5" />
                 <span>{link.name}</span>
               </Link>
             ) : (
-              <div key={index} className="space-y-2">
-                <div className="flex items-center space-x-3 text-lg py-2 border-b border-border">
-                  <link.icon className="w-5 h-5" />
-                  <span>{link.name}</span>
-                </div>
-                <div className="pl-8 space-y-4 mt-2">
-                  {link.links.map((subLink, subIndex) => (
-                    <Link 
-                      key={subIndex}
-                      to={subLink.path}
-                      className="flex items-center space-x-3 text-base py-1 text-muted-foreground hover:text-foreground"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      <subLink.icon className="w-4 h-4" />
-                      <span>{subLink.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
+              <Collapsible key={index} className="space-y-2 w-full">
+                <CollapsibleTrigger className="w-full">
+                  <div className={`flex items-center justify-between text-lg py-2 border-b border-border w-full ${isDropdownActive(link) ? 'text-primary' : ''}`}>
+                    <div className="flex items-center space-x-3">
+                      <link.icon className="w-5 h-5" />
+                      <span>{link.name}</span>
+                    </div>
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="pl-8 space-y-4 mt-2">
+                    {link.links.map((subLink, subIndex) => (
+                      <Link 
+                        key={subIndex}
+                        to={subLink.path}
+                        className={`flex items-center space-x-3 text-base py-1 ${isLinkActive(subLink.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <subLink.icon className="w-4 h-4" />
+                        <span>{subLink.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
             )
           ))}
         </nav>
+
+        {/* Sticky Theme Toggle at Bottom */}
+        <div className="fixed bottom-0 left-0 right-0 flex justify-center items-center py-4 bg-background/90 backdrop-blur-sm border-t border-border">
+          <div className="flex items-center space-x-2">
+            <Sun className="h-4 w-4" />
+            <ThemeToggle />
+            <Moon className="h-4 w-4" />
+          </div>
+        </div>
       </div>
     </header>
   );
