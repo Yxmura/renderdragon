@@ -64,13 +64,13 @@ body::-webkit-scrollbar-thumb:hover {
   @apply bg-card border border-border rounded-md p-4 shadow-sm hover:shadow-md transition-shadow pixel-corners;
 }
 
-/* Pixel buttons */
+/* Pixel buttons - Fixing the font-pixel class issue */
 .pixel-btn-primary {
-  @apply font-pixel bg-cow-purple hover:bg-cow-purple-dark text-white font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
+  @apply bg-cow-purple hover:bg-cow-purple-dark text-white font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
 }
 
 .pixel-btn-secondary {
-  @apply font-pixel bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
+  @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
 }
 
 .pixel-input {
@@ -190,7 +190,7 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .guide-step-number {
-  @apply absolute top-0 transform -translate-y-1/2 bg-cow-purple text-white font-pixel w-10 h-10 flex items-center justify-center rounded-full text-xl;
+  @apply absolute top-0 transform -translate-y-1/2 bg-cow-purple text-white w-10 h-10 flex items-center justify-center rounded-full text-xl;
 }
 
 .guide-step:nth-child(odd) .guide-step-number {
@@ -199,4 +199,26 @@ body::-webkit-scrollbar-thumb:hover {
 
 .guide-step:nth-child(even) .guide-step-number {
   @apply left-6;
+}
+
+/* Testimonial styles */
+.testimonial-card {
+  @apply bg-card border border-border rounded-lg p-6 shadow-md hover:shadow-lg transition-all pixel-corners;
+}
+
+.testimonial-avatar {
+  @apply w-16 h-16 rounded-full border-2 border-cow-purple overflow-hidden;
+}
+
+.testimonial-quote {
+  @apply text-muted-foreground italic my-4 relative pl-6;
+}
+
+.testimonial-quote::before {
+  content: '"';
+  @apply absolute left-0 top-0 text-3xl text-cow-purple font-serif;
+}
+
+.testimonial-stars {
+  @apply flex gap-1 text-yellow-400;
 }

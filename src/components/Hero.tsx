@@ -24,7 +24,7 @@ const Hero = () => {
     <section ref={parallaxRef} className="relative min-h-screen flex items-center overflow-hidden cow-grid-bg">
       {/* Background Layer */}
       <div 
-        className="parallax-layer"
+        className="absolute inset-0 pointer-events-none"
         style={{ 
           backgroundImage: "url('https://images.unsplash.com/photo-1605490005049-7c7ab3b5bb05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80')",
           backgroundSize: 'cover',
@@ -37,15 +37,12 @@ const Hero = () => {
       
       {/* Cityscape Layer */}
       <div 
-        className="parallax-layer"
+        className="absolute inset-x-0 bottom-0 h-[40%] pointer-events-none"
         style={{ 
           backgroundImage: "url('https://i.imgur.com/tLHtS8F.png')",
           backgroundSize: 'cover', 
           backgroundPosition: 'bottom center',
           backgroundRepeat: 'repeat-x',
-          height: '40%',
-          bottom: 0,
-          top: 'auto',
           opacity: 0.7,
           transform: `translateY(${-offset * 0.1}px)`,
           filter: 'brightness(0.4) contrast(1.2)'
@@ -54,7 +51,7 @@ const Hero = () => {
       
       {/* Grid Lines */}
       <div 
-        className="parallax-layer"
+        className="absolute inset-0 pointer-events-none"
         style={{ 
           backgroundImage: 'linear-gradient(to bottom, rgba(155, 135, 245, 0.1) 1px, transparent 1px), linear-gradient(to right, rgba(155, 135, 245, 0.1) 1px, transparent 1px)',
           backgroundSize: '40px 40px',
@@ -66,9 +63,9 @@ const Hero = () => {
       {/* Floating Items */}
       {!isMobile && (
         <>
-          <div className="parallax-layer pointer-events-none">
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <div 
-              className="absolute w-12 h-12 bg-cow-blue rounded-lg opacity-30 pixel-corners"
+              className="absolute w-12 h-12 bg-cow-purple/30 rounded-lg pixel-corners"
               style={{ 
                 top: '20%', 
                 left: '20%', 
@@ -76,7 +73,7 @@ const Hero = () => {
               }}
             />
             <div 
-              className="absolute w-16 h-16 bg-cow-purple rounded-lg opacity-30 pixel-corners"
+              className="absolute w-16 h-16 bg-cow-purple/30 rounded-lg pixel-corners"
               style={{ 
                 top: '60%', 
                 right: '25%', 
@@ -84,7 +81,7 @@ const Hero = () => {
               }}
             />
             <div 
-              className="absolute w-10 h-10 border-2 border-cow-purple opacity-40 pixel-corners"
+              className="absolute w-10 h-10 border-2 border-cow-purple/40 pixel-corners"
               style={{ 
                 top: '30%', 
                 right: '10%', 
@@ -92,7 +89,7 @@ const Hero = () => {
               }}
             />
             <div 
-              className="absolute w-8 h-8 border-2 border-cow-blue opacity-40 pixel-corners"
+              className="absolute w-8 h-8 border-2 border-cow-purple/40 pixel-corners"
               style={{ 
                 bottom: '35%', 
                 left: '15%', 
@@ -106,14 +103,14 @@ const Hero = () => {
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10 mt-20 md:mt-0">
         <div className="max-w-2xl mx-auto md:mx-0 text-center md:text-left">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-pixel mb-6 text-white leading-tight animate-glow">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight animate-glow">
             <span className="text-cow-purple">Unlock</span> Your <br />
-            <span className="text-cow-blue">Content Creation</span> <br />
-            <span className="text-cow-purple">Potential</span>
+            <span className="text-cow-purple">Minecraft</span> <br />
+            <span className="text-cow-purple">Creation</span> Potential
           </h1>
           
           <p className="text-xl md:text-2xl mb-8 text-white/80 max-w-lg mx-auto md:mx-0">
-            Free assets, tools, and resources for content creators, all in one place.
+            Free assets, tools, and resources for Minecraft content creators, all in one place.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4">

@@ -163,9 +163,9 @@ const Navbar = () => {
         {/* Logo */}
         <Link 
           to="/" 
-          className="flex items-center space-x-2 text-xl md:text-2xl font-pixel tracking-wider"
+          className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
         >
-          <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-pixel text-xs pixel-corners">COW</div>
+          <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">COW</div>
           {!isMobile && (
             <span className="hidden md:inline animate-glow">Creator On Wheels</span>
           )}
@@ -251,22 +251,18 @@ const Navbar = () => {
         <div 
           ref={siteOverlayRef}
           className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40 pt-16 md:hidden"
-          onClick={(e) => {
-            if (e.target === siteOverlayRef.current) {
-              setMobileMenuOpen(false);
-            }
-          }}
+          onClick={() => setMobileMenuOpen(false)}
         >
           {/* This empty div allows clicking outside the menu to close it */}
         </div>
       )}
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Fixed to show only part of the screen */}
       <div 
-        className={`fixed inset-0 pt-16 bg-background z-40 transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 right-0 pt-16 bg-background z-40 transition-transform duration-300 ease-in-out w-4/5 max-w-sm shadow-xl ${
           mobileMenuOpen ? 'transform translate-x-0' : 'transform translate-x-full'
         } md:hidden`}
-        style={{ height: 'calc(100vh)' }}
+        style={{ top: '60px', height: 'calc(100vh - 60px)' }}
       >
         {/* Close button */}
         <div className="absolute top-4 right-4">
