@@ -1,45 +1,137 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Download, RefreshCcw, Image as ImageIcon, Wand2 } from 'lucide-react';
+import { Download, RefreshCcw, Image as ImageIcon, Upload, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const BackgroundGenerator = () => {
-  const [style, setStyle] = useState('pixel-art');
   const [color, setColor] = useState('#9b87f5');
-  const [complexity, setComplexity] = useState([50]);
   const [size, setSize] = useState('1920x1080');
+  const [spacing, setSpacing] = useState([10]);
+  const [opacity, setOpacity] = useState([100]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     document.title = 'Background Generator - Creator On Wheels';
-    
-    // Preload a demo image
-    const timer = setTimeout(() => {
-      setGeneratedImage('https://images.unsplash.com/photo-1610237052983-e5ae62379802?q=80&w=2070&auto=format&fit=crop');
-    }, 500);
-    
-    return () => clearTimeout(timer);
   }, []);
 
-  const handleGenerate = () => {
-    setIsGenerating(true);
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check if file is an image
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setUploadedImage(e.target?.result as string);
+      // Clear any previously generated image
+      setGeneratedImage(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const clearUploadedImage = () => {
+    setUploadedImage(null);
     setGeneratedImage(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const generatePattern = (
+    ctx: CanvasRenderingContext2D, 
+    img: HTMLImageElement, 
+    canvasWidth: number, 
+    canvasHeight: number,
+    imgSpacing: number,
+    imgOpacity: number
+  ) => {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     
-    // Simulate generation process
-    setTimeout(() => {
+    // Set background color
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    
+    // Calculate image size while maintaining aspect ratio
+    const aspectRatio = img.width / img.height;
+    const patternHeight = 100; // Base pattern size
+    const patternWidth = patternHeight * aspectRatio;
+    
+    // Calculate spacing
+    const spacingPixels = imgSpacing;
+    
+    // Set opacity
+    ctx.globalAlpha = imgOpacity / 100;
+    
+    // Draw pattern
+    for (let y = 0; y < canvasHeight; y += patternHeight + spacingPixels) {
+      for (let x = 0; x < canvasWidth; x += patternWidth + spacingPixels) {
+        ctx.drawImage(img, x, y, patternWidth, patternHeight);
+      }
+    }
+    
+    // Reset opacity
+    ctx.globalAlpha = 1;
+  };
+
+  const handleGenerate = () => {
+    if (!uploadedImage) {
+      toast.error("Please upload an image first");
+      return;
+    }
+
+    setIsGenerating(true);
+    
+    // Create dimensions from size string
+    const [width, height] = size.split('x').map(dim => parseInt(dim, 10));
+    
+    // Create an image element from uploaded image
+    const img = new Image();
+    img.onload = () => {
+      // Get canvas
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      
+      // Set canvas dimensions
+      canvas.width = width;
+      canvas.height = height;
+      
+      // Get context
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      
+      // Generate pattern
+      generatePattern(ctx, img, width, height, spacing[0], opacity[0]);
+      
+      // Convert canvas to data URL
+      const dataUrl = canvas.toDataURL('image/png');
+      setGeneratedImage(dataUrl);
       setIsGenerating(false);
-      setGeneratedImage('https://images.unsplash.com/photo-1610237052983-e5ae62379802?q=80&w=2070&auto=format&fit=crop');
+      
       toast.success("Background generated!", {
         description: "Ready to download",
       });
-    }, 2000);
+    };
+    
+    img.onerror = () => {
+      setIsGenerating(false);
+      toast.error("Failed to load image");
+    };
+    
+    img.src = uploadedImage;
   };
 
   const handleDownload = () => {
@@ -49,10 +141,9 @@ const BackgroundGenerator = () => {
       description: "Your background will be downloaded shortly",
     });
     
-    // In a real implementation, this would trigger an actual download
     const link = document.createElement('a');
     link.href = generatedImage;
-    link.download = `minecraft-background-${style}-${new Date().getTime()}.jpg`;
+    link.download = `minecraft-pattern-background-${size}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -78,23 +169,46 @@ const BackgroundGenerator = () => {
               <div className="md:col-span-1 space-y-6 pixel-card">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Style</label>
-                    <Select value={style} onValueChange={setStyle}>
-                      <SelectTrigger className="pixel-corners">
-                        <SelectValue placeholder="Select style" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pixel-art">Pixel Art</SelectItem>
-                        <SelectItem value="modern">Modern</SelectItem>
-                        <SelectItem value="retro">Retro</SelectItem>
-                        <SelectItem value="minecraft">Minecraft-style</SelectItem>
-                        <SelectItem value="futuristic">Futuristic</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <label className="text-sm font-medium">Upload Image</label>
+                    <div className="flex space-x-2 items-center">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        ref={fileInputRef}
+                        className="hidden"
+                      />
+                      <Button 
+                        onClick={() => fileInputRef.current?.click()}
+                        className="pixel-btn-primary flex-grow flex items-center justify-center space-x-2"
+                      >
+                        <Upload className="h-5 w-5" />
+                        <span>Select Image</span>
+                      </Button>
+                      {uploadedImage && (
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={clearUploadedImage}
+                          className="pixel-corners"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </Button>
+                      )}
+                    </div>
+                    {uploadedImage && (
+                      <div className="mt-2 relative border border-primary/20 rounded-sm overflow-hidden h-24 bg-black/10">
+                        <img 
+                          src={uploadedImage} 
+                          alt="Uploaded" 
+                          className="h-full w-full object-contain" 
+                        />
+                      </div>
+                    )}
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Color Accent</label>
+                    <label className="text-sm font-medium">Background Color</label>
                     <div className="flex space-x-2">
                       <Input
                         type="color"
@@ -113,13 +227,28 @@ const BackgroundGenerator = () => {
                   
                   <div className="space-y-2">
                     <div className="flex justify-between">
-                      <label className="text-sm font-medium">Complexity</label>
-                      <span className="text-xs text-muted-foreground">{complexity[0]}%</span>
+                      <label className="text-sm font-medium">Spacing</label>
+                      <span className="text-xs text-muted-foreground">{spacing[0]}px</span>
                     </div>
                     <Slider 
-                      value={complexity} 
-                      onValueChange={setComplexity} 
+                      value={spacing} 
+                      onValueChange={setSpacing} 
                       min={0} 
+                      max={50} 
+                      step={1} 
+                      className="pixel-corners" 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <label className="text-sm font-medium">Opacity</label>
+                      <span className="text-xs text-muted-foreground">{opacity[0]}%</span>
+                    </div>
+                    <Slider 
+                      value={opacity} 
+                      onValueChange={setOpacity} 
+                      min={10} 
                       max={100} 
                       step={1} 
                       className="pixel-corners" 
@@ -144,7 +273,7 @@ const BackgroundGenerator = () => {
                   
                   <Button 
                     onClick={handleGenerate}
-                    disabled={isGenerating}
+                    disabled={isGenerating || !uploadedImage}
                     className="w-full pixel-btn-primary flex items-center justify-center space-x-2 mt-4"
                   >
                     {isGenerating ? (
@@ -154,7 +283,7 @@ const BackgroundGenerator = () => {
                       </>
                     ) : (
                       <>
-                        <Wand2 className="h-5 w-5" />
+                        <ImageIcon className="h-5 w-5" />
                         <span>Generate Background</span>
                       </>
                     )}
@@ -177,14 +306,22 @@ const BackgroundGenerator = () => {
                   ) : isGenerating ? (
                     <div className="text-center px-4 animate-pulse">
                       <RefreshCcw className="h-12 w-12 mx-auto mb-4 animate-spin" />
-                      <p className="text-muted-foreground">Generating your unique Minecraft background...</p>
+                      <p className="text-muted-foreground">Generating your pattern background...</p>
+                    </div>
+                  ) : uploadedImage ? (
+                    <div className="text-center px-4">
+                      <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                      <p className="text-muted-foreground">Click 'Generate Background' to create your pattern</p>
                     </div>
                   ) : (
                     <div className="text-center px-4">
-                      <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                      <p className="text-muted-foreground">Your generated background will appear here</p>
+                      <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                      <p className="text-muted-foreground">Upload an image to get started</p>
                     </div>
                   )}
+                  
+                  {/* Hidden canvas for generating images */}
+                  <canvas ref={canvasRef} className="hidden"></canvas>
                 </div>
                 
                 {generatedImage && (
@@ -206,8 +343,8 @@ const BackgroundGenerator = () => {
                   <div className="h-12 w-12 bg-cow-purple/20 rounded-full flex items-center justify-center mx-auto mb-3">
                     <span className="font-vt323 text-xl">1</span>
                   </div>
-                  <h3 className="font-vt323 mb-2">Configure</h3>
-                  <p className="text-sm text-muted-foreground">Select your desired style, color, and complexity</p>
+                  <h3 className="font-vt323 mb-2">Upload</h3>
+                  <p className="text-sm text-muted-foreground">Upload your image and adjust settings</p>
                 </div>
                 
                 <div className="pixel-card p-6">

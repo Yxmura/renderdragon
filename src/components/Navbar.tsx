@@ -74,7 +74,6 @@ const Navbar = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const siteOverlayRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -86,7 +85,6 @@ const Navbar = () => {
     };
 
     const handleResize = () => {
-      setWindowWidth(window.innerWidth);
       if (window.innerWidth >= 768) {
         setMobileMenuOpen(false);
       }
@@ -202,6 +200,7 @@ const Navbar = () => {
                     <Button 
                       variant="ghost" 
                       className={`flex items-center space-x-1 transition-colors ${isDropdownActive(link) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
+                      style={{ transform: 'none' }}
                     >
                       <link.icon className="w-4 h-4" />
                       <span>{link.name}</span>

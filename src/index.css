@@ -111,6 +111,27 @@
   .pixelated {
     image-rendering: pixelated;
   }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary));
+    opacity: 0.8;
+  }
 }
 
 @layer components {
@@ -119,7 +140,7 @@
   }
 
   .pixel-btn-primary {
-    @apply pixel-btn border-cow-purple bg-cow-purple text-white hover:bg-cow-purple-dark;
+    @apply pixel-btn bg-cow-purple hover:bg-cow-purple-dark text-white font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
   }
 
   .pixel-btn-secondary {
@@ -164,4 +185,8 @@
 
 .font-chakra {
   font-family: 'Chakra Petch', sans-serif;
+}
+
+.font-geist {
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }

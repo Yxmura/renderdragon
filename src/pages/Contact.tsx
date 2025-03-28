@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Copy, Mail, Check, ExternalLink } from 'lucide-react';
+import { Copy, Mail, Check, ExternalLink, Github, Discord } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -10,33 +10,57 @@ interface TeamMember {
   name: string;
   role: string;
   avatar: string;
+  socials?: {
+    github?: string;
+    discord?: string;
+  };
 }
 
 const teamMembers: TeamMember[] = [
   {
     name: 'Alex Johnson',
     role: 'Founder',
-    avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+    avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    socials: {
+      github: 'https://github.com',
+      discord: 'https://discord.com'
+    }
   },
   {
     name: 'Sarah Wang',
     role: 'Lead Developer',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2076&q=80'
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2076&q=80',
+    socials: {
+      github: 'https://github.com',
+      discord: 'https://discord.com'
+    }
   },
   {
     name: 'Miguel Torres',
     role: 'Content Manager',
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80'
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
+    socials: {
+      github: 'https://github.com',
+      discord: 'https://discord.com'
+    }
   },
   {
     name: 'Emma Chen',
     role: 'Designer',
-    avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80'
+    avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
+    socials: {
+      github: 'https://github.com',
+      discord: 'https://discord.com'
+    }
   },
   {
     name: 'Chris Powell',
     role: 'Community Manager',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    socials: {
+      github: 'https://github.com',
+      discord: 'https://discord.com'
+    }
   }
 ];
 
@@ -140,6 +164,34 @@ const Contact = () => {
                     </div>
                     <h3 className="text-sm font-medium">{member.name}</h3>
                     <p className="text-xs text-muted-foreground">{member.role}</p>
+                    
+                    {/* Social Icons */}
+                    {member.socials && (
+                      <div className="flex space-x-2 mt-2">
+                        {member.socials.github && (
+                          <a 
+                            href={member.socials.github} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-primary transition-colors"
+                            aria-label={`${member.name}'s GitHub`}
+                          >
+                            <Github className="h-4 w-4" />
+                          </a>
+                        )}
+                        {member.socials.discord && (
+                          <a 
+                            href={member.socials.discord} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-primary transition-colors"
+                            aria-label={`${member.name}'s Discord`}
+                          >
+                            <Discord className="h-4 w-4" />
+                          </a>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
