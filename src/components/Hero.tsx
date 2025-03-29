@@ -118,7 +118,7 @@ const Hero = () => {
         </h1>
         
         <p 
-          className="text-lg md:text-xl mb-8 text-white/80 max-w-lg text-center md:text-left"
+          className="text-lg md:text-xl mb-8 text-white/80 max-w-lg text-center md:text-left dark:text-white/80 text-foreground"
           style={{
             transform: `translateY(${mousePosition.y * -3}px) translateX(${mousePosition.x * -3}px)`,
             transition: 'transform 0.1s ease-out'
@@ -151,7 +151,7 @@ const Hero = () => {
         </div>
         
         <p 
-          className="mt-6 text-white/70 text-sm md:text-base"
+          className="mt-6 text-foreground dark:text-white/70 text-sm md:text-base"
           style={{
             transform: `translateY(${mousePosition.y * -1}px) translateX(${mousePosition.x * -1}px)`,
             transition: 'transform 0.1s ease-out'

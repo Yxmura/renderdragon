@@ -78,6 +78,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [openMobileCollapsible, setOpenMobileCollapsible] = useState<string | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return localStorage.getItem('theme') as 'light' | 'dark' || 
            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -127,6 +128,10 @@ const Navbar = () => {
     if (!isMobile) {
       setActiveDropdown(null);
     }
+  };
+
+  const handleMobileCollapsibleToggle = (name: string) => {
+    setOpenMobileCollapsible(prev => prev === name ? null : name);
   };
 
   const isLinkActive = (path: string) => {
@@ -254,13 +259,18 @@ const Navbar = () => {
                         <span>{link.name}</span>
                       </Link>
                     ) : (
-                      <Collapsible key={index} className="w-full border-b border-border">
+                      <Collapsible 
+                        key={index} 
+                        className="w-full border-b border-border"
+                        open={openMobileCollapsible === link.name}
+                        onOpenChange={() => handleMobileCollapsibleToggle(link.name)}
+                      >
                         <CollapsibleTrigger className="w-full flex items-center justify-between text-lg py-3">
                           <div className="flex items-center space-x-3">
                             <link.icon className="w-5 h-5" />
                             <span>{link.name}</span>
                           </div>
-                          <ChevronDown className="w-4 h-4 transition-transform duration-200 ui-open:rotate-180" />
+                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openMobileCollapsible === link.name ? 'rotate-180' : ''}`} />
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <div className="pl-8 pb-3 space-y-3">
