@@ -292,14 +292,17 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Mobile Menu - Fixed to show only part of the screen */}
+      {/* Enhanced Mobile Menu - Full width, partial height */}
       <div
-        className={`fixed inset-y-0 right-0 pt-16 bg-background z-40 transition-transform duration-300 ease-in-out w-4/5 max-w-sm shadow-xl ${
-          mobileMenuOpen
-            ? 'transform translate-x-0'
-            : 'transform translate-x-full'
-        } md:hidden`}
-        style={{ top: '60px', height: 'calc(100vh - 60px)' }}
+        className={`fixed left-0 right-0 top-0 z-40 md:hidden transition-transform duration-300 ease-in-out ${
+          mobileMenuOpen ? 'transform translate-y-0' : 'transform -translate-y-full'
+        }`}
+        style={{
+          height: '60vh', // Adjust the height as needed
+          backgroundColor: 'rgba(10, 10, 10, 0.95)', // Dark background
+          backdropFilter: 'blur(10px)',
+          paddingTop: '60px', // Adjust to match header height
+        }}
       >
         {/* Close button */}
         <div className="absolute top-4 right-4">
@@ -307,23 +310,24 @@ const Navbar = () => {
             variant="ghost"
             size="icon"
             onClick={() => setMobileMenuOpen(false)}
-            className="h-8 w-8"
+            className="h-8 w-8 text-white"
           >
             <X className="h-5 w-5" />
             <span className="sr-only">Close menu</span>
           </Button>
         </div>
 
-        <nav className="h-full overflow-y-auto custom-scrollbar flex flex-col p-6 space-y-6 pb-20">
+        <nav className="h-full overflow-y-auto custom-scrollbar flex flex-col p-6 space-y-4">
           {mainLinks.map((link, index) =>
             'path' in link ? (
               <Link
                 key={index}
                 to={link.path}
-                className={`flex items-center space-x-3 text-lg py-2 border-b border-border ${
+                className={`flex items-center space-x-3 text-lg py-3 rounded-md hover:bg-cow-purple/20 text-white transition-colors duration-200 pixel-corners ${
                   isLinkActive(link.path) ? 'text-primary' : ''
                 }`}
                 onClick={() => setMobileMenuOpen(false)}
+                style={{ borderBottom: '2px solid rgba(155, 135, 245, 0.3)' }}
               >
                 <link.icon className="w-5 h-5" />
                 <span>{link.name}</span>
@@ -332,9 +336,10 @@ const Navbar = () => {
               <Collapsible key={index} className="space-y-2 w-full">
                 <CollapsibleTrigger className="w-full">
                   <div
-                    className={`flex items-center justify-between text-lg py-2 border-b border-border w-full ${
+                    className={`flex items-center justify-between text-lg py-3 rounded-md hover:bg-cow-purple/20 text-white transition-colors duration-200 pixel-corners ${
                       isDropdownActive(link) ? 'text-primary' : ''
                     }`}
+                    style={{ borderBottom: '2px solid rgba(155, 135, 245, 0.3)' }}
                   >
                     <div className="flex items-center space-x-3">
                       <link.icon className="w-5 h-5" />
@@ -344,15 +349,15 @@ const Navbar = () => {
                   </div>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <div className="pl-8 space-y-4 mt-2">
+                  <div className="pl-8 space-y-2 mt-2">
                     {link.links.map((subLink, subIndex) => (
                       <Link
                         key={subIndex}
                         to={subLink.path}
-                        className={`flex items-center space-x-3 text-base py-1 ${
+                        className={`flex items-center space-x-3 text-base py-2 rounded-md hover:bg-cow-purple/10 text-white/80 transition-colors duration-200 pixel-corners ${
                           isLinkActive(subLink.path)
                             ? 'text-primary'
-                            : 'text-muted-foreground hover:text-foreground'
+                            : 'hover:text-white'
                         }`}
                         onClick={() => setMobileMenuOpen(false)}
                       >
@@ -367,12 +372,9 @@ const Navbar = () => {
           )}
         </nav>
 
-        {/* Sticky Theme Toggle at Bottom */}
-        <div className="fixed bottom-0 left-0 right-0 flex justify-center items-center py-4 bg-background/90 backdrop-blur-sm border-t border-border">
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            <div className="text-sm text-muted-foreground">Toggle Theme</div>
-          </div>
+        {/* Theme Toggle at Bottom */}
+        <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center">
+          <ThemeToggle />
         </div>
       </div>
     </header>
