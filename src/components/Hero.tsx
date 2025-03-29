@@ -37,6 +37,20 @@ const Hero = () => {
       {/* Background gradients */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent opacity-50 z-10"></div>
       
+      {/* Background image with parallax effect */}
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{ 
+          backgroundImage: "url('https://images.unsplash.com/photo-1623224316517-dfbe3bf5e612?q=80&w=2670&auto=format&fit=crop')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          opacity: 0.15,
+          transform: `translateY(${scrollY * 0.15}px) translateX(${mousePosition.x * -10}px)`,
+          filter: 'blur(3px) brightness(0.4) contrast(1.2)',
+          transition: 'transform 0.1s ease-out'
+        }}
+      />
+      
       {/* Grid overlay */}
       <div 
         className="absolute inset-0 pointer-events-none z-0"
