@@ -14,6 +14,8 @@ import {
   Music, 
   Bot, 
   Image,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -30,6 +32,9 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Toggle } from "@/components/ui/toggle";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 interface NavLink {
   name: string;
@@ -73,7 +78,10 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const siteOverlayRef = useRef<HTMLDivElement>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return localStorage.getItem('theme') as 'light' | 'dark' || 
+           (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  });
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -102,33 +110,12 @@ const Navbar = () => {
     setMobileMenuOpen(false);
   }, [location]);
 
-  // Handle click outside to close mobile menu
-  useEffect(() => {
-    if (!mobileMenuOpen || !siteOverlayRef.current) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (siteOverlayRef.current && event.target === siteOverlayRef.current) {
-        setMobileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [mobileMenuOpen]);
-
-  // Disable body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mobileMenuOpen]);
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.classList.toggle('dark', newTheme === 'dark');
+  };
 
   const handleDropdownMouseEnter = (dropdownName: string) => {
     if (!isMobile) {
@@ -231,98 +218,92 @@ const Navbar = () => {
           <ThemeToggle className="mr-4" />
           
           {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* Site Overlay when Mobile Menu is Open */}
-      {mobileMenuOpen && (
-        <div 
-          ref={siteOverlayRef}
-          className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40 pt-16 md:hidden"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          {/* This empty div allows clicking outside the menu to close it */}
-        </div>
-      )}
-
-      {/* Mobile Menu - Fixed to show only part of the screen */}
-      <div 
-        className={`fixed inset-y-0 right-0 pt-16 bg-background z-40 transition-transform duration-300 ease-in-out w-4/5 max-w-sm shadow-xl ${
-          mobileMenuOpen ? 'transform translate-x-0' : 'transform translate-x-full'
-        } md:hidden`}
-        style={{ top: '60px', height: 'calc(100vh - 60px)' }}
-      >
-        {/* Close button */}
-        <div className="absolute top-4 right-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileMenuOpen(false)}
-            className="h-8 w-8"
-          >
-            <X className="h-5 w-5" />
-            <span className="sr-only">Close menu</span>
-          </Button>
-        </div>
-
-        <nav className="h-full overflow-y-auto custom-scrollbar flex flex-col p-6 space-y-6 pb-20">
-          {mainLinks.map((link, index) => (
-            'path' in link ? (
-              <Link 
-                key={index} 
-                to={link.path} 
-                className={`flex items-center space-x-3 text-lg py-2 border-b border-border ${isLinkActive(link.path) ? 'text-primary' : ''}`}
-                onClick={() => setMobileMenuOpen(false)}
+          <Drawer>
+            <DrawerTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
               >
-                <link.icon className="w-5 h-5" />
-                <span>{link.name}</span>
-              </Link>
-            ) : (
-              <Collapsible key={index} className="space-y-2 w-full">
-                <CollapsibleTrigger className="w-full">
-                  <div className={`flex items-center justify-between text-lg py-2 border-b border-border w-full ${isDropdownActive(link) ? 'text-primary' : ''}`}>
-                    <div className="flex items-center space-x-3">
-                      <link.icon className="w-5 h-5" />
-                      <span>{link.name}</span>
-                    </div>
-                    <ChevronDown className="w-4 h-4" />
-                  </div>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="pl-8 space-y-4 mt-2">
-                    {link.links.map((subLink, subIndex) => (
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle menu</span>
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent className="h-[75vh] rounded-t-xl bg-background border-t border-border">
+              <div className="px-4 py-6 max-h-full overflow-auto">
+                <div className="flex items-center justify-between mb-6">
+                  <Link 
+                    to="/" 
+                    className="flex items-center space-x-2 text-xl font-bold"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">COW</div>
+                    <span>Creator On Wheels</span>
+                  </Link>
+                </div>
+                
+                <nav className="space-y-4">
+                  {mainLinks.map((link, index) => (
+                    'path' in link ? (
                       <Link 
-                        key={subIndex}
-                        to={subLink.path}
-                        className={`flex items-center space-x-3 text-base py-1 ${isLinkActive(subLink.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-                        onClick={() => setMobileMenuOpen(false)}
+                        key={index} 
+                        to={link.path} 
+                        className={`flex items-center space-x-3 text-lg py-3 border-b border-border ${isLinkActive(link.path) ? 'text-primary' : ''}`}
                       >
-                        <subLink.icon className="w-4 h-4" />
-                        <span>{subLink.name}</span>
+                        <link.icon className="w-5 h-5" />
+                        <span>{link.name}</span>
                       </Link>
-                    ))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-            )
-          ))}
-        </nav>
-
-        {/* Sticky Theme Toggle at Bottom */}
-        <div className="fixed bottom-0 left-0 right-0 flex justify-center items-center py-4 bg-background/90 backdrop-blur-sm border-t border-border">
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            <div className="text-sm text-muted-foreground">Toggle Theme</div>
-          </div>
+                    ) : (
+                      <Collapsible key={index} className="w-full border-b border-border">
+                        <CollapsibleTrigger className="w-full flex items-center justify-between text-lg py-3">
+                          <div className="flex items-center space-x-3">
+                            <link.icon className="w-5 h-5" />
+                            <span>{link.name}</span>
+                          </div>
+                          <ChevronDown className="w-4 h-4 transition-transform duration-200 ui-open:rotate-180" />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <div className="pl-8 pb-3 space-y-3">
+                            {link.links.map((subLink, subIndex) => (
+                              <Link 
+                                key={subIndex}
+                                to={subLink.path}
+                                className={`flex items-center space-x-3 py-2 ${isLinkActive(subLink.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                              >
+                                <subLink.icon className="w-4 h-4" />
+                                <span>{subLink.name}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    )
+                  ))}
+                </nav>
+              </div>
+              
+              {/* Theme Toggle Footer */}
+              <div className="absolute bottom-0 left-0 right-0 p-4 flex justify-center border-t border-border bg-background">
+                <Toggle 
+                  pressed={theme === 'dark'} 
+                  onPressedChange={toggleTheme}
+                  className="w-full flex items-center justify-center gap-2 py-2"
+                >
+                  {theme === 'dark' ? (
+                    <>
+                      <Moon className="h-5 w-5" />
+                      <span>Dark Mode</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sun className="h-5 w-5" />
+                      <span>Light Mode</span>
+                    </>
+                  )}
+                </Toggle>
+              </div>
+            </DrawerContent>
+          </Drawer>
         </div>
       </div>
     </header>
