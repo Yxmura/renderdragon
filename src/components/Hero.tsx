@@ -213,7 +213,8 @@ const Hero = () => {
         ))}
       </div>
 
-      <style jsx>{`
+      <style>
+        {`
         @keyframes float {
           0%, 100% {
             transform: translateY(0) translateX(0);
@@ -228,7 +229,8 @@ const Hero = () => {
             transform: translateY(-10px) translateX(-5px);
           }
         }
-      `}</style>
+        `}
+      </style>
     </section>
   );
 };

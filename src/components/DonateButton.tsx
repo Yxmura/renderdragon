@@ -55,7 +55,8 @@ const DonateButton = () => {
         </DialogContent>
       </Dialog>
 
-      <style jsx>{`
+      <style>
+        {`
         .pixel-art-coffee {
           width: 24px;
           height: 24px;
@@ -130,7 +131,8 @@ const DonateButton = () => {
           0%, 100% { opacity: 0.3; transform: translateY(0); }
           50% { opacity: 0.7; transform: translateY(-4px); }
         }
-      `}</style>
+        `}
+      </style>
     </>
   );
 };

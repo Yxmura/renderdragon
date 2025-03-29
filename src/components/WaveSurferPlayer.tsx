@@ -45,7 +45,6 @@ const WaveSurferPlayer = ({
             barRadius: 2,
             cursorWidth: 0,
             normalize: true,
-            responsive: true,
           });
           
           // Load audio file
@@ -66,7 +65,8 @@ const WaveSurferPlayer = ({
             setIsPlaying(false);
           });
           
-          wavesurfer.on('seek', () => {
+          // Use 'seeking' event instead of 'seek'
+          wavesurfer.on('seeking', () => {
             setCurrentTime(formatTime(wavesurfer.getCurrentTime()));
           });
           
