@@ -14,8 +14,6 @@ import {
   Music, 
   Bot, 
   Image,
-  Sun,
-  Moon
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -207,7 +205,7 @@ const Navbar = () => {
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 bg-popover border border-border">
+                  <DropdownMenuContent align="end" className="w-56 bg-popover border border-border z-50">
                     <DropdownMenuGroup>
                       {link.links.map((subLink, subIndex) => (
                         <DropdownMenuItem key={subIndex} asChild>
@@ -321,10 +319,9 @@ const Navbar = () => {
 
         {/* Sticky Theme Toggle at Bottom */}
         <div className="fixed bottom-0 left-0 right-0 flex justify-center items-center py-4 bg-background/90 backdrop-blur-sm border-t border-border">
-          <div className="flex items-center space-x-2">
-            <Sun className="h-4 w-4" />
+          <div className="flex items-center space-x-4">
             <ThemeToggle />
-            <Moon className="h-4 w-4" />
+            <div className="text-sm text-muted-foreground">Toggle Theme</div>
           </div>
         </div>
       </div>

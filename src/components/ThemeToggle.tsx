@@ -33,7 +33,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       size="icon" 
       onClick={toggleTheme}
       className={cn(
-        "relative overflow-hidden transition-colors animate-glow rounded-full", 
+        "relative overflow-hidden transition-colors animate-glow rounded-full w-10 h-10", 
         className
       )}
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}

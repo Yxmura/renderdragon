@@ -29,6 +29,7 @@
 html, body {
   scrollbar-width: thin;
   scrollbar-color: var(--cow-purple, #9b87f5) rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
 }
 
 body::-webkit-scrollbar {
@@ -64,7 +65,7 @@ body::-webkit-scrollbar-thumb:hover {
   @apply bg-card border border-border rounded-md p-4 shadow-sm hover:shadow-md transition-shadow pixel-corners;
 }
 
-/* Pixel buttons - Fixing the font-pixel class issue */
+/* Pixel buttons - Fixed to remove font-pixel class */
 .pixel-btn-primary {
   @apply bg-cow-purple hover:bg-cow-purple-dark text-white font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
 }
@@ -100,25 +101,39 @@ body::-webkit-scrollbar-thumb:hover {
   animation: animate-glow 2s infinite;
 }
 
-/* Audio player styles */
+/* Float animation */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Audio player styles with WaveSurfer */
 .audio-player-container {
   @apply bg-background/60 backdrop-blur-sm rounded-md p-3 border border-border;
 }
 
-.audio-player-progress {
-  @apply h-1.5 bg-background rounded-full overflow-hidden cursor-pointer;
+.wavesurfer-container {
+  @apply h-24 w-full bg-background/30 rounded-md overflow-hidden;
 }
 
-.audio-player-progress-fill {
-  @apply h-full bg-cow-purple transition-all duration-100;
+.audio-controls {
+  @apply flex items-center space-x-3 mt-2;
 }
 
-.audio-visualizer {
-  @apply flex items-end h-12 gap-[2px] my-2;
+.audio-play-pause {
+  @apply p-2 rounded-full bg-cow-purple text-white hover:bg-cow-purple-dark transition-colors;
 }
 
-.audio-visualizer-bar {
-  @apply w-1 bg-cow-purple/70 rounded-t-sm transition-all duration-150;
+.audio-time {
+  @apply text-sm text-muted-foreground;
 }
 
 /* Fix nav dropdown issue */
@@ -126,99 +141,45 @@ body::-webkit-scrollbar-thumb:hover {
   transform: translateZ(0);
 }
 
-/* Audio visualizer animation */
-@keyframes equalize {
-  0% { height: 20%; }
-  10% { height: 60%; }
-  20% { height: 40%; }
-  30% { height: 75%; }
-  40% { height: 30%; }
-  50% { height: 90%; }
-  60% { height: 40%; }
-  70% { height: 70%; }
-  80% { height: 50%; }
-  90% { height: 80%; }
-  100% { height: 20%; }
+/* FAQ page text size increase */
+.faq-content {
+  @apply text-lg;
 }
 
-.audio-visualizer-animated .audio-visualizer-bar {
-  animation: equalize 1.5s ease-in-out infinite;
-  animation-play-state: paused;
+/* Hide filter and categories in Discord servers */
+.discord-filter, .discord-categories {
+  display: none !important;
 }
 
-.audio-visualizer-animated.playing .audio-visualizer-bar {
-  animation-play-state: running;
+/* Fix search bar in resource pages */
+.resource-search-container {
+  @apply flex items-center justify-between w-full;
 }
 
-.audio-visualizer-bar:nth-child(1) { animation-delay: -1.2s; }
-.audio-visualizer-bar:nth-child(2) { animation-delay: -1.1s; }
-.audio-visualizer-bar:nth-child(3) { animation-delay: -1.0s; }
-.audio-visualizer-bar:nth-child(4) { animation-delay: -0.9s; }
-.audio-visualizer-bar:nth-child(5) { animation-delay: -0.8s; }
-.audio-visualizer-bar:nth-child(6) { animation-delay: -0.7s; }
-.audio-visualizer-bar:nth-child(7) { animation-delay: -0.6s; }
-.audio-visualizer-bar:nth-child(8) { animation-delay: -0.5s; }
-.audio-visualizer-bar:nth-child(9) { animation-delay: -0.4s; }
-.audio-visualizer-bar:nth-child(10) { animation-delay: -0.3s; }
-.audio-visualizer-bar:nth-child(11) { animation-delay: -0.2s; }
-.audio-visualizer-bar:nth-child(12) { animation-delay: -0.1s; }
-.audio-visualizer-bar:nth-child(13) { animation-delay: 0s; }
-.audio-visualizer-bar:nth-child(14) { animation-delay: 0.1s; }
-.audio-visualizer-bar:nth-child(15) { animation-delay: 0.2s; }
-.audio-visualizer-bar:nth-child(16) { animation-delay: 0.3s; }
-
-/* Video player styles */
-.video-player-container {
-  @apply rounded-md overflow-hidden bg-black/90 relative;
+.resource-search-wrapper {
+  @apply flex items-center flex-1 mr-2;
 }
 
-.video-player-controls {
-  @apply absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 flex items-center gap-2 transition-opacity duration-300 opacity-0 hover:opacity-100;
+.resource-search-input {
+  @apply w-full;
 }
 
-.video-player-progress {
-  @apply h-1 bg-white/20 rounded-full overflow-hidden flex-grow cursor-pointer;
+.resource-filter-button {
+  @apply flex-shrink-0;
 }
 
-.video-player-progress-fill {
-  @apply h-full bg-cow-purple transition-all duration-100;
+/* Guide complete button styles */
+.guide-complete-button {
+  @apply bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors;
 }
 
-/* Guide steps */
-.guide-step {
-  @apply relative border border-border rounded-md p-6 mb-8;
+/* Fix searchbar active issue */
+.search-active {
+  max-width: 100% !important;
+  overflow: hidden;
 }
 
-.guide-step-number {
-  @apply absolute top-0 transform -translate-y-1/2 bg-cow-purple text-white w-10 h-10 flex items-center justify-center rounded-full text-xl;
-}
-
-.guide-step:nth-child(odd) .guide-step-number {
-  @apply right-6;
-}
-
-.guide-step:nth-child(even) .guide-step-number {
-  @apply left-6;
-}
-
-/* Testimonial styles */
-.testimonial-card {
-  @apply bg-card border border-border rounded-lg p-6 shadow-md hover:shadow-lg transition-all pixel-corners;
-}
-
-.testimonial-avatar {
-  @apply w-16 h-16 rounded-full border-2 border-cow-purple overflow-hidden;
-}
-
-.testimonial-quote {
-  @apply text-muted-foreground italic my-4 relative pl-6;
-}
-
-.testimonial-quote::before {
-  content: '"';
-  @apply absolute left-0 top-0 text-3xl text-cow-purple font-serif;
-}
-
-.testimonial-stars {
-  @apply flex gap-1 text-yellow-400;
+.search-active input:focus {
+  box-shadow: none;
+  outline: none;
 }

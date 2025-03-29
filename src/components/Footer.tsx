@@ -8,6 +8,7 @@ import confetti from 'canvas-confetti';
 const Footer = () => {
   const [cartClicked, setCartClicked] = useState(false);
   const cartButtonRef = useRef<HTMLButtonElement>(null);
+  const currentYear = new Date().getFullYear();
 
   const handleCartClick = () => {
     if (cartClicked) return;
@@ -182,7 +183,7 @@ const Footer = () => {
           
           <div className="flex items-center">
             <p className="text-white/70 text-sm">
-              &copy; {new Date().getFullYear()} Creator On Wheels
+              &copy; {currentYear} Creator On Wheels
             </p>
             
             <button 

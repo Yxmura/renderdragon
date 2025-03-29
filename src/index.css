@@ -1,5 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Chakra+Petch:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -97,7 +98,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-vt323;
+    @apply font-pixel;
   }
 
   .pixel-corners {
@@ -136,7 +137,7 @@
 
 @layer components {
   .pixel-btn {
-    @apply relative px-6 py-2 font-vt323 text-lg uppercase tracking-wider border-2 bg-opacity-90 pixel-corners transition-all duration-300;
+    @apply relative px-6 py-2 text-lg uppercase tracking-wider border-2 bg-opacity-90 pixel-corners transition-all duration-300;
   }
 
   .pixel-btn-primary {
@@ -188,5 +189,5 @@
 }
 
 .font-geist {
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
