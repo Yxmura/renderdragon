@@ -46,6 +46,10 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    --cow-purple: 259, 70%, 75%;
+    --cow-purple-dark: 259, 70%, 65%;
+    --cow-dark: 228, 19%, 15%;
   }
 
   .dark {
@@ -85,6 +89,10 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    --cow-purple: 259, 70%, 75%;
+    --cow-purple-dark: 259, 70%, 65%;
+    --cow-dark: 228, 19%, 15%;
   }
 }
 
@@ -190,4 +198,62 @@
 
 .font-geist {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.bg-cow-purple {
+  background-color: hsl(var(--cow-purple));
+}
+
+.bg-cow-purple-dark {
+  background-color: hsl(var(--cow-purple-dark));
+}
+
+.bg-cow-dark {
+  background-color: hsl(var(--cow-dark));
+}
+
+.text-cow-purple {
+  color: hsl(var(--primary));
+}
+
+/* Define hover variants */
+.hover\:bg-cow-purple:hover {
+  background-color: hsl(var(--cow-purple));
+}
+
+.hover\:bg-cow-purple-dark:hover {
+  background-color: hsl(var(--cow-purple-dark));
+}
+
+.hover\:text-cow-purple:hover {
+  color: hsl(var(--primary));
+}
+
+/* Additional CSS to ensure light/dark mode visibility */
+@media (prefers-color-scheme: light) {
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+  
+  .text-foreground\/80 {
+    color: hsl(var(--foreground) / 0.8);
+  }
+  
+  .text-foreground\/70 {
+    color: hsl(var(--foreground) / 0.7);
+  }
+}
+
+/* Animation for glowing effects */
+@keyframes animate-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(155, 135, 245, 0.8), 0 0 30px rgba(155, 135, 245, 0.5);
+  }
+}
+
+.animate-glow {
+  animation: animate-glow 2s infinite;
 }

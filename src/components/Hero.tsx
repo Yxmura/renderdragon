@@ -41,7 +41,7 @@ const Hero = () => {
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1605490005049-7c7ab3b5bb05?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2670&q=80')",
+          backgroundImage: "url('https://images.unsplash.com/photo-1623224316517-dfbe3bf5e612?q=80&w=2670&auto=format&fit=crop')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 0.15,
@@ -102,7 +102,7 @@ const Hero = () => {
       {/* Main content */}
       <div className="container relative z-20 mx-auto px-4 flex flex-col items-center md:items-start">
         <h1 
-          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-white text-center md:text-left"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground dark:text-white text-center md:text-left"
           style={{ 
             fontFamily: "'Press Start 2P', cursive",
             lineHeight: "1.2",
@@ -118,7 +118,7 @@ const Hero = () => {
         </h1>
         
         <p 
-          className="text-lg md:text-xl mb-8 text-white/80 max-w-lg text-center md:text-left dark:text-white/80 text-foreground"
+          className="text-lg md:text-xl mb-8 max-w-lg text-center md:text-left text-foreground/80 dark:text-white/80"
           style={{
             transform: `translateY(${mousePosition.y * -3}px) translateX(${mousePosition.x * -3}px)`,
             transition: 'transform 0.1s ease-out'
@@ -151,7 +151,7 @@ const Hero = () => {
         </div>
         
         <p 
-          className="mt-6 text-foreground dark:text-white/70 text-sm md:text-base"
+          className="mt-6 text-foreground/70 dark:text-white/70 text-sm md:text-base"
           style={{
             transform: `translateY(${mousePosition.y * -1}px) translateX(${mousePosition.x * -1}px)`,
             transition: 'transform 0.1s ease-out'
