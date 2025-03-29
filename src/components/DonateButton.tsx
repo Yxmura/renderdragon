@@ -16,7 +16,7 @@ const DonateButton = () => {
     <>
       <Button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-6 rounded-full w-14 h-14 shadow-lg z-40 bg-cow-purple hover:bg-cow-purple-dark animate-float"
+        className="fixed bottom-6 left-6 rounded-full w-14 h-14 shadow-lg z-40 bg-cow-purple hover:bg-cow-purple-dark"
       >
         <div className="pixel-art-coffee">
           <div className="pixel-art-coffee-mug"></div>
