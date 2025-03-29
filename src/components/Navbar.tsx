@@ -1,26 +1,20 @@
-import {
-  useState,
-  useEffect,
-  useRef,
-  useLayoutEffect,
-} from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/context/LanguageContext';
 import {
   ChevronDown,
   Menu,
   X,
   Home,
-  MessageSquare,
+  Mail,
   BookOpen,
-  Video,
-  MessageCircle,
-  Download,
-  Music,
-  Bot,
-  Image,
+  Wrench,
+  LogIn,
+  LogOut,
+  User,
 } from 'lucide-react';
-import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from './ThemeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,12 +22,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Logo } from './Logo';
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { useIsMobile } from '@/hooks/use-mobile';
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from '@/components/ui/drawer'; // Assuming you have Drawer component
 
 interface NavLink {
   name: string;
@@ -49,40 +43,255 @@ interface NavDropdown {
 
 const mainLinks: (NavLink | NavDropdown)[] = [
   { name: 'Home', path: '/', icon: Home },
-  { name: 'Contact', path: '/contact', icon: MessageSquare },
+  { name: 'Contact', path: '/contact', icon: Mail },
   {
     name: 'Resources',
     icon: BookOpen,
     links: [
       { name: 'Resources Hub', path: '/resources', icon: BookOpen },
       { name: 'Guides', path: '/guides', icon: BookOpen },
-      { name: 'YouTube Videos', path: '/youtube-videos', icon: Video },
+      { name: 'YouTube Videos', path: '/youtube-videos', icon: BookOpen },
       {
         name: 'Discord Servers',
         path: '/discord-servers',
-        icon: MessageCircle,
+        icon: BookOpen,
       },
     ],
   },
   {
     name: 'Tools',
-    icon: Download,
+    icon: Wrench,
     links: [
-      { name: 'YouTube Downloader', path: '/youtube-downloader', icon: Download },
-      { name: 'Music Copyright Checker', path: '/music-copyright', icon: Music },
-      { name: 'AI Title Helper', path: '/ai-title-helper', icon: Bot },
-      { name: 'Background Generator', path: '/background-generator', icon: Image },
+      { name: 'YouTube Downloader', path: '/youtube-downloader', icon: Wrench },
+      { name: 'Music Copyright Checker', path: '/music-copyright', icon: Wrench },
+      { name: 'AI Title Helper', path: '/ai-title-helper', icon: Wrench },
+      { name: 'Background Generator', path: '/background-generator', icon: Wrench },
     ],
   },
 ];
 
-const Navbar = () => {
+interface MobileNavigationProps {
+  resourcesLinks: Array<{ name: string; path: string }>;
+  toolsLinks: Array<{ name: string; path: string }>;
+  isAuthenticated: boolean;
+  onLogin?: () => void;
+  onLogout?: () => void;
+}
+
+export const MobileNavigation: React.FC<MobileNavigationProps> = ({
+  resourcesLinks,
+  toolsLinks,
+  isAuthenticated,
+  onLogin,
+  onLogout,
+}) => {
+  const { t } = useLanguage();
+  const navigate = useNavigate();
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDropdown = (dropdown: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
+  };
+
+  const handleLinkClick = () => {
+    setDrawerOpen(false);
+  };
+
+  const handleDashboardClick = () => {
+    navigate('/dashboard');
+    setDrawerOpen(false);
+  };
+
+  const handleLoginClick = () => {
+    if (onLogin) onLogin();
+    setDrawerOpen(false);
+  };
+
+  const handleLogoutClick = () => {
+    if (onLogout) onLogout();
+    setDrawerOpen(false);
+  };
+
+  return (
+    <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+      <DrawerTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          aria-label="Open menu"
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
+      </DrawerTrigger>
+      <DrawerContent className="h-[calc(100vh-4rem)] flex flex-col p-0 rounded-t-lg">
+        <div className="flex items-center justify-between border-b p-4">
+          <Logo isMobile={true} />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setDrawerOpen(false)}
+            aria-label="Close menu"
+          >
+            <X className="h-6 w-6" />
+          </Button>
+        </div>
+
+        <div className="flex-1 overflow-auto p-6 mobile-nav-content">
+          <nav className="space-y-6">
+            <Link
+              to="/"
+              className="flex items-center p-3 rounded-md hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
+              onClick={handleLinkClick}
+            >
+              <Home className="h-4 w-4 mr-3" />
+              <span className="font-medium">{t('home')}</span>
+            </Link>
+
+            <Link
+              to="/contact"
+              className="flex items-center p-3 rounded-md hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
+              onClick={handleLinkClick}
+            >
+              <Mail className="h-4 w-4 mr-3" />
+              <span className="font-medium">{t('contact')}</span>
+            </Link>
+
+            <div className="border-t border-border/20 pt-4">
+              <button
+                className="flex items-center justify-between w-full p-3 rounded-md hover:bg-muted"
+                onClick={(e) => toggleDropdown('resources-mobile', e)}
+              >
+                <div className="flex items-center">
+                  <BookOpen className="h-4 w-4 mr-3" />
+                  <span className="font-medium">{t('resources')}</span>
+                </div>
+                <ChevronDown
+                  className={`w-5 h-5 transition-transform duration-300 ${
+                    openDropdown === 'resources-mobile' ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {openDropdown === 'resources-mobile' && (
+                <div className="ml-4 mt-2 space-y-2 animate-slide-down border-l-2 border-primary/20 pl-4">
+                  {resourcesLinks.map((link) => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className="block p-2 rounded hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
+                      onClick={handleLinkClick}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-border/20 pt-4">
+              <button
+                className="flex items-center justify-between w-full p-3 rounded-md hover:bg-muted"
+                onClick={(e) => toggleDropdown('tools-mobile', e)}
+              >
+                <div className="flex items-center">
+                  <Wrench className="h-4 w-4 mr-3" />
+                  <span className="font-medium">{t('tools')}</span>
+                </div>
+                <ChevronDown
+                  className={`w-5 h-5 transition-transform duration-300 ${
+                    openDropdown === 'tools-mobile' ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {openDropdown === 'tools-mobile' && (
+                <div className="ml-4 mt-2 space-y-2 animate-slide-down border-l-2 border-primary/20 pl-4">
+                  {toolsLinks.map((link) => (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className="block p-2 rounded hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
+                      onClick={handleLinkClick}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-border/20 pt-4">
+              {isAuthenticated ? (
+                <div className="space-y-2">
+                  <Link
+                    to="/dashboard"
+                    className="flex items-center p-3 rounded-md hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
+                    onClick={handleLinkClick}
+                  >
+                    <User className="h-4 w-4 mr-3" />
+                    <span className="font-medium">Dashboard</span>
+                  </Link>
+                  <button
+                    className="flex items-center w-full p-3 rounded-md hover:bg-muted transition-all duration-300 transform hover:translate-x-1 text-destructive"
+                    onClick={handleLogoutClick}
+                  >
+                    <LogOut className="h-4 w-4 mr-3" />
+                    <span className="font-medium">Sign Out</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={handleLoginClick}
+                  >
+                    <LogIn className="h-4 w-4 mr-3" />
+                    Sign In
+                  </Button>
+                  <Button
+                    className="w-full justify-start"
+                    onClick={() => {
+                      navigate('/signup');
+                      setDrawerOpen(false);
+                    }}
+                  >
+                    <User className="h-4 w-4 mr-3" />
+                    Sign Up
+                  </Button>
+                </div>
+              )}
+            </div>
+          </nav>
+        </div>
+
+        <div className="p-4 border-t border-border/50 flex justify-center">
+          <ThemeToggle />
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};
+
+interface NavbarProps {
+  isAuthenticated: boolean;
+  onLogin?: () => void;
+  onLogout?: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLogin, onLogout }) => {
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const siteOverlayRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
+  const isMobile = false; //useIsMobile(); // Disabling the isMobile hook for now
+  const resourcesLinks = mainLinks.find((link) => link.name === 'Resources')?.links || [];
+  const toolsLinks = mainLinks.find((link) => link.name === 'Tools')?.links || [];
+
+  const { t } = useLanguage();
 
   useLayoutEffect(() => {
     const handleScroll = () => {
@@ -90,64 +299,18 @@ const Navbar = () => {
       setScrolled(offset > 50);
     };
 
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setMobileMenuOpen(false);
-      }
-    };
-
     window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize);
-
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [location]);
-
-  // Handle click outside to close mobile menu
-  useEffect(() => {
-    if (!mobileMenuOpen || !siteOverlayRef.current) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (siteOverlayRef.current && event.target === siteOverlayRef.current) {
-        setMobileMenuOpen(false);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, [mobileMenuOpen]);
-
-  // Disable body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mobileMenuOpen]);
-
   const handleDropdownMouseEnter = (dropdownName: string) => {
-    if (!isMobile) {
-      setActiveDropdown(dropdownName);
-    }
+    setActiveDropdown(dropdownName);
   };
 
   const handleDropdownMouseLeave = () => {
-    if (!isMobile) {
-      setActiveDropdown(null);
-    }
+    setActiveDropdown(null);
   };
 
   const isLinkActive = (path: string) => {
@@ -176,23 +339,15 @@ const Navbar = () => {
           to="/"
           className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
         >
-          <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
-            COW
-          </div>
-          {!isMobile && (
-            <span className="hidden md:inline animate-glow">
-              Creator On Wheels
-            </span>
-          )}
-          {isMobile && <span>COW</span>}
+          <Logo />
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          {mainLinks.map((link, index) =>
+          {mainLinks.map((link) =>
             'path' in link ? (
               <Link
-                key={index}
+                key={link.path}
                 to={link.path}
                 className={`flex items-center space-x-1 transition-colors ${
                   isLinkActive(link.path)
@@ -200,12 +355,13 @@ const Navbar = () => {
                     : 'text-foreground hover:text-primary'
                 }`}
               >
+                {/* @ts-expect-error */}
                 <link.icon className="w-4 h-4" />
                 <span>{link.name}</span>
               </Link>
             ) : (
               <div
-                key={index}
+                key={link.name}
                 className="relative"
                 onMouseEnter={() => handleDropdownMouseEnter(link.name)}
                 onMouseLeave={handleDropdownMouseLeave}
@@ -227,6 +383,7 @@ const Navbar = () => {
                       }`}
                       style={{ transform: 'none' }}
                     >
+                      {/* @ts-expect-error */}
                       <link.icon className="w-4 h-4" />
                       <span>{link.name}</span>
                       <ChevronDown className="w-4 h-4" />
@@ -237,8 +394,8 @@ const Navbar = () => {
                     className="w-56 bg-popover border border-border z-50 absolute"
                   >
                     <DropdownMenuGroup>
-                      {link.links.map((subLink, subIndex) => (
-                        <DropdownMenuItem key={subIndex} asChild>
+                      {link.links.map((subLink) => (
+                        <DropdownMenuItem key={subLink.path} asChild>
                           <Link
                             to={subLink.path}
                             className={`flex items-center space-x-2 px-2 py-2 cursor-pointer min-w-[150px] ${
@@ -247,6 +404,7 @@ const Navbar = () => {
                                 : ''
                             }`}
                           >
+                            {/* @ts-expect-error */}
                             <subLink.icon className="w-4 h-4" />
                             <span>{subLink.name}</span>
                           </Link>
@@ -260,122 +418,14 @@ const Navbar = () => {
           )}
         </nav>
 
-        {/* Right side controls */}
-        <div className="flex items-center">
-          <ThemeToggle className="mr-4" />
-
-          {/* Mobile Menu Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* Site Overlay when Mobile Menu is Open */}
-      {mobileMenuOpen && (
-        <div
-          ref={siteOverlayRef}
-          className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40 pt-16 md:hidden"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          {/* This empty div allows clicking outside the menu to close it */}
-        </div>
-      )}
-
-      {/* Enhanced Mobile Menu - Full width, partial height */}
-      <div
-        className={`fixed left-0 right-0 top-0 z-40 md:hidden transition-transform duration-300 ease-in-out ${
-          mobileMenuOpen ? 'transform translate-y-0' : 'transform -translate-y-full'
-        }`}
-        style={{
-          height: '60vh', // Adjust the height as needed
-          backgroundColor: 'rgba(10, 10, 10, 0.95)', // Dark background
-          backdropFilter: 'blur(10px)',
-          paddingTop: '60px', // Adjust to match header height
-        }}
-      >
-        {/* Close button */}
-        <div className="absolute top-4 right-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileMenuOpen(false)}
-            className="h-8 w-8 text-white"
-          >
-            <X className="h-5 w-5" />
-            <span className="sr-only">Close menu</span>
-          </Button>
-        </div>
-
-        <nav className="h-full overflow-y-auto custom-scrollbar flex flex-col p-6 space-y-4">
-          {mainLinks.map((link, index) =>
-            'path' in link ? (
-              <Link
-                key={index}
-                to={link.path}
-                className={`flex items-center space-x-3 text-lg py-3 rounded-md hover:bg-cow-purple/20 text-white transition-colors duration-200 pixel-corners ${
-                  isLinkActive(link.path) ? 'text-primary' : ''
-                }`}
-                onClick={() => setMobileMenuOpen(false)}
-                style={{ borderBottom: '2px solid rgba(155, 135, 245, 0.3)' }}
-              >
-                <link.icon className="w-5 h-5" />
-                <span>{link.name}</span>
-              </Link>
-            ) : (
-              <Collapsible key={index} className="space-y-2 w-full">
-                <CollapsibleTrigger className="w-full">
-                  <div
-                    className={`flex items-center justify-between text-lg py-3 rounded-md hover:bg-cow-purple/20 text-white transition-colors duration-200 pixel-corners ${
-                      isDropdownActive(link) ? 'text-primary' : ''
-                    }`}
-                    style={{ borderBottom: '2px solid rgba(155, 135, 245, 0.3)' }}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <link.icon className="w-5 h-5" />
-                      <span>{link.name}</span>
-                    </div>
-                    <ChevronDown className="w-4 h-4" />
-                  </div>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="pl-8 space-y-2 mt-2">
-                    {link.links.map((subLink, subIndex) => (
-                      <Link
-                        key={subIndex}
-                        to={subLink.path}
-                        className={`flex items-center space-x-3 text-base py-2 rounded-md hover:bg-cow-purple/10 text-white/80 transition-colors duration-200 pixel-corners ${
-                          isLinkActive(subLink.path)
-                            ? 'text-primary'
-                            : 'hover:text-white'
-                        }`}
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <subLink.icon className="w-4 h-4" />
-                        <span>{subLink.name}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-            )
-          )}
-        </nav>
-
-        {/* Theme Toggle at Bottom */}
-        <div className="absolute bottom-4 left-0 right-0 flex justify-center items-center">
-          <ThemeToggle />
-        </div>
+        {/* Mobile Navigation */}
+        <MobileNavigation
+          resourcesLinks={resourcesLinks}
+          toolsLinks={toolsLinks}
+          isAuthenticated={isAuthenticated}
+          onLogin={onLogin}
+          onLogout={onLogout}
+        />
       </div>
     </header>
   );
