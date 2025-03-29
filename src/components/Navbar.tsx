@@ -1,36 +1,35 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useLayoutEffect,
-} from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import {
-  ChevronDown,
-  Menu,
-  X,
-  Home,
-  Mail,
-  BookOpen,
-  Wrench,
-  LogIn,
-  LogOut,
-  User,
+
+import { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { 
+  ChevronDown, 
+  Menu, 
+  X, 
+  Home, 
+  MessageSquare, 
+  BookOpen, 
+  Video, 
+  MessageCircle, 
+  Download, 
+  Music, 
+  Bot, 
+  Image,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './ThemeToggle';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerTrigger,
-} from '@/components/ui/drawer'; // Assuming you have Drawer component
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface NavLink {
   name: string;
@@ -44,292 +43,103 @@ interface NavDropdown {
   links: NavLink[];
 }
 
-type MainLink = NavLink | NavDropdown;
-
-const mainLinks: MainLink[] = [
+const mainLinks: (NavLink | NavDropdown)[] = [
   { name: 'Home', path: '/', icon: Home },
-  { name: 'Contact', path: '/contact', icon: Mail },
-  {
-    name: 'Resources',
+  { name: 'Contact', path: '/contact', icon: MessageSquare },
+  { 
+    name: 'Resources', 
     icon: BookOpen,
     links: [
       { name: 'Resources Hub', path: '/resources', icon: BookOpen },
       { name: 'Guides', path: '/guides', icon: BookOpen },
-      { name: 'YouTube Videos', path: '/youtube-videos', icon: BookOpen },
-      {
-        name: 'Discord Servers',
-        path: '/discord-servers',
-        icon: BookOpen,
-      },
-    ],
+      { name: 'YouTube Videos', path: '/youtube-videos', icon: Video },
+      { name: 'Discord Servers', path: '/discord-servers', icon: MessageCircle },
+    ]
   },
   {
     name: 'Tools',
-    icon: Wrench,
+    icon: Download,
     links: [
-      { name: 'YouTube Downloader', path: '/youtube-downloader', icon: Wrench },
-      { name: 'Music Copyright Checker', path: '/music-copyright', icon: Wrench },
-      { name: 'AI Title Helper', path: '/ai-title-helper', icon: Wrench },
-      { name: 'Background Generator', path: '/background-generator', icon: Wrench },
-    ],
-  },
+      { name: 'YouTube Downloader', path: '/youtube-downloader', icon: Download },
+      { name: 'Music Copyright Checker', path: '/music-copyright', icon: Music },
+      { name: 'AI Title Helper', path: '/ai-title-helper', icon: Bot },
+      { name: 'Background Generator', path: '/background-generator', icon: Image },
+    ]
+  }
 ];
 
-interface MobileNavigationProps {
-  resourcesLinks: NavLink[];
-  toolsLinks: NavLink[];
-  isAuthenticated: boolean;
-  onLogin?: () => void;
-  onLogout?: () => void;
-}
-
-export const MobileNavigation: React.FC<MobileNavigationProps> = ({
-  resourcesLinks,
-  toolsLinks,
-  isAuthenticated,
-  onLogin,
-  onLogout,
-}) => {
-  const navigate = useNavigate();
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-
-  const toggleDropdown = (dropdown: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setOpenDropdown((prev) => (prev === dropdown ? null : dropdown));
-  };
-
-  const handleLinkClick = () => {
-    setDrawerOpen(false);
-  };
-
-  const handleDashboardClick = () => {
-    navigate('/dashboard');
-    setDrawerOpen(false);
-  };
-
-  const handleLoginClick = () => {
-    if (onLogin) onLogin();
-    setDrawerOpen(false);
-  };
-
-  const handleLogoutClick = () => {
-    if (onLogout) onLogout();
-    setDrawerOpen(false);
-  };
-
-  return (
-    <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-      <DrawerTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="md:hidden"
-          aria-label="Open menu"
-        >
-          <Menu className="h-6 w-6" />
-        </Button>
-      </DrawerTrigger>
-      <DrawerContent className="h-[calc(100vh-4rem)] flex flex-col p-0 rounded-t-lg">
-        <div className="flex items-center justify-between border-b p-4">
-          <Link
-            to="/"
-            className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
-          >
-            <img src="/COW.png" alt="COW Logo" className="w-8 h-8" />
-          </Link>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setDrawerOpen(false)}
-            aria-label="Close menu"
-          >
-            <X className="h-6 w-6" />
-          </Button>
-        </div>
-
-        <div className="flex-1 overflow-auto p-6 mobile-nav-content">
-          <nav className="space-y-6">
-            <Link
-              to="/"
-              className="flex items-center p-3 rounded-md hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
-              onClick={handleLinkClick}
-            >
-              <Home className="h-4 w-4 mr-3" />
-              <span className="font-medium">Home</span>
-            </Link>
-
-            <Link
-              to="/contact"
-              className="flex items-center p-3 rounded-md hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
-              onClick={handleLinkClick}
-            >
-              <Mail className="h-4 w-4 mr-3" />
-              <span className="font-medium">Contact</span>
-            </Link>
-
-            <div className="border-t border-border/20 pt-4">
-              <button
-                className="flex items-center justify-between w-full p-3 rounded-md hover:bg-muted"
-                onClick={(e) => toggleDropdown('resources-mobile', e)}
-              >
-                <div className="flex items-center">
-                  <BookOpen className="h-4 w-4 mr-3" />
-                  <span className="font-medium">Resources</span>
-                </div>
-                <ChevronDown
-                  className={`w-5 h-5 transition-transform duration-300 ${
-                    openDropdown === 'resources-mobile' ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
-
-              {openDropdown === 'resources-mobile' && (
-                <div className="ml-4 mt-2 space-y-2 animate-slide-down border-l-2 border-primary/20 pl-4">
-                  {resourcesLinks.map((link) => (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className="block p-2 rounded hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
-                      onClick={handleLinkClick}
-                    >
-                      {link.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="border-t border-border/20 pt-4">
-              <button
-                className="flex items-center justify-between w-full p-3 rounded-md hover:bg-muted"
-                onClick={(e) => toggleDropdown('tools-mobile', e)}
-              >
-                <div className="flex items-center">
-                  <Wrench className="h-4 w-4 mr-3" />
-                  <span className="font-medium">Tools</span>
-                </div>
-                <ChevronDown
-                  className={`w-5 h-5 transition-transform duration-300 ${
-                    openDropdown === 'tools-mobile' ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
-
-              {openDropdown === 'tools-mobile' && (
-                <div className="ml-4 mt-2 space-y-2 animate-slide-down border-l-2 border-primary/20 pl-4">
-                  {toolsLinks.map((link) => (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className="block p-2 rounded hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
-                      onClick={handleLinkClick}
-                    >
-                      {link.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="border-t border-border/20 pt-4">
-              {isAuthenticated ? (
-                <div className="space-y-2">
-                  <Link
-                    to="/dashboard"
-                    className="flex items-center p-3 rounded-md hover:bg-muted transition-all duration-300 transform hover:translate-x-1"
-                    onClick={handleLinkClick}
-                  >
-                    <User className="h-4 w-4 mr-3" />
-                    <span className="font-medium">Dashboard</span>
-                  </Link>
-                  <button
-                    className="flex items-center w-full p-3 rounded-md hover:bg-muted transition-all duration-300 transform hover:translate-x-1 text-destructive"
-                    onClick={handleLogoutClick}
-                  >
-                    <LogOut className="h-4 w-4 mr-3" />
-                    <span className="font-medium">Sign Out</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start"
-                    onClick={handleLoginClick}
-                  >
-                    <LogIn className="h-4 w-4 mr-3" />
-                    Sign In
-                  </Button>
-                  <Button
-                    className="w-full justify-start"
-                    onClick={() => {
-                      navigate('/signup');
-                      setDrawerOpen(false);
-                    }}
-                  >
-                    <User className="h-4 w-4 mr-3" />
-                    Sign Up
-                  </Button>
-                </div>
-              )}
-            </div>
-          </nav>
-        </div>
-
-        <div className="p-4 border-t border-border/50 flex justify-center">
-          <ThemeToggle />
-        </div>
-      </DrawerContent>
-    </Drawer>
-  );
-};
-
-interface NavbarProps {
-  isAuthenticated: boolean;
-  onLogin?: () => void;
-  onLogout?: () => void;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLogin, onLogout }) => {
+const Navbar = () => {
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const isMobile = false; //useIsMobile(); // Disabling the isMobile hook for now
+  const siteOverlayRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
-  const resourcesLinks: NavLink[] = [];
-  const toolsLinks: NavLink[] = [];
-
-  mainLinks.forEach((link) => {
-    if ('links' in link) {
-      if (link.name === 'Resources') {
-        resourcesLinks.push(...link.links);
-      } else if (link.name === 'Tools') {
-        toolsLinks.push(...link.links);
-      }
-    }
-  });
-
-  useLayoutEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
       setScrolled(offset > 50);
     };
 
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setMobileMenuOpen(false);
+      }
+    };
+
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleResize);
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location]);
+
+  // Handle click outside to close mobile menu
+  useEffect(() => {
+    if (!mobileMenuOpen || !siteOverlayRef.current) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (siteOverlayRef.current && event.target === siteOverlayRef.current) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [mobileMenuOpen]);
+
+  // Disable body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const handleDropdownMouseEnter = (dropdownName: string) => {
-    setActiveDropdown(dropdownName);
+    if (!isMobile) {
+      setActiveDropdown(dropdownName);
+    }
   };
 
-  const handleDropdownMouseLeave = (dropdownName: string) => {
-    setActiveDropdown(null);
+  const handleDropdownMouseLeave = () => {
+    if (!isMobile) {
+      setActiveDropdown(null);
+    }
   };
 
   const isLinkActive = (path: string) => {
@@ -339,53 +149,42 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLogin, onLogout }) =
     return location.pathname.startsWith(path);
   };
 
-  const isDropdownActive = (dropdown: MainLink): boolean => {
-    if ('links' in dropdown) {
-      return dropdown.links.some((link) => isLinkActive(link.path));
-    }
-    return false;
+  const isDropdownActive = (dropdown: NavDropdown) => {
+    return dropdown.links.some(link => isLinkActive(link.path));
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? 'py-2 backdrop-blur-md bg-background/90 shadow-md'
-          : 'py-4'
-      }`}
-      style={{ minWidth: '320px' }}
-    >
+    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'py-2 backdrop-blur-md bg-background/90 shadow-md' : 'py-4'}`}>
       <div className="container mx-auto px-4 flex justify-between items-center">
         {/* Logo */}
-        <Link
-          to="/"
+        <Link 
+          to="/" 
           className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
         >
-          <img src="/COW.png" alt="COW Logo" className="w-8 h-8" />
+          <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">COW</div>
+          {!isMobile && (
+            <span className="hidden md:inline animate-glow">Creator On Wheels</span>
+          )}
+          {isMobile && <span>COW</span>}
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          {mainLinks.map((link) =>
+          {mainLinks.map((link, index) => (
             'path' in link ? (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`flex items-center space-x-1 transition-colors ${
-                  isLinkActive(link.path)
-                    ? 'text-primary'
-                    : 'text-foreground hover:text-primary'
-                }`}
+              <Link 
+                key={index} 
+                to={link.path} 
+                className={`flex items-center space-x-1 transition-colors ${isLinkActive(link.path) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
               >
-                {/* Line 407 was referencing this, but it's handled on the interface  */}
-                {/*{ link.icon className="w-4 h-4" }*/}
+                <link.icon className="w-4 h-4" />
                 <span>{link.name}</span>
               </Link>
             ) : (
-              <div
-                key={link.name}
+              <div 
+                key={index}
                 className="relative"
-                onMouseEnter={handleDropdownMouseEnter}
+                onMouseEnter={() => handleDropdownMouseEnter(link.name)}
                 onMouseLeave={handleDropdownMouseLeave}
               >
                 <DropdownMenu
@@ -396,37 +195,25 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLogin, onLogout }) =
                   }}
                 >
                   <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className={`flex items-center space-x-1 transition-colors ${
-                        isDropdownActive(link)
-                          ? 'text-primary'
-                          : 'text-foreground hover:text-primary'
-                      }`}
+                    <Button 
+                      variant="ghost" 
+                      className={`flex items-center space-x-1 transition-colors ${isDropdownActive(link) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
                       style={{ transform: 'none' }}
                     >
-                      {/*<link.icon className="w-4 h-4" /> {* Line 428 Removed check, since no longer optional *} */}
+                      <link.icon className="w-4 h-4" />
                       <span>{link.name}</span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="w-56 bg-popover border border-border z-50 absolute"
-                  >
+                  <DropdownMenuContent align="end" className="w-56 bg-popover border border-border z-50">
                     <DropdownMenuGroup>
-                      {('links' in link ? link.links : []).map((subLink) => (
-                        <DropdownMenuItem key={subLink.path} asChild>
-                          <Link
-                            to={subLink.path}
-                            className={`flex items-center space-x-2 px-2 py-2 cursor-pointer min-w-[150px] ${
-                              isLinkActive(subLink.path)
-                                ? 'text-primary bg-accent/50'
-                                : ''
-                            }`}
+                      {link.links.map((subLink, subIndex) => (
+                        <DropdownMenuItem key={subIndex} asChild>
+                          <Link 
+                            to={subLink.path} 
+                            className={`flex items-center space-x-2 px-2 py-2 cursor-pointer ${isLinkActive(subLink.path) ? 'text-primary bg-accent/50' : ''}`}
                           >
-                            {/* Line 428 was referencing this, but it's handled on the interface  */}
-                            {/*<subLink.icon className="w-4 h-4" />*/}
+                            <subLink.icon className="w-4 h-4" />
                             <span>{subLink.name}</span>
                           </Link>
                         </DropdownMenuItem>
@@ -436,17 +223,107 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, onLogin, onLogout }) =
                 </DropdownMenu>
               </div>
             )
-          )}
+          ))}
         </nav>
 
-        {/* Mobile Navigation */}
-        <MobileNavigation
-          resourcesLinks={resourcesLinks}
-          toolsLinks={toolsLinks}
-          isAuthenticated={isAuthenticated}
-          onLogin={onLogin}
-          onLogout={onLogout}
-        />
+        {/* Right side controls */}
+        <div className="flex items-center">
+          <ThemeToggle className="mr-4" />
+          
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <span className="sr-only">Toggle menu</span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Site Overlay when Mobile Menu is Open */}
+      {mobileMenuOpen && (
+        <div 
+          ref={siteOverlayRef}
+          className="fixed inset-0 bg-background/50 backdrop-blur-sm z-40 pt-16 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          {/* This empty div allows clicking outside the menu to close it */}
+        </div>
+      )}
+
+      {/* Mobile Menu - Fixed to show only part of the screen */}
+      <div 
+        className={`fixed inset-y-0 right-0 pt-16 bg-background z-40 transition-transform duration-300 ease-in-out w-4/5 max-w-sm shadow-xl ${
+          mobileMenuOpen ? 'transform translate-x-0' : 'transform translate-x-full'
+        } md:hidden`}
+        style={{ top: '60px', height: 'calc(100vh - 60px)' }}
+      >
+        {/* Close button */}
+        <div className="absolute top-4 right-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileMenuOpen(false)}
+            className="h-8 w-8"
+          >
+            <X className="h-5 w-5" />
+            <span className="sr-only">Close menu</span>
+          </Button>
+        </div>
+
+        <nav className="h-full overflow-y-auto custom-scrollbar flex flex-col p-6 space-y-6 pb-20">
+          {mainLinks.map((link, index) => (
+            'path' in link ? (
+              <Link 
+                key={index} 
+                to={link.path} 
+                className={`flex items-center space-x-3 text-lg py-2 border-b border-border ${isLinkActive(link.path) ? 'text-primary' : ''}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <link.icon className="w-5 h-5" />
+                <span>{link.name}</span>
+              </Link>
+            ) : (
+              <Collapsible key={index} className="space-y-2 w-full">
+                <CollapsibleTrigger className="w-full">
+                  <div className={`flex items-center justify-between text-lg py-2 border-b border-border w-full ${isDropdownActive(link) ? 'text-primary' : ''}`}>
+                    <div className="flex items-center space-x-3">
+                      <link.icon className="w-5 h-5" />
+                      <span>{link.name}</span>
+                    </div>
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="pl-8 space-y-4 mt-2">
+                    {link.links.map((subLink, subIndex) => (
+                      <Link 
+                        key={subIndex}
+                        to={subLink.path}
+                        className={`flex items-center space-x-3 text-base py-1 ${isLinkActive(subLink.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <subLink.icon className="w-4 h-4" />
+                        <span>{subLink.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            )
+          ))}
+        </nav>
+
+        {/* Sticky Theme Toggle at Bottom */}
+        <div className="fixed bottom-0 left-0 right-0 flex justify-center items-center py-4 bg-background/90 backdrop-blur-sm border-t border-border">
+          <div className="flex items-center space-x-4">
+            <ThemeToggle />
+            <div className="text-sm text-muted-foreground">Toggle Theme</div>
+          </div>
+        </div>
       </div>
     </header>
   );
