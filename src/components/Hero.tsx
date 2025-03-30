@@ -35,7 +35,7 @@ const Hero = () => {
   return (
     <section
       ref={heroRef}
-      className="relative h-[90vh] overflow-hidden flex items-center justify-center bg-background pt-20 md:pt-24"
+      className="relative h-[90vh] overflow-hidden flex items-center justify-center bg-background pt-32 md:pt-48" // Increased padding-top here
       style={{
         perspective: '1500px',
         transformStyle: 'preserve-3d',
