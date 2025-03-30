@@ -29,10 +29,13 @@ const PreventLayoutShift = () => {
 
 const ContextMenu = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Root>
->(({ children, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Root> & { 
+    // Add our custom property to extend the type
+    preventLayoutShift?: boolean 
+  }
+>(({ children, preventLayoutShift, ...props }, ref) => (
   <ContextMenuPrimitive.Root {...props}>
-    {props.defaultOpen && <PreventLayoutShift />}
+    {preventLayoutShift && <PreventLayoutShift />}
     {children}
   </ContextMenuPrimitive.Root>
 ))
@@ -62,7 +65,9 @@ ContextMenuContent.displayName = ContextMenuPrimitive.Content.displayName
 
 const ContextMenuItem = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & { inset?: boolean }
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & { 
+    inset?: boolean 
+  }
 >(({ className, children, inset, ...props }, ref) => (
   <ContextMenuPrimitive.Item
     ref={ref}
@@ -80,7 +85,9 @@ ContextMenuItem.displayName = ContextMenuPrimitive.Item.displayName
 
 const ContextMenuCheckboxItem = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem> & { inset?: boolean }
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem> & { 
+    inset?: boolean 
+  }
 >(({ className, children, checked, inset, ...props }, ref) => (
   <ContextMenuPrimitive.CheckboxItem
     ref={ref}
@@ -105,7 +112,9 @@ ContextMenuCheckboxItem.displayName =
 
 const ContextMenuRadioItem = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem> & { inset?: boolean }
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem> & { 
+    inset?: boolean 
+  }
 >(({ className, children, inset, ...props }, ref) => (
   <ContextMenuPrimitive.RadioItem
     ref={ref}
@@ -128,7 +137,9 @@ ContextMenuRadioItem.displayName = ContextMenuPrimitive.RadioItem.displayName
 
 const ContextMenuLabel = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.Label>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Label> & { inset?: boolean }
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Label> & { 
+    inset?: boolean 
+  }
 >(({ className, inset, ...props }, ref) => (
   <ContextMenuPrimitive.Label
     ref={ref}
@@ -185,7 +196,9 @@ const ContextMenuSub = ContextMenuPrimitive.Sub
 
 const ContextMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.SubTrigger>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> & { inset?: boolean }
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> & { 
+    inset?: boolean 
+  }
 >(({ className, inset, children, ...props }, ref) => (
   <ContextMenuPrimitive.SubTrigger
     ref={ref}
