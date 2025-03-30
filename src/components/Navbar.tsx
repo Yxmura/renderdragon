@@ -105,6 +105,9 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
     
+    // Initial check for scroll position
+    handleScroll();
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
@@ -150,16 +153,15 @@ const Navbar = () => {
   };
 
   // Create dynamic background style based on scroll progress
-  const navbarStyle = {
-    backgroundImage: scrolled 
-      ? `linear-gradient(to right, rgba(155, 135, 245, ${scrollProgress * 0.2}), rgba(155, 135, 245, ${scrollProgress * 0.1}))`
-      : 'none',
-  };
+  const navbarStyle = scrolled ? {
+    backgroundImage: `linear-gradient(to right, rgba(155, 135, 245, ${scrollProgress * 0.2}), rgba(155, 135, 245, ${scrollProgress * 0.1}))`,
+    backdropFilter: 'blur(8px)',
+  } : {};
 
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'py-2 backdrop-blur-md bg-background/90 shadow-md' : 'py-4'
+        scrolled ? 'py-2 shadow-md bg-background/80' : 'py-4'
       }`}
       style={navbarStyle}
     >

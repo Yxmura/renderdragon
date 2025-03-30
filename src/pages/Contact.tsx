@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Copy, Mail, Check, ExternalLink, Github } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -9,6 +10,7 @@ interface TeamMember {
   name: string;
   role: string;
   avatar: string;
+  bio?: string;
   socials?: {
     github?: string;
     discord?: string;
@@ -19,6 +21,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Alex Johnson',
     role: 'Founder',
+    bio: 'Creator and strategist with 10+ years in content creation and community building.',
     avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
     socials: {
       github: 'https://github.com',
@@ -28,6 +31,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Sarah Wang',
     role: 'Lead Developer',
+    bio: 'Full-stack developer focused on creating intuitive tools for content creators.',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2076&q=80',
     socials: {
       github: 'https://github.com',
@@ -37,6 +41,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Miguel Torres',
     role: 'Content Manager',
+    bio: 'Content specialist with expertise in YouTube growth strategies and analytics.',
     avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
     socials: {
       github: 'https://github.com',
@@ -46,6 +51,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Emma Chen',
     role: 'Designer',
+    bio: 'UI/UX designer with a passion for creating engaging and accessible interfaces.',
     avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
     socials: {
       github: 'https://github.com',
@@ -55,6 +61,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Chris Powell',
     role: 'Community Manager',
+    bio: 'Community builder focused on fostering supportive spaces for creators.',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
     socials: {
       github: 'https://github.com',
@@ -65,6 +72,7 @@ const teamMembers: TeamMember[] = [
 
 const Contact = () => {
   const [copied, setCopied] = useState(false);
+  const [activeCard, setActiveCard] = useState<number | null>(null);
   const email = 'contact@creatoronwheels.com';
 
   useEffect(() => {
@@ -151,28 +159,38 @@ const Contact = () => {
             <div>
               <h2 className="text-2xl font-vt323 mb-6 text-center">Meet The Team</h2>
               
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {teamMembers.map((member, index) => (
-                  <div key={index} className="flex flex-col items-center">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden mb-3 pixel-corners">
+                  <div 
+                    key={index} 
+                    className={`bg-card hover:bg-accent/20 border border-border hover:border-cow-purple transition-all duration-300 rounded-lg p-4 flex flex-col items-center text-center
+                      ${activeCard === index ? 'scale-105 shadow-lg shadow-cow-purple/20' : ''}`}
+                    onMouseEnter={() => setActiveCard(index)}
+                    onMouseLeave={() => setActiveCard(null)}
+                  >
+                    <div className="w-24 h-24 rounded-full overflow-hidden mb-4 pixel-corners border-2 border-cow-purple">
                       <img 
                         src={member.avatar} 
                         alt={member.name} 
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <h3 className="text-sm font-medium">{member.name}</h3>
-                    <p className="text-xs text-muted-foreground">{member.role}</p>
+                    <h3 className="text-lg font-medium">{member.name}</h3>
+                    <p className="text-sm text-cow-purple font-bold mb-2">{member.role}</p>
+                    
+                    {member.bio && (
+                      <p className="text-sm text-muted-foreground mb-3">{member.bio}</p>
+                    )}
                     
                     {/* Social Icons */}
                     {member.socials && (
-                      <div className="flex space-x-2 mt-2">
+                      <div className="flex space-x-3 mt-auto">
                         {member.socials.github && (
                           <a 
                             href={member.socials.github} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-primary transition-colors"
+                            className="bg-secondary hover:bg-primary hover:text-primary-foreground p-2 rounded-md transition-colors"
                             aria-label={`${member.name}'s GitHub`}
                           >
                             <Github className="h-4 w-4" />
@@ -183,7 +201,7 @@ const Contact = () => {
                             href={member.socials.discord} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-primary transition-colors"
+                            className="bg-secondary hover:bg-primary hover:text-primary-foreground p-2 rounded-md transition-colors"
                             aria-label={`${member.name}'s Discord`}
                           >
                             <svg 
