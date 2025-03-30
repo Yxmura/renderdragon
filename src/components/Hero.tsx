@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -8,24 +7,25 @@ const Hero = () => {
   const [scrollY, setScrollY] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const isMobile = useIsMobile();
+  const heroRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMouseMove = (e) => {
       if (isMobile) return;
-      
+
       const x = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
       const y = (e.clientY / window.innerHeight - 0.5) * 2; // -1 to 1
-      
+
       setMousePosition({ x, y });
     };
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('mousemove', handleMouseMove);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousemove', handleMouseMove);
@@ -33,82 +33,106 @@ const Hero = () => {
   }, [isMobile]);
 
   return (
-    <section className="relative h-screen flex items-center overflow-hidden cow-grid-bg pt-20 md:pt-24">
-      {/* Background gradients */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-transparent opacity-50 z-10"></div>
-      
-      {/* Background image with parallax effect */}
-      <div 
+    <section
+      ref={heroRef}
+      className="relative h-[90vh] overflow-hidden flex items-center justify-center bg-background pt-20 md:pt-24"
+      style={{
+        perspective: '1500px',
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      {/* Radial Gradient Background */}
+      <div
+        className="absolute inset-0 overflow-hidden pointer-events-none"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle at 50% 50%, rgba(155, 135, 245, 0.3) 0%, rgba(50, 10, 100, 0.15) 40%, transparent 70%)',
+          transform: `translateZ(${scrollY * -0.08}px)`,
+        }}
+      />
+
+      {/* Floating Particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-cow-purple/30"
+            style={{
+              width: Math.random() * 6 + 2 + 'px',
+              height: Math.random() * 6 + 2 + 'px',
+              left: Math.random() * 100 + '%',
+              top: Math.random() * 100 + '%',
+              opacity: Math.random() * 0.5 + 0.2,
+              animation: `float-vertical ${Math.random() * 15 + 10}s ease-in-out infinite`,
+              animationDelay: `-${Math.random() * 15}s`,
+              transform: `translateX(${mousePosition.x * -30 * (i % 5 + 1)}px) translateY(${mousePosition.y * -30 * (i % 5 + 1)}px) translateZ(${i * 5}px)`,
+              transition: 'transform 0.15s ease-out',
+              zIndex: i,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Pixel Art Shapes */}
+      <div
         className="absolute inset-0 pointer-events-none"
-        style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1623224316517-dfbe3bf5e612?q=80&w=2670&auto=format&fit=crop')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.15,
-          transform: `translateY(${scrollY * 0.15}px) translateX(${mousePosition.x * -10}px)`,
-          filter: 'blur(3px) brightness(0.4) contrast(1.2)',
-          transition: 'transform 0.1s ease-out'
+        style={{
+          transform: `translate3d(${mousePosition.x * -50}px, ${
+            mousePosition.y * -50
+          }px, 100px)`,
+          transition: 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)',
         }}
-      />
-      
-      {/* Grid overlay */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{ 
-          backgroundImage: 'linear-gradient(to bottom, rgba(155, 135, 245, 0.1) 1px, transparent 1px), linear-gradient(to right, rgba(155, 135, 245, 0.1) 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-          transform: `translateY(${scrollY * 0.2}px) translateX(${mousePosition.x * 5}px)`,
-          opacity: 0.4,
-          transition: 'transform 0.1s ease-out'
-        }}
-      />
-      
-      {/* Digital cityscape silhouette */}
-      <div 
-        className="absolute inset-x-0 bottom-0 h-[30%] pointer-events-none"
-        style={{ 
-          backgroundImage: "url('https://i.imgur.com/tLHtS8F.png')",
-          backgroundSize: 'cover', 
-          backgroundPosition: 'bottom center',
-          backgroundRepeat: 'repeat-x',
-          opacity: 0.7,
-          transform: `translateY(${-scrollY * 0.1}px) translateX(${mousePosition.x * 15}px)`,
-          filter: 'brightness(0.4) contrast(1.2)',
-          transition: 'transform 0.1s ease-out'
-        }}
-      />
-      
-      {/* Floating elements */}
-      {!isMobile && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div 
-              key={index}
-              className={`absolute ${index % 2 === 0 ? 'bg-cow-purple/20' : 'border-2 border-cow-purple/20'} rounded-lg pixel-corners`}
-              style={{ 
-                width: `${Math.random() * 16 + 8}px`,
-                height: `${Math.random() * 16 + 8}px`,
-                top: `${Math.random() * 80 + 10}%`,
-                left: `${Math.random() * 80 + 10}%`,
-                transform: `translate(${scrollY * 0.1 * (index - 3) + mousePosition.x * (index * 5)}px, ${-scrollY * 0.05 * (index - 3) + mousePosition.y * (index * 5)}px) rotate(${scrollY * 0.02 * index}deg)`,
-                transition: 'transform 0.1s ease-out',
-                animationDelay: `${index * 0.5}s`
-              }}
-            />
-          ))}
+      >
+        <div className="absolute left-[15%] top-[10%] w-20 h-20 border-2 border-cow-purple/30 rounded-lg transform rotate-45 animate-float-vertical" />
+        <div
+          className="absolute right-[20%] top-[20%] w-16 h-16 border-2 border-cow-purple/30 rounded-full animate-float-vertical"
+          style={{ animationDelay: '-3s' }}
+        />
+        <div
+          className="absolute left-[25%] bottom-[10%] w-18 h-18 border-2 border-cow-purple/30 transform rotate-12 animate-float-vertical"
+          style={{ animationDelay: '-6s' }}
+        />
+      </div>
+
+      {/* Main Content */}
+      <div className="container relative z-10 mx-auto px-4 text-center">
+        {/* Placeholder for pixel art logo */}
+        <div className="mb-8 inline-block relative animate-float">
+          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-400 to-purple-600 rounded-full animate-pixel-spin transform-gpu" />
+          <div className="absolute inset-0 bg-transparent border-4 border-white/20 rounded-full" />
+          {/* Example of adding more pixel-style elements */}
+          <div
+            className="absolute w-3 h-3 text-yellow-300 animate-spin-slow rounded-full bg-yellow-300"
+            style={{
+              top: '5%',
+              left: '85%',
+              transformOrigin: '-15px 30px',
+              animationDuration: '12s',
+            }}
+          />
+          <div
+            className="absolute w-2 h-2 text-yellow-300 animate-spin-slow rounded-full bg-yellow-300"
+            style={{
+              bottom: '5%',
+              right: '85%',
+              transformOrigin: '35px -15px',
+              animationDuration: '18s',
+              animationDirection: 'reverse',
+            }}
+          />
         </div>
-      )}
-      
-      {/* Main content */}
-      <div className="container relative z-20 mx-auto px-4 flex flex-col items-center md:items-start">
-        <h1 
-          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground dark:text-white text-center md:text-left"
-          style={{ 
+
+        <h1
+          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground dark:text-white text-center"
+          style={{
             fontFamily: "'Press Start 2P', cursive",
-            lineHeight: "1.2",
-            textShadow: "0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3)",
-            transform: `translateY(${mousePosition.y * -5}px) translateX(${mousePosition.x * -5}px)`,
-            transition: 'transform 0.1s ease-out'
+            lineHeight: '1.2',
+            textShadow:
+              '0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3)',
+            transform: `translateZ(100px) translateY(${
+              mousePosition.y * -20
+            }px)`,
+            transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
           }}
         >
           <span className="text-cow-purple block mb-2">UNLOCK</span>
@@ -116,85 +140,103 @@ const Hero = () => {
           <br />
           <span className="text-cow-purple">CREATION</span> POTENTIAL
         </h1>
-        
-        <p 
-          className="text-lg md:text-xl mb-8 max-w-lg text-center md:text-left text-foreground/80 dark:text-white/80"
+
+        <p
+          className="text-lg md:text-xl mb-8 max-w-lg mx-auto text-center text-foreground/80 dark:text-white/80"
           style={{
-            transform: `translateY(${mousePosition.y * -3}px) translateX(${mousePosition.x * -3}px)`,
-            transition: 'transform 0.1s ease-out'
+            transform: `translateZ(50px) translateY(${
+              mousePosition.y * -10
+            }px)`,
+            transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
           }}
         >
-          Free assets, tools, and resources for Minecraft content creators, all in one place.
+          Free assets, tools, and resources for Minecraft content creators, all
+          in one place.
         </p>
-        
-        <div 
-          className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-4 w-full md:w-auto"
+
+        <div
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full md:w-auto"
           style={{
-            transform: `translateY(${mousePosition.y * -2}px) translateX(${mousePosition.x * -2}px)`,
-            transition: 'transform 0.1s ease-out'
+            transform: `translateZ(150px)`,
           }}
         >
-          <Link 
-            to="/resources" 
+          <Link
+            to="/resources"
             className="pixel-btn-primary group flex items-center space-x-2 hover:scale-105 transition-transform w-full sm:w-auto"
           >
             <span>Browse Resources</span>
             <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Link>
-          
-          <Link 
-            to="/guides" 
+
+          <Link
+            to="/guides"
             className="pixel-btn-secondary hover:scale-105 transition-transform w-full sm:w-auto"
           >
             <span>View Guides</span>
           </Link>
         </div>
-        
-        <p 
-          className="mt-6 text-foreground/70 dark:text-white/70 text-sm md:text-base"
-          style={{
-            transform: `translateY(${mousePosition.y * -1}px) translateX(${mousePosition.x * -1}px)`,
-            transition: 'transform 0.1s ease-out'
-          }}
-        >
+
+        <p className="mt-6 text-foreground/70 dark:text-white/70 text-sm md:text-base">
           <span className="bg-cow-purple/20 px-2 py-1 rounded-md">
             100% Free. No strings attached.
           </span>
         </p>
       </div>
-      
-      {/* Subtle particles */}
-      {!isMobile && (
-        <div className="absolute inset-0 pointer-events-none z-10">
-          {Array.from({ length: 20 }).map((_, index) => (
-            <div 
-              key={`particle-${index}`}
-              className="absolute bg-cow-purple/30 rounded-full"
-              style={{
-                width: Math.random() * 4 + 1 + 'px',
-                height: Math.random() * 4 + 1 + 'px',
-                top: Math.random() * 100 + '%',
-                left: Math.random() * 100 + '%',
-                opacity: Math.random() * 0.5 + 0.1,
-                animation: `float ${Math.random() * 10 + 10}s linear infinite`,
-                animationDelay: `-${Math.random() * 10}s`,
-              }}
-            />
-          ))}
-        </div>
-      )}
+
+      {/* Corner Accents */}
+      <div
+        className="absolute top-4 left-4 w-6 h-6 bg-cow-purple rounded-full"
+        style={{
+          transform: `translate3d(${mousePosition.x * 20}px, ${
+            mousePosition.y * 20
+          }px, 0)`,
+        }}
+      />
+      <div
+        className="absolute top-4 right-4 w-6 h-6 bg-cow-purple rounded-full"
+        style={{
+          transform: `translate3d(${mousePosition.x * -20}px, ${
+            mousePosition.y * 20
+          }px, 0)`,
+        }}
+      />
+      <div
+        className="absolute bottom-4 left-4 w-6 h-6 bg-cow-purple rounded-full"
+        style={{
+          transform: `translate3d(${mousePosition.x * 20}px, ${
+            mousePosition.y * -20
+          }px, 0)`,
+        }}
+      />
+      <div
+        className="absolute bottom-4 right-4 w-6 h-6 bg-cow-purple rounded-full"
+        style={{
+          transform: `translate3d(${mousePosition.x * -20}px, ${
+            mousePosition.y * -20
+          }px, 0)`,
+        }}
+      />
 
       <style>
         {`
-        @keyframes float {
+        @keyframes float-vertical {
           0%, 100% {
             transform: translateY(0);
           }
           50% {
-            transform: translateY(-20px);
+            transform: translateY(-15px);
           }
         }
-        `}
+
+        @keyframes pixel-spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      `}
       </style>
     </section>
   );
