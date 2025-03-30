@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -106,7 +105,6 @@ const Navbar = () => {
     };
   }, []);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
@@ -148,7 +146,6 @@ const Navbar = () => {
   return (
     <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'py-2 backdrop-blur-md bg-background/90 shadow-md' : 'py-4'}`}>
       <div className="container mx-auto px-4 flex justify-between items-center">
-        {/* Logo */}
         <Link 
           to="/" 
           className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
@@ -160,7 +157,6 @@ const Navbar = () => {
           {isMobile && <span>COW</span>}
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           {mainLinks.map((link, index) => (
             'path' in link ? (
@@ -218,11 +214,9 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* Right side controls */}
         <div className="flex items-center">
           <ThemeToggle className="mr-4" />
           
-          {/* Mobile Menu Button */}
           <Drawer>
             <DrawerTrigger asChild>
               <Button
@@ -235,7 +229,7 @@ const Navbar = () => {
               </Button>
             </DrawerTrigger>
             <DrawerContent className="h-[75vh] rounded-t-xl bg-background border-t border-border">
-              <div className="px-4 py-6 max-h-full overflow-auto">
+              <div className="px-4 py-6 max-h-[calc(100%-60px)] overflow-auto">
                 <div className="flex items-center justify-between mb-6">
                   <Link 
                     to="/" 
@@ -270,9 +264,13 @@ const Navbar = () => {
                             <link.icon className="w-5 h-5" />
                             <span>{link.name}</span>
                           </div>
-                          <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${openMobileCollapsible === link.name ? 'rotate-180' : ''}`} />
+                          <ChevronDown 
+                            className={`w-4 h-4 transition-transform duration-300 ${
+                              openMobileCollapsible === link.name ? 'rotate-180' : ''
+                            }`} 
+                          />
                         </CollapsibleTrigger>
-                        <CollapsibleContent>
+                        <CollapsibleContent className="animate-accordion-down">
                           <div className="pl-8 pb-3 space-y-3">
                             {link.links.map((subLink, subIndex) => (
                               <Link 
@@ -292,7 +290,6 @@ const Navbar = () => {
                 </nav>
               </div>
               
-              {/* Theme Toggle Footer */}
               <div className="absolute bottom-0 left-0 right-0 p-4 flex justify-center border-t border-border bg-background">
                 <Toggle 
                   pressed={theme === 'dark'} 

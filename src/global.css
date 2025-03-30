@@ -30,6 +30,7 @@ html, body {
   scrollbar-width: thin;
   scrollbar-color: var(--cow-purple, #9b87f5) rgba(0, 0, 0, 0.1);
   overflow-x: hidden;
+  height: 100%;
 }
 
 body::-webkit-scrollbar {
@@ -76,6 +77,37 @@ body::-webkit-scrollbar-thumb:hover {
 
 .pixel-input {
   @apply bg-background border border-input rounded-md px-3 py-2 pixel-corners;
+}
+
+/* Animation for mobile dropdown */
+@keyframes accordion-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+.animate-accordion-down {
+  animation: accordion-down 0.3s ease-out;
+}
+
+.animate-accordion-up {
+  animation: accordion-up 0.3s ease-out;
 }
 
 /* Grid background */
@@ -182,4 +214,37 @@ body::-webkit-scrollbar-thumb:hover {
 .search-active input:focus {
   box-shadow: none;
   outline: none;
+}
+
+/* Add pixel animation */
+@keyframes pixel-spin {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  50% { transform: rotate(0deg); }
+  75% { transform: rotate(-1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.animate-pixel-spin {
+  animation: pixel-spin 3s ease-in-out infinite;
+}
+
+/* Float vertical animation */
+@keyframes float-vertical {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(-10px) rotate(45deg); }
+}
+
+.animate-float-vertical {
+  animation: float-vertical 6s ease-in-out infinite;
+}
+
+/* Spin slow animation */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 10s linear infinite;
 }

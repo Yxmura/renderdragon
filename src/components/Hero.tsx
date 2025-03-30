@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -35,14 +36,12 @@ const Hero = () => {
   return (
     <section
       ref={heroRef}
-      className="relative h-[90vh] overflow-hidden flex items-center justify-center bg-background pt-64 md:pt-72" // Increased padding-top
+      className="relative h-screen overflow-hidden flex items-center justify-center bg-background pt-24 md:pt-32"
       style={{
         perspective: '1500px',
         transformStyle: 'preserve-3d',
       }}
     >
-      {/* Removed Floating Particles */}
-
       {/* Pixel Art Shapes */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -59,23 +58,34 @@ const Hero = () => {
           style={{ animationDelay: '-3s' }}
         />
         <div
-          className="absolute left-[25%] bottom-[10%] w-18 h-18 border-2 border-cow-purple/30 transform rotate-12 animate-float-vertical"
+          className="absolute left-[25%] bottom-[25%] w-18 h-18 border-2 border-cow-purple/30 transform rotate-12 animate-float-vertical"
           style={{ animationDelay: '-6s' }}
         />
-        {/* Added more pixel art rectangles */}
-        <div className="absolute top-[40%] left-[40%] w-12 h-8 bg-cow-purple/20 rounded-sm" />
-        <div className="absolute bottom-[20%] right-[30%] w-8 h-12 bg-cow-purple/20 rounded-sm" />
+        {/* Pixel art rectangles */}
+        <div className="absolute top-[40%] left-[40%] w-12 h-8 bg-cow-purple/20 rounded-sm pixel-corners" />
+        <div className="absolute bottom-[30%] right-[30%] w-8 h-12 bg-cow-purple/20 rounded-sm pixel-corners" />
+        
+        {/* Additional pixel art elements */}
+        <div className="absolute top-[15%] right-[15%] w-6 h-6 bg-cow-purple/30 pixel-corners" />
+        <div className="absolute bottom-[15%] left-[15%] w-6 h-6 bg-cow-purple/30 pixel-corners" />
+        <div className="absolute top-[60%] left-[10%] w-4 h-10 bg-cow-purple/20 pixel-corners" />
+        <div className="absolute top-[25%] left-[60%] w-10 h-4 bg-cow-purple/20 pixel-corners" />
       </div>
 
       {/* Main Content */}
-      <div className="container relative z-10 mx-auto px-4 text-center">
+      <div 
+        className="container relative z-10 mx-auto px-4 text-center"
+        style={{
+          transform: `translateZ(80px)`,
+        }}
+      >
         {/* Placeholder for pixel art logo */}
         <div className="mb-8 inline-block relative animate-float">
-          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-400 to-purple-600 rounded-full animate-pixel-spin transform-gpu" />
-          <div className="absolute inset-0 bg-transparent border-4 border-white/20 rounded-full" />
+          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-400 to-purple-600 rounded-full animate-pixel-spin transform-gpu pixel-corners" />
+          <div className="absolute inset-0 bg-transparent border-4 border-white/20 rounded-full pixel-corners" />
           {/* Example of adding more pixel-style elements */}
           <div
-            className="absolute w-3 h-3 text-yellow-300 animate-spin-slow rounded-full bg-yellow-300"
+            className="absolute w-3 h-3 text-yellow-300 animate-spin-slow rounded-full bg-yellow-300 pixel-corners"
             style={{
               top: '5%',
               left: '85%',
@@ -84,7 +94,7 @@ const Hero = () => {
             }}
           />
           <div
-            className="absolute w-2 h-2 text-yellow-300 animate-spin-slow rounded-full bg-yellow-300"
+            className="absolute w-2 h-2 text-yellow-300 animate-spin-slow rounded-full bg-yellow-300 pixel-corners"
             style={{
               bottom: '5%',
               right: '85%',
@@ -115,11 +125,9 @@ const Hero = () => {
         </h1>
 
         <p
-          className="text-lg md:text-xl mb-8 max-w-lg mx-auto text-center text-foreground/80 dark:text-white/80"
+          className="text-lg md:text-xl mb-8 max-w-lg mx-auto text-center text-foreground/90 dark:text-white/80"
           style={{
-            transform: `translateZ(50px) translateY(${
-              mousePosition.y * -10
-            }px)`,
+            transform: `translateZ(50px)`,
             transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
           }}
         >
@@ -150,45 +158,14 @@ const Hero = () => {
         </div>
 
         <p className="mt-6 text-foreground/70 dark:text-white/70 text-sm md:text-base">
-          <span className="bg-cow-purple/20 px-2 py-1 rounded-md">
+          <span className="bg-cow-purple/20 px-2 py-1 rounded-md pixel-corners">
             100% Free. No strings attached.
           </span>
         </p>
       </div>
 
-      {/* Corner Accents */}
-      <div
-        className="absolute top-4 left-4 w-6 h-6 bg-cow-purple rounded-full"
-        style={{
-          transform: `translate3d(${mousePosition.x * 20}px, ${
-            mousePosition.y * 20
-          }px, 0)`,
-        }}
-      />
-      <div
-        className="absolute top-4 right-4 w-6 h-6 bg-cow-purple rounded-full"
-        style={{
-          transform: `translate3d(${mousePosition.x * -20}px, ${
-            mousePosition.y * 20
-          }px, 0)`,
-        }}
-      />
-      <div
-        className="absolute bottom-4 left-4 w-6 h-6 bg-cow-purple rounded-full"
-        style={{
-          transform: `translate3d(${mousePosition.x * 20}px, ${
-            mousePosition.y * -20
-          }px, 0)`,
-        }}
-      />
-      <div
-        className="absolute bottom-4 right-4 w-6 h-6 bg-cow-purple rounded-full"
-        style={{
-          transform: `translate3d(${mousePosition.x * -20}px, ${
-            mousePosition.y * -20
-          }px, 0)`,
-        }}
-      />
+      {/* Pixel art border frame */}
+      <div className="absolute inset-4 border-2 border-dashed border-cow-purple/30 pointer-events-none hidden" />
     </section>
   );
 };

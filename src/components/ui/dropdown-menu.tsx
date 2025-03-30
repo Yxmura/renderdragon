@@ -1,11 +1,41 @@
-
 import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const DropdownMenu = DropdownMenuPrimitive.Root
+// Add effect to prevent layout shift when opening dropdown menu
+const PreventLayoutShift = () => {
+  React.useEffect(() => {
+    const html = document.documentElement;
+    const scrollbarWidth = window.innerWidth - html.clientWidth;
+    
+    if (scrollbarWidth > 0) {
+      const originalPaddingRight = getComputedStyle(html).getPropertyValue('padding-right');
+      
+      html.style.paddingRight = `${scrollbarWidth}px`;
+      html.classList.add('overflow-hidden');
+      
+      return () => {
+        html.style.paddingRight = originalPaddingRight;
+        html.classList.remove('overflow-hidden');
+      };
+    }
+  }, []);
+  
+  return null;
+}
+
+const DropdownMenu = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Root>
+>(({ children, ...props }, ref) => (
+  <DropdownMenuPrimitive.Root {...props}>
+    {props.open && <PreventLayoutShift />}
+    {children}
+  </DropdownMenuPrimitive.Root>
+))
+DropdownMenu.displayName = DropdownMenuPrimitive.Root.displayName
 
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 
