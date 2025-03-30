@@ -35,43 +35,13 @@ const Hero = () => {
   return (
     <section
       ref={heroRef}
-      className="relative h-[90vh] overflow-hidden flex items-center justify-center bg-background pt-32 md:pt-48" // Increased padding-top here
+      className="relative h-[90vh] overflow-hidden flex items-center justify-center bg-background pt-64 md:pt-72" // Increased padding-top
       style={{
         perspective: '1500px',
         transformStyle: 'preserve-3d',
       }}
     >
-      {/* Radial Gradient Background */}
-      <div
-        className="absolute inset-0 overflow-hidden pointer-events-none"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at 50% 50%, rgba(155, 135, 245, 0.3) 0%, rgba(50, 10, 100, 0.15) 40%, transparent 70%)',
-          transform: `translateZ(${scrollY * -0.08}px)`,
-        }}
-      />
-
-      {/* Floating Particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-cow-purple/30"
-            style={{
-              width: Math.random() * 6 + 2 + 'px',
-              height: Math.random() * 6 + 2 + 'px',
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%',
-              opacity: Math.random() * 0.5 + 0.2,
-              animation: `float-vertical ${Math.random() * 15 + 10}s ease-in-out infinite`,
-              animationDelay: `-${Math.random() * 15}s`,
-              transform: `translateX(${mousePosition.x * -30 * (i % 5 + 1)}px) translateY(${mousePosition.y * -30 * (i % 5 + 1)}px) translateZ(${i * 5}px)`,
-              transition: 'transform 0.15s ease-out',
-              zIndex: i,
-            }}
-          />
-        ))}
-      </div>
+      {/* Removed Floating Particles */}
 
       {/* Pixel Art Shapes */}
       <div
@@ -92,6 +62,9 @@ const Hero = () => {
           className="absolute left-[25%] bottom-[10%] w-18 h-18 border-2 border-cow-purple/30 transform rotate-12 animate-float-vertical"
           style={{ animationDelay: '-6s' }}
         />
+        {/* Added more pixel art rectangles */}
+        <div className="absolute top-[40%] left-[40%] w-12 h-8 bg-cow-purple/20 rounded-sm" />
+        <div className="absolute bottom-[20%] right-[30%] w-8 h-12 bg-cow-purple/20 rounded-sm" />
       </div>
 
       {/* Main Content */}
@@ -216,28 +189,6 @@ const Hero = () => {
           }px, 0)`,
         }}
       />
-
-      <style>
-        {`
-        @keyframes float-vertical {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-15px);
-          }
-        }
-
-        @keyframes pixel-spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-      `}
-      </style>
     </section>
   );
 };
