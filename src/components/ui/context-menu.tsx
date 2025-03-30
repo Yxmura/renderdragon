@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu"
 import { Check, ChevronRight, Circle } from "lucide-react"
@@ -31,7 +32,7 @@ const ContextMenu = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Root>
 >(({ children, ...props }, ref) => (
   <ContextMenuPrimitive.Root {...props}>
-    {props.open && <PreventLayoutShift />}
+    {props.defaultOpen && <PreventLayoutShift />}
     {children}
   </ContextMenuPrimitive.Root>
 ))
@@ -61,7 +62,7 @@ ContextMenuContent.displayName = ContextMenuPrimitive.Content.displayName
 
 const ContextMenuItem = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item>
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Item> & { inset?: boolean }
 >(({ className, children, inset, ...props }, ref) => (
   <ContextMenuPrimitive.Item
     ref={ref}
@@ -73,16 +74,13 @@ const ContextMenuItem = React.forwardRef<
     {...props}
   >
     {children}
-    <ContextMenuPrimitive.Shortcut className="ml-auto text-xs tracking-widest opacity-60">
-      {props.shortcut}
-    </ContextMenuPrimitive.Shortcut>
   </ContextMenuPrimitive.Item>
 ))
 ContextMenuItem.displayName = ContextMenuPrimitive.Item.displayName
 
 const ContextMenuCheckboxItem = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.CheckboxItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem>
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.CheckboxItem> & { inset?: boolean }
 >(({ className, children, checked, inset, ...props }, ref) => (
   <ContextMenuPrimitive.CheckboxItem
     ref={ref}
@@ -107,7 +105,7 @@ ContextMenuCheckboxItem.displayName =
 
 const ContextMenuRadioItem = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.RadioItem>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem>
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.RadioItem> & { inset?: boolean }
 >(({ className, children, inset, ...props }, ref) => (
   <ContextMenuPrimitive.RadioItem
     ref={ref}
@@ -130,7 +128,7 @@ ContextMenuRadioItem.displayName = ContextMenuPrimitive.RadioItem.displayName
 
 const ContextMenuLabel = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.Label>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Label>
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Label> & { inset?: boolean }
 >(({ className, inset, ...props }, ref) => (
   <ContextMenuPrimitive.Label
     ref={ref}
@@ -156,17 +154,18 @@ const ContextMenuSeparator = React.forwardRef<
 ))
 ContextMenuSeparator.displayName = ContextMenuPrimitive.Separator.displayName
 
-const ContextMenuShortcut = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Shortcut>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Shortcut>
->(({ className, ...props }, ref) => (
-  <ContextMenuPrimitive.Shortcut
-    ref={ref}
-    className={cn("ml-auto text-xs tracking-widest opacity-60", className)}
-    {...props}
-  />
-))
-ContextMenuShortcut.displayName = ContextMenuPrimitive.Shortcut.displayName
+const ContextMenuShortcut = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLSpanElement>) => {
+  return (
+    <span
+      className={cn("ml-auto text-xs tracking-widest opacity-60", className)}
+      {...props}
+    />
+  )
+}
+ContextMenuShortcut.displayName = "ContextMenuShortcut"
 
 const ContextMenuGroup = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.Group>,
@@ -186,7 +185,7 @@ const ContextMenuSub = ContextMenuPrimitive.Sub
 
 const ContextMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.SubTrigger>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger>
+  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.SubTrigger> & { inset?: boolean }
 >(({ className, inset, children, ...props }, ref) => (
   <ContextMenuPrimitive.SubTrigger
     ref={ref}

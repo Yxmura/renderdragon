@@ -1,5 +1,6 @@
 
-import { Star } from 'lucide-react';
+import { Star, Quote } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 interface Testimonial {
   id: number;
@@ -39,46 +40,94 @@ const testimonials: Testimonial[] = [
 
 const Testimonials = () => {
   return (
-    <section className="py-16 bg-background">
+    <section className="py-16 bg-background relative overflow-hidden">
+      {/* Pixel Art Background Elements */}
+      <div className="absolute inset-0 pointer-events-none opacity-10">
+        <div className="absolute top-10 left-10 w-8 h-8 bg-cow-purple pixel-corners"></div>
+        <div className="absolute bottom-12 right-12 w-6 h-6 bg-cow-purple pixel-corners"></div>
+        <div className="absolute top-1/4 right-1/4 w-4 h-10 bg-cow-purple pixel-corners"></div>
+        <div className="absolute bottom-1/3 left-1/3 w-10 h-4 bg-cow-purple pixel-corners"></div>
+      </div>
+      
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 animate-glow">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 animate-glow font-vt323">
           What <span className="text-cow-purple">Creators</span> Say About Us
         </h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
+        <p className="text-center text-muted-foreground mb-12 max-w-xl mx-auto">
+          Don't just take our word for it - hear from the content creators who use our tools every day
+        </p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {testimonials.map((testimonial, index) => (
             <div 
               key={testimonial.id} 
-              className="testimonial-card hover:scale-105 transition-transform duration-300"
+              className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 pixel-corners"
             >
-              <div className="flex items-center gap-4">
-                <div className="testimonial-avatar">
-                  <img 
-                    src={testimonial.avatar} 
-                    alt={testimonial.name} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium">{testimonial.name}</h3>
-                  <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                  <div className="testimonial-stars mt-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star 
-                        key={i} 
-                        size={16} 
-                        fill={i < testimonial.rating ? "currentColor" : "none"} 
-                        strokeWidth={i < testimonial.rating ? 0 : 1.5}
-                      />
-                    ))}
+              {/* Card Header with Avatar and Rating */}
+              <div className="p-6 bg-gradient-to-r from-cow-purple/10 to-transparent border-b border-border">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-cow-purple/30 pixel-corners">
+                    <img 
+                      src={testimonial.avatar} 
+                      alt={testimonial.name} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-medium">{testimonial.name}</h3>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                   </div>
                 </div>
               </div>
-              <blockquote className="testimonial-quote">
-                {testimonial.content}
-              </blockquote>
+              
+              {/* Card Content */}
+              <div className="p-6 relative">
+                <Quote className="absolute top-4 left-4 text-cow-purple/10 w-10 h-10" />
+                <blockquote className="relative z-10 pl-2">
+                  <p className="italic text-foreground/80">"{testimonial.content}"</p>
+                  
+                  <div className="flex items-center mt-4">
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star 
+                          key={i} 
+                          size={16} 
+                          className={`${i < testimonial.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+                    <span className="ml-2 text-sm text-muted-foreground">
+                      {testimonial.rating}/5
+                    </span>
+                  </div>
+                </blockquote>
+              </div>
             </div>
           ))}
+        </div>
+        
+        <div className="text-center mt-12">
+          <a 
+            href="#" 
+            className="inline-flex items-center gap-2 text-cow-purple hover:text-cow-purple-dark transition-colors"
+          >
+            <span>See more testimonials</span>
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </a>
         </div>
       </div>
     </section>
