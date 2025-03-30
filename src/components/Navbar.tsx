@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -76,6 +77,7 @@ const Navbar = () => {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [openMobileCollapsible, setOpenMobileCollapsible] = useState<string | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -87,7 +89,11 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = Math.min(offset / 300, 1);
+      
       setScrolled(offset > 50);
+      setScrollProgress(progress);
     };
 
     const handleResize = () => {
@@ -143,9 +149,22 @@ const Navbar = () => {
     return dropdown.links.some(link => isLinkActive(link.path));
   };
 
+  // Create dynamic background style based on scroll progress
+  const navbarStyle = {
+    backgroundImage: scrolled 
+      ? `linear-gradient(to right, rgba(155, 135, 245, ${scrollProgress * 0.2}), rgba(155, 135, 245, ${scrollProgress * 0.1}))`
+      : 'none',
+  };
+
   return (
-    <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${scrolled ? 'py-2 backdrop-blur-md bg-background/90 shadow-md' : 'py-4'}`}>
+    <header 
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+        scrolled ? 'py-2 backdrop-blur-md bg-background/90 shadow-md' : 'py-4'
+      }`}
+      style={navbarStyle}
+    >
       <div className="container mx-auto px-4 flex justify-between items-center">
+        {/* Logo */}
         <Link 
           to="/" 
           className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
@@ -157,6 +176,7 @@ const Navbar = () => {
           {isMobile && <span>COW</span>}
         </Link>
 
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           {mainLinks.map((link, index) => (
             'path' in link ? (
@@ -214,9 +234,11 @@ const Navbar = () => {
           ))}
         </nav>
 
+        {/* Right Side Controls */}
         <div className="flex items-center">
           <ThemeToggle className="mr-4" />
           
+          {/* Mobile Menu */}
           <Drawer>
             <DrawerTrigger asChild>
               <Button
@@ -313,6 +335,16 @@ const Navbar = () => {
           </Drawer>
         </div>
       </div>
+      
+      {/* Progress indicator line */}
+      {scrolled && (
+        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-background/20">
+          <div 
+            className="h-full bg-cow-purple transition-all duration-300 animate-pulse-neon"
+            style={{ width: `${scrollProgress * 100}%` }}
+          ></div>
+        </div>
+      )}
     </header>
   );
 };
