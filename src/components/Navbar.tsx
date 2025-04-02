@@ -105,7 +105,6 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
     
-    // Initial check for scroll position
     handleScroll();
     
     return () => {
