@@ -1,7 +1,6 @@
-
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Dragon } from 'lucide-react';
+import { ArrowRight, Skull } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Hero = () => {
@@ -121,7 +120,7 @@ const Hero = () => {
         {/* Dragon logo */}
         <div className="mb-8 inline-block relative animate-float">
           <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-900 to-purple-600 rounded-full animate-pixel-spin transform-gpu pixel-corners">
-            <Dragon className="w-16 h-16 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white" />
+            <Skull className="w-16 h-16 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white" />
           </div>
           <div className="absolute inset-0 bg-transparent border-4 border-white/20 rounded-full pixel-corners" />
           {/* Example of adding more pixel-style elements */}

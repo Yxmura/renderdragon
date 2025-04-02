@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -16,7 +15,7 @@ import {
   Image,
   Sun,
   Moon,
-  Dragon
+  Skull
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -153,7 +152,6 @@ const Navbar = () => {
     return dropdown.links.some(link => isLinkActive(link.path));
   };
 
-  // Create dynamic background style based on scroll progress
   const navbarStyle = scrolled ? {
     backdropFilter: 'blur(8px)',
     backgroundColor: `rgba(155, 135, 245, ${scrollProgress * 0.1})`,
@@ -168,13 +166,12 @@ const Navbar = () => {
       style={navbarStyle}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
-        {/* Logo */}
         <Link 
           to="/" 
           className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
         >
           <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
-            <Dragon className="w-5 h-5" />
+            <Skull className="w-5 h-5" />
           </div>
           {!isMobile && (
             <span className="hidden md:inline animate-glow">Renderdragon</span>
@@ -182,7 +179,6 @@ const Navbar = () => {
           {isMobile && <span>RD</span>}
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           {mainLinks.map((link, index) => (
             'path' in link ? (
@@ -240,11 +236,9 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* Right Side Controls */}
         <div className="flex items-center">
           <ThemeToggle className="mr-4" />
           
-          {/* Mobile Menu */}
           <Drawer>
             <DrawerTrigger asChild>
               <Button
@@ -264,8 +258,10 @@ const Navbar = () => {
                     className="flex items-center space-x-2 text-xl font-bold"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">COW</div>
-                    <span>Creator On Wheels</span>
+                    <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
+                      <Skull className="w-5 h-5" />
+                    </div>
+                    <span>Renderdragon</span>
                   </Link>
                 </div>
                 
@@ -342,7 +338,6 @@ const Navbar = () => {
         </div>
       </div>
       
-      {/* Progress indicator line */}
       {scrolled && (
         <div className="absolute bottom-0 left-0 w-full h-[2px] bg-background/20">
           <div 
