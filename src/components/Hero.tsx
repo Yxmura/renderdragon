@@ -1,7 +1,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Dragon } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const Hero = () => {
@@ -42,6 +42,45 @@ const Hero = () => {
         transformStyle: 'preserve-3d',
       }}
     >
+      {/* Minecraft Dragon Animation */}
+      <div 
+        className="absolute w-full h-full pointer-events-none"
+        style={{
+          transform: `translate3d(${mousePosition.x * -30}px, ${
+            mousePosition.y * -30
+          }px, 0px)`,
+          transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
+        }}
+      >
+        <div className="dragon-container absolute inset-0 flex items-center justify-center">
+          <div className="dragon relative w-64 h-64">
+            {/* Dragon Body - Animated cube blocks */}
+            <div className="dragon-body absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="dragon-head w-16 h-16 bg-purple-900 pixel-corners absolute -top-4 -left-4 animate-float-vertical" 
+                style={{ animationDelay: '0s', transformOrigin: 'center' }}></div>
+              <div className="dragon-body-segment w-12 h-12 bg-purple-800 pixel-corners absolute top-8 left-0 animate-float-vertical" 
+                style={{ animationDelay: '-0.2s', transformOrigin: 'center' }}></div>
+              <div className="dragon-body-segment w-10 h-10 bg-purple-700 pixel-corners absolute top-16 left-8 animate-float-vertical" 
+                style={{ animationDelay: '-0.4s', transformOrigin: 'center' }}></div>
+              <div className="dragon-body-segment w-8 h-8 bg-purple-600 pixel-corners absolute top-20 left-16 animate-float-vertical" 
+                style={{ animationDelay: '-0.6s', transformOrigin: 'center' }}></div>
+              <div className="dragon-tail w-6 h-6 bg-purple-500 pixel-corners absolute top-24 left-24 animate-float-vertical" 
+                style={{ animationDelay: '-0.8s', transformOrigin: 'center' }}></div>
+              
+              {/* Dragon Wings */}
+              <div className="dragon-wing w-20 h-16 bg-purple-800/60 pixel-corners absolute -top-2 -left-20 animate-float-vertical" 
+                style={{ animationDelay: '-0.3s', transformOrigin: 'right center', animation: 'float-vertical 3s ease-in-out infinite' }}></div>
+              <div className="dragon-wing w-20 h-16 bg-purple-800/60 pixel-corners absolute -top-2 left-12 animate-float-vertical" 
+                style={{ animationDelay: '-0.7s', transformOrigin: 'left center', animation: 'float-vertical 3.2s ease-in-out infinite' }}></div>
+              
+              {/* Dragon Eyes */}
+              <div className="dragon-eye w-2 h-2 bg-purple-300 absolute -top-1 -left-1"></div>
+              <div className="dragon-eye w-2 h-2 bg-purple-300 absolute -top-1 left-3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Pixel Art Shapes */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -79,9 +118,11 @@ const Hero = () => {
           transform: `translateZ(80px)`,
         }}
       >
-        {/* Placeholder for pixel art logo */}
+        {/* Dragon logo */}
         <div className="mb-8 inline-block relative animate-float">
-          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-400 to-purple-600 rounded-full animate-pixel-spin transform-gpu pixel-corners" />
+          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-900 to-purple-600 rounded-full animate-pixel-spin transform-gpu pixel-corners">
+            <Dragon className="w-16 h-16 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white" />
+          </div>
           <div className="absolute inset-0 bg-transparent border-4 border-white/20 rounded-full pixel-corners" />
           {/* Example of adding more pixel-style elements */}
           <div

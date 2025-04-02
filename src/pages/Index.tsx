@@ -11,7 +11,7 @@ import DonateButton from '@/components/DonateButton';
 
 const Index = () => {
   useEffect(() => {
-    document.title = 'Creator On Wheels - Free Resources for Content Creators';
+    document.title = 'Renderdragon - Free Resources for Content Creators';
     
     // Load fonts
     const fontLinks = [

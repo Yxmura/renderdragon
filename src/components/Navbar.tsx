@@ -16,6 +16,7 @@ import {
   Image,
   Sun,
   Moon,
+  Dragon
 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -154,14 +155,15 @@ const Navbar = () => {
 
   // Create dynamic background style based on scroll progress
   const navbarStyle = scrolled ? {
-    backgroundImage: `linear-gradient(to right, rgba(155, 135, 245, ${scrollProgress * 0.2}), rgba(155, 135, 245, ${scrollProgress * 0.1}))`,
     backdropFilter: 'blur(8px)',
+    backgroundColor: `rgba(155, 135, 245, ${scrollProgress * 0.1})`,
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
   } : {};
 
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'py-2 shadow-md bg-background/80' : 'py-4'
+        scrolled ? 'py-2 shadow-md' : 'py-4'
       }`}
       style={navbarStyle}
     >
@@ -171,11 +173,13 @@ const Navbar = () => {
           to="/" 
           className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
         >
-          <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">COW</div>
+          <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
+            <Dragon className="w-5 h-5" />
+          </div>
           {!isMobile && (
-            <span className="hidden md:inline animate-glow">Creator On Wheels</span>
+            <span className="hidden md:inline animate-glow">Renderdragon</span>
           )}
-          {isMobile && <span>COW</span>}
+          {isMobile && <span>RD</span>}
         </Link>
 
         {/* Desktop Navigation */}
