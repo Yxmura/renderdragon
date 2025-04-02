@@ -36,7 +36,7 @@ const Hero = () => {
   return (
     <section
       ref={heroRef}
-      className="relative h-screen overflow-hidden flex items-center justify-center bg-background pt-24 md:pt-32"
+      className="relative h-screen overflow-hidden flex items-center justify-center bg-background pt-22 md:pt-32"
       style={{
         perspective: '1500px',
         transformStyle: 'preserve-3d',
