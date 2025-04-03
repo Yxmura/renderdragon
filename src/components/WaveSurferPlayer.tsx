@@ -55,7 +55,7 @@ const WaveSurferPlayer = ({
             normalize: true,
             backend: 'WebAudio',
             hideScrollbar: true,
-            responsive: true,
+            // Remove the 'responsive' property as it's not in the type definition
             interact: true,
             minPxPerSec: 50,
           });
@@ -84,8 +84,8 @@ const WaveSurferPlayer = ({
             setIsLoading(false);
           });
           
-          // Enable seeking
-          wavesurfer.on('seek', () => {
+          // Enable seeking - fix the event name
+          wavesurfer.on('interaction', () => {
             setCurrentTime(formatTime(wavesurfer.getCurrentTime()));
           });
           
@@ -196,7 +196,8 @@ const WaveSurferPlayer = ({
             </div>
           </div>
 
-          <style jsx global>{`
+          <style>
+            {`
             .wavesurfer-loading-animation {
               display: inline-block;
               position: relative;
@@ -252,7 +253,8 @@ const WaveSurferPlayer = ({
                 transform: translate(24px, 0);
               }
             }
-          `}</style>
+            `}
+          </style>
         </>
       )}
     </Card>
