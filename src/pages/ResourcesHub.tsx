@@ -69,23 +69,32 @@ const ResourcesHub = () => {
 
     const fetchResources = async () => {
       try {
+        setIsLoading(true);
+        console.log('Fetching resources from Supabase...');
+        
         const { data, error } = await supabase
           .from('resources')
           .select('*');
 
         if (error) {
+          console.error('Supabase error:', error);
           throw error;
         }
 
+        console.log('Resources fetched:', data);
+        
         if (data) {
-          setResources(data);
+          setResources(data as Resource[]);
+        } else {
+          console.log('No data returned from Supabase');
+          setResources([]);
         }
         
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching resources:', error);
+        toast.error('Failed to load resources. Please check console for details.');
         setIsLoading(false);
-        toast.error('Failed to load resources');
       }
     };
 
@@ -442,6 +451,11 @@ const ResourcesHub = () => {
             ) : filteredResources.length === 0 ? (
               <div className="text-center py-16">
                 <p className="text-xl text-muted-foreground">No resources found</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {resources.length === 0 ? 
+                    "Couldn't connect to resource database. Please try again later." : 
+                    "Try adjusting your search or filters."}
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
