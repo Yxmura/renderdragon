@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -84,10 +83,7 @@ const Hero = () => {
                 lineHeight: '1.2',
                 textShadow:
                   '0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3)',
-                transform: `translateZ(100px) translateY(${
-                  mousePosition.y * -20
-                }px)`,
-                transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
+                // Removed transform here to keep text fixed
               }}
             >
               <span className="text-cow-purple block mb-2">UNLOCK</span>
@@ -99,8 +95,7 @@ const Hero = () => {
             <p
               className="text-lg md:text-xl mb-8 mx-auto md:mx-0 text-foreground/90 dark:text-white/80"
               style={{
-                transform: `translateZ(50px)`,
-                transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
+                // Removed transform here to keep text fixed
                 maxWidth: '500px',
               }}
             >
@@ -110,9 +105,7 @@ const Hero = () => {
 
             <div
               className="flex flex-col sm:flex-row items-center md:items-start justify-center md:justify-start gap-4 w-full md:w-auto"
-              style={{
-                transform: `translateZ(150px)`,
-              }}
+              // Removed style with transform to keep buttons fixed
             >
               <Link
                 to="/resources"
@@ -137,19 +130,14 @@ const Hero = () => {
             </div>
           </div>
           
-          {/* Dragon Animation - Side by side on desktop, stacked on mobile */}
+          {/* Dragon Animation - Keep this static too */}
           <div className="md:w-1/2 flex items-center justify-center">
             <div 
               className="relative w-64 h-64 md:w-80 md:h-80"
-              style={{
-                transform: `translate3d(${mousePosition.x * -30}px, ${
-                  mousePosition.y * -30
-                }px, 0px)`,
-                transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
-              }}
+              // Removed transform here to keep dragon fixed
             >
               <img 
-                src="https://media.tenor.com/xSwM0lAKOvMAAAAi/ender-dragon-end-dragon.gif" 
+                src="https://gamepedia.cursecdn.com/minecraft_gamepedia/0/0a/Ender_Dragon.gif" 
                 alt="Minecraft Ender Dragon" 
                 className="w-full h-auto object-contain animate-float"
               />
