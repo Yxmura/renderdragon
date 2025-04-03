@@ -50,12 +50,12 @@ const ImageRotator = ({ className = "" }: { className?: string }) => {
   return (
     <div className={`relative w-5 h-5 ${className}`}>
       <img
-        src="/public/renderdragon0.png"
+        src="/renderdragon0.png"
         alt="Renderdragon Logo"
         className={`absolute w-full h-full object-cover transition-opacity duration-300 ${showFirstImage ? 'opacity-100' : 'opacity-0'}`}
       />
       <img
-        src="/public/renderdragon1.png"
+        src="/renderdragon1.png"
         alt="Renderdragon Logo Alternate"
         className={`absolute w-full h-full object-cover transition-opacity duration-300 ${showFirstImage ? 'opacity-0' : 'opacity-100'}`}
       />
@@ -178,16 +178,22 @@ const Navbar = () => {
     return dropdown.links.some(link => isLinkActive(link.path));
   };
 
+  // Updated navbar style to include blur effect when scrolled
   const navbarStyle = scrolled ? {
-    backdropFilter: 'blur(8px)',
-    backgroundColor: `rgba(155, 135, 245, ${scrollProgress * 0.1})`,
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-  } : {};
+    backdropFilter: 'blur(10px)',
+    backgroundColor: theme === 'dark' 
+      ? `rgba(20, 20, 30, ${scrollProgress * 0.8})` 
+      : `rgba(255, 255, 255, ${scrollProgress * 0.8})`,
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    borderBottom: `1px solid rgba(155, 135, 245, ${scrollProgress * 0.3})`
+  } : {
+    backgroundColor: 'transparent',
+  };
 
   return (
     <header 
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'py-2 shadow-md' : 'py-4'
+        scrolled ? 'py-2' : 'py-4'
       }`}
       style={navbarStyle}
     >
@@ -285,7 +291,6 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
-                      {/* Replace Skull icon with rotating image in mobile menu too */}
                       <ImageRotator />
                     </div>
                     <span>Renderdragon</span>

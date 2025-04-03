@@ -35,7 +35,7 @@ const Hero = () => {
   return (
     <section
       ref={heroRef}
-      className="relative min-h-screen overflow-hidden flex items-center justify-center bg-background pt-22 md:pt-32"
+      className="relative min-h-screen overflow-hidden flex items-center justify-center bg-background pt-16 md:pt-24" // Reduced padding-top
       style={{
         perspective: '1500px',
         transformStyle: 'preserve-3d',
@@ -51,7 +51,7 @@ const Hero = () => {
           transition: 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)',
         }}
       >
-        <div className="absolute left-[15%] top-[7%] w-20 h-20 border-2 border-cow-purple/30 rounded-lg transform rotate-45 animate-float-vertical" />
+        <div className="absolute left-[15%] top-[10%] w-20 h-20 border-2 border-cow-purple/30 rounded-lg transform rotate-45 animate-float-vertical" />
         <div
           className="absolute right-[20%] top-[20%] w-16 h-16 border-2 border-cow-purple/30 rounded-full animate-float-vertical"
           style={{ animationDelay: '-3s' }}
@@ -63,7 +63,7 @@ const Hero = () => {
         {/* Pixel art rectangles */}
         <div className="absolute top-[40%] left-[40%] w-12 h-8 bg-cow-purple/20 rounded-sm pixel-corners" />
         <div className="absolute bottom-[30%] right-[30%] w-8 h-12 bg-cow-purple/20 rounded-sm pixel-corners" />
-        
+
         {/* Additional pixel art elements */}
         <div className="absolute top-[15%] right-[15%] w-6 h-6 bg-cow-purple/30 pixel-corners" />
         <div className="absolute bottom-[15%] left-[15%] w-6 h-6 bg-cow-purple/30 pixel-corners" />
@@ -72,7 +72,7 @@ const Hero = () => {
       </div>
 
       {/* Main Content - Two column layout on desktop, stacked on mobile */}
-      <div className="container relative z-10 mx-auto px-4 py-12">
+      <div className="container relative z-10 mx-auto px-4 pb-[48px]">
         <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between">
           {/* Text Content */}
           <div className="md:w-1/2 text-center md:text-left md:pr-8 mt-8 md:mt-0">
@@ -83,7 +83,6 @@ const Hero = () => {
                 lineHeight: '1.2',
                 textShadow:
                   '0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3)',
-                // Removed transform here to keep text fixed
               }}
             >
               <span className="text-cow-purple block mb-2">UNLOCK</span>
@@ -95,7 +94,6 @@ const Hero = () => {
             <p
               className="text-lg md:text-xl mb-8 mx-auto md:mx-0 text-foreground/90 dark:text-white/80"
               style={{
-                // Removed transform here to keep text fixed
                 maxWidth: '500px',
               }}
             >
@@ -103,10 +101,7 @@ const Hero = () => {
               in one place.
             </p>
 
-            <div
-              className="flex flex-col sm:flex-row items-center md:items-start justify-center md:justify-start gap-4 w-full md:w-auto"
-              // Removed style with transform to keep buttons fixed
-            >
+            <div className="flex flex-col sm:flex-row items-center md:items-start justify-center md:justify-start gap-4 w-full md:w-auto">
               <Link
                 to="/resources"
                 className="pixel-btn-primary group flex items-center justify-center space-x-2 hover:scale-105 transition-transform w-full sm:w-auto"
@@ -129,16 +124,13 @@ const Hero = () => {
               </span>
             </div>
           </div>
-          
+
           {/* Dragon Animation - Keep this static too */}
           <div className="md:w-1/2 flex items-center justify-center">
-            <div 
-              className="relative w-64 h-64 md:w-80 md:h-80"
-              // Removed transform here to keep dragon fixed
-            >
-              <img 
-                src="https://gamepedia.cursecdn.com/minecraft_gamepedia/0/0a/Ender_Dragon.gif" 
-                alt="Minecraft Ender Dragon" 
+            <div className="relative w-64 h-64 md:w-80 md:h-80">
+              <img
+                src="https://gamepedia.cursecdn.com/minecraft_gamepedia/0/0a/Ender_Dragon.gif"
+                alt="Minecraft Ender Dragon"
                 className="w-full h-auto object-contain animate-float"
               />
             </div>

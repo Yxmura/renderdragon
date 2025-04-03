@@ -13,7 +13,6 @@ const Index = () => {
   useEffect(() => {
     document.title = 'Renderdragon - Free Resources for Content Creators';
     
-    // Load fonts
     const fontLinks = [
       {
         rel: 'stylesheet',
