@@ -51,7 +51,7 @@ const Hero = () => {
           transition: 'transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)',
         }}
       >
-        <div className="absolute left-[15%] top-[10%] w-20 h-20 border-2 border-cow-purple/30 rounded-lg transform rotate-45 animate-float-vertical" />
+        <div className="absolute left-[15%] top-[7%] w-20 h-20 border-2 border-cow-purple/30 rounded-lg transform rotate-45 animate-float-vertical" />
         <div
           className="absolute right-[20%] top-[20%] w-16 h-16 border-2 border-cow-purple/30 rounded-full animate-float-vertical"
           style={{ animationDelay: '-3s' }}
