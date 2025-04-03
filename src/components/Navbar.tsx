@@ -36,6 +36,33 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Toggle } from "@/components/ui/toggle";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
+const ImageRotator = ({ className = "" }: { className?: string }) => {
+  const [showFirstImage, setShowFirstImage] = useState(true);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setShowFirstImage(prev => !prev);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className={`relative w-5 h-5 ${className}`}>
+      <img
+        src="/public/renderdragon0.png"
+        alt="Renderdragon Logo"
+        className={`absolute w-full h-full object-cover transition-opacity duration-300 ${showFirstImage ? 'opacity-100' : 'opacity-0'}`}
+      />
+      <img
+        src="/public/renderdragon1.png"
+        alt="Renderdragon Logo Alternate"
+        className={`absolute w-full h-full object-cover transition-opacity duration-300 ${showFirstImage ? 'opacity-0' : 'opacity-100'}`}
+      />
+    </div>
+  );
+};
+
 interface NavLink {
   name: string;
   path: string;
@@ -105,7 +132,6 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleResize);
     
-    // Initial check for scroll position
     handleScroll();
     
     return () => {
@@ -171,7 +197,7 @@ const Navbar = () => {
           className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
         >
           <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
-            <Skull className="w-5 h-5" />
+            <ImageRotator />
           </div>
           {!isMobile && (
             <span className="hidden md:inline animate-glow">Renderdragon</span>
@@ -259,7 +285,8 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
-                      <Skull className="w-5 h-5" />
+                      {/* Replace Skull icon with rotating image in mobile menu too */}
+                      <ImageRotator />
                     </div>
                     <span>Renderdragon</span>
                   </Link>

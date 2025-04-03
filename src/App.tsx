@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-// Pages
 import Index from "./pages/Index";
 import ResourcesHub from "./pages/ResourcesHub";
 import Contact from "./pages/Contact";
@@ -20,8 +19,6 @@ import FAQ from "./pages/FAQ";
 import TOS from "./pages/TOS";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
-
-// Create the KBar provider
 import { KBarProvider } from 'kbar';
 
 const queryClient = new QueryClient();
