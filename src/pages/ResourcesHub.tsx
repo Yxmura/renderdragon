@@ -30,24 +30,17 @@ import { toast } from 'sonner';
 import { useKBar } from 'kbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { supabase } from '@/integrations/supabase/client';
+import WaveSurferPlayer from '@/components/WaveSurferPlayer';
 
 interface Resource {
   id: number;
   title: string;
-  category: 'music' | 'sfx' | 'image' | 'animation' | 'fonts' | 'presets';
-  subcategory?: 'davinci' | 'premiere' | null;
-  downloadURL: string;
+  category: string;
+  subcategory?: string;
+  download_url: string;
   credit?: string;
-  previewUrl?: string;
-}
-
-interface ResourcesData {
-  animations: Resource[];
-  fonts: Resource[];
-  music: Resource[];
-  sfx: Resource[];
-  images: Resource[];
-  presets: Resource[];
+  preview_url?: string;
 }
 
 const ResourcesHub = () => {
@@ -76,22 +69,23 @@ const ResourcesHub = () => {
 
     const fetchResources = async () => {
       try {
-        const response = await fetch('/resources.json');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch resources: ${response.status} ${response.statusText}`);
+        const { data, error } = await supabase
+          .from('resources')
+          .select('*');
+
+        if (error) {
+          throw error;
         }
-        const resourcesData = (await response.json()) as ResourcesData; // Type assertion
-    
-        const allResources: Resource[] = Object.entries(resourcesData).flatMap(
-          ([category, resources]) =>
-            resources.map((resource) => ({ ...resource, category })),
-        );
-    
-        setResources(allResources);
+
+        if (data) {
+          setResources(data);
+        }
+        
         setIsLoading(false);
       } catch (error) {
         console.error('Error fetching resources:', error);
         setIsLoading(false);
+        toast.error('Failed to load resources');
       }
     };
 
@@ -136,13 +130,25 @@ const ResourcesHub = () => {
     }, 2000);
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!selectedResource) return;
 
-    toast.info('Starting download...', {
-      description: 'Crediting Creator On Wheels is optional but appreciated!',
-      duration: 3000,
-    });
+    try {
+      toast.info('Starting download...', {
+        description: 'Crediting Creator On Wheels is optional but appreciated!',
+        duration: 3000,
+      });
+
+      const link = document.createElement('a');
+      link.href = selectedResource.download_url;
+      link.download = selectedResource.title;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error('Download failed');
+    }
   };
 
   const getCategoryIcon = (category: string) => {
@@ -181,192 +187,6 @@ const ResourcesHub = () => {
       default:
         return 'bg-gray-500/10 text-gray-500';
     }
-  };
-
-  const AudioPlayer = ({ url }: { url: string }) => {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const audioRef = useRef<HTMLAudioElement>(null);
-    const progressRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      const audio = audioRef.current;
-      if (!audio) return;
-
-      const updateProgress = () => {
-        if (audio.duration) {
-          setProgress((audio.currentTime / audio.duration) * 100);
-        }
-      };
-
-      audio.addEventListener('timeupdate', updateProgress);
-      audio.addEventListener('ended', () => setIsPlaying(false));
-
-      return () => {
-        audio.removeEventListener('timeupdate', updateProgress);
-        audio.removeEventListener('ended', () => setIsPlaying(false));
-      };
-    }, []);
-
-    const togglePlay = () => {
-      const audio = audioRef.current;
-      if (!audio) return;
-
-      if (isPlaying) {
-        audio.pause();
-      } else {
-        audio.play();
-      }
-      setIsPlaying(!isPlaying);
-    };
-
-    const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      const audio = audioRef.current;
-      const progressBar = progressRef.current;
-
-      if (!audio || !progressBar) return;
-
-      const rect = progressBar.getBoundingClientRect();
-      const pos = (e.clientX - rect.left) / rect.width;
-      audio.currentTime = pos * audio.duration;
-    };
-
-    const bars = Array.from({ length: 16 }, (_, i) => (
-      <div
-        key={i}
-        className="audio-visualizer-bar"
-        style={{
-          height: `${Math.random() * 60 + 20}%`,
-          animationDelay: `${i * 0.1 - 0.8}s`,
-        }}
-      />
-    ));
-
-    return (
-      <div className="audio-player-container">
-        <audio ref={audioRef} src={url} preload="metadata" />
-
-        <div
-          className={`audio-visualizer audio-visualizer-animated ${
-            isPlaying ? 'playing' : ''
-          }`}
-        >
-          {bars}
-        </div>
-
-        <div className="flex items-center space-x-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={togglePlay}
-            className="h-8 w-8 rounded-full"
-          >
-            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-            <span className="sr-only">{isPlaying ? 'Pause' : 'Play'}</span>
-          </Button>
-
-          <div
-            ref={progressRef}
-            className="audio-player-progress flex-grow"
-            onClick={handleProgressClick}
-          >
-            <div
-              className="audio-player-progress-fill"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-
-          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
-            <Volume2 className="h-4 w-4" />
-            <span className="sr-only">Volume</span>
-          </Button>
-        </div>
-      </div>
-    );
-  };
-
-  const VideoPlayer = ({ url }: { url: string }) => {
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const progressRef = useRef<HTMLDivElement>(null);
-
-    useEffect(() => {
-      const video = videoRef.current;
-      if (!video) return;
-
-      const updateProgress = () => {
-        if (video.duration) {
-          setProgress((video.currentTime / video.duration) * 100);
-        }
-      };
-
-      video.addEventListener('timeupdate', updateProgress);
-      video.addEventListener('ended', () => setIsPlaying(false));
-
-      return () => {
-        video.removeEventListener('timeupdate', updateProgress);
-        video.removeEventListener('ended', () => setIsPlaying(false));
-      };
-    }, []);
-
-    const togglePlay = () => {
-      const video = videoRef.current;
-      if (!video) return;
-
-      if (isPlaying) {
-        video.pause();
-      } else {
-        video.play();
-      }
-      setIsPlaying(!isPlaying);
-    };
-
-    const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-      const video = videoRef.current;
-      const progressBar = progressRef.current;
-
-      if (!video || !progressBar) return;
-
-      const rect = progressBar.getBoundingClientRect();
-      const pos = (e.clientX - rect.left) / rect.width;
-      video.currentTime = pos * video.duration;
-    };
-
-    return (
-      <div className="video-player-container">
-        <video
-          ref={videoRef}
-          src={url}
-          className="w-full rounded-md"
-          onClick={togglePlay}
-          preload="metadata"
-        />
-
-        <div className="video-player-controls">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={togglePlay}
-            className="h-8 w-8 rounded-full"
-          >
-            {isPlaying ? <Pause className="h-4 w-4 text-white" /> : <Play className="h-4 w-4 text-white" />}
-            <span className="sr-only">{isPlaying ? 'Pause' : 'Play'}</span>
-          </Button>
-
-          <div
-            ref={progressRef}
-            className="video-player-progress"
-            onClick={handleProgressClick}
-          >
-            <div
-              className="video-player-progress-fill"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-      </div>
-    );
   };
 
   return (
@@ -735,26 +555,39 @@ const ResourcesHub = () => {
               )}
             </div>
 
-            {selectedResource?.previewUrl && (
+            {selectedResource?.preview_url && (
               <div className="border border-border rounded-md p-4">
                 <h4 className="font-vt323 text-lg mb-4">Preview</h4>
 
-                {selectedResource.category === 'music' ||
-                selectedResource.category === 'sfx' ? (
-                  <AudioPlayer url={selectedResource.previewUrl} />
+                {selectedResource.category === 'music' || selectedResource.category === 'sfx' ? (
+                  <WaveSurferPlayer 
+                    audioUrl={selectedResource.preview_url} 
+                    waveColor="rgba(155, 135, 245, 0.5)"
+                    progressColor="rgba(155, 135, 245, 1)"
+                  />
                 ) : selectedResource.category === 'animation' ? (
-                  <VideoPlayer url={selectedResource.previewUrl} />
-                ) : selectedResource.category === 'image' ? (
+                  <div className="rounded-md overflow-hidden">
+                    <video
+                      src={selectedResource.preview_url}
+                      controls
+                      className="w-full h-auto"
+                    >
+                      Your browser does not support video playback.
+                    </video>
+                  </div>
+                ) : selectedResource.category === 'image' ||
+                  selectedResource.category === 'fonts' ||
+                  selectedResource.category === 'presets' ? (
                   <div className="rounded-md overflow-hidden">
                     <img
-                      src={selectedResource.previewUrl}
+                      src={selectedResource.preview_url}
                       alt={selectedResource.title}
                       className="w-full h-auto"
                     />
                   </div>
                 ) : (
                   <p className="text-muted-foreground text-sm">
-                    Preview not available in this demo.
+                    Preview not available for this resource type.
                   </p>
                 )}
               </div>
