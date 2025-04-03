@@ -36,32 +36,13 @@ const Hero = () => {
   return (
     <section
       ref={heroRef}
-      className="relative h-screen overflow-hidden flex items-center justify-center bg-background pt-22 md:pt-32"
+      className="relative min-h-screen overflow-hidden flex items-center justify-center bg-background pt-22 md:pt-32"
       style={{
         perspective: '1500px',
         transformStyle: 'preserve-3d',
       }}
     >
-      {/* Ender Dragon Animation */}
-      <div 
-        className="absolute w-full h-full pointer-events-none"
-        style={{
-          transform: `translate3d(${mousePosition.x * -30}px, ${
-            mousePosition.y * -30
-          }px, 0px)`,
-          transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
-        }}
-      >
-        <div className="dragon-container absolute inset-0 flex items-center justify-center">
-          <img 
-            src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/0a/Ender_Dragon.gif/revision/latest?cb=20210107043116" 
-            alt="Minecraft Ender Dragon" 
-            className="w-64 h-auto object-contain animate-float"
-          />
-        </div>
-      </div>
-
-      {/* Pixel Art Shapes */}
+      {/* Pixel Art Shapes - Background elements */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -91,102 +72,90 @@ const Hero = () => {
         <div className="absolute top-[25%] left-[60%] w-10 h-4 bg-cow-purple/20 pixel-corners" />
       </div>
 
-      {/* Main Content */}
-      <div 
-        className="container relative z-10 mx-auto px-4 text-center"
-        style={{
-          transform: `translateZ(80px)`,
-        }}
-      >
-        {/* Dragon logo */}
-        <div className="mb-8 inline-block relative animate-float">
-          <div className="w-24 h-24 mx-auto bg-gradient-to-br from-purple-900 to-purple-600 rounded-full animate-pixel-spin transform-gpu pixel-corners">
-            <img 
-              src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/0/0a/Ender_Dragon.gif/revision/latest?cb=20210107043116"
-              alt="Ender Dragon" 
-              className="w-16 h-16 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-            />
+      {/* Main Content - Two column layout on desktop, stacked on mobile */}
+      <div className="container relative z-10 mx-auto px-4 py-12">
+        <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between">
+          {/* Text Content */}
+          <div className="md:w-1/2 text-center md:text-left md:pr-8 mt-8 md:mt-0">
+            <h1
+              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground dark:text-white"
+              style={{
+                fontFamily: "'Press Start 2P', cursive",
+                lineHeight: '1.2',
+                textShadow:
+                  '0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3)',
+                transform: `translateZ(100px) translateY(${
+                  mousePosition.y * -20
+                }px)`,
+                transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
+              }}
+            >
+              <span className="text-cow-purple block mb-2">UNLOCK</span>
+              YOUR <span className="text-cow-purple">MINECRAFT</span>
+              <br />
+              <span className="text-cow-purple">CREATION</span> POTENTIAL
+            </h1>
+
+            <p
+              className="text-lg md:text-xl mb-8 mx-auto md:mx-0 text-foreground/90 dark:text-white/80"
+              style={{
+                transform: `translateZ(50px)`,
+                transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
+                maxWidth: '500px',
+              }}
+            >
+              Free assets, tools, and resources for Minecraft content creators, all
+              in one place.
+            </p>
+
+            <div
+              className="flex flex-col sm:flex-row items-center md:items-start justify-center md:justify-start gap-4 w-full md:w-auto"
+              style={{
+                transform: `translateZ(150px)`,
+              }}
+            >
+              <Link
+                to="/resources"
+                className="pixel-btn-primary group flex items-center justify-center space-x-2 hover:scale-105 transition-transform w-full sm:w-auto"
+              >
+                <span>Browse Resources</span>
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+
+              <Link
+                to="/guides"
+                className="pixel-btn-secondary hover:scale-105 transition-transform w-full sm:w-auto"
+              >
+                <span>View Guides</span>
+              </Link>
+            </div>
+
+            <div className="mt-8 w-full md:w-auto">
+              <span className="inline-block bg-cow-purple/20 px-4 py-2 rounded-md pixel-corners text-foreground/70 dark:text-white/70 text-sm md:text-base">
+                100% Free. No strings attached.
+              </span>
+            </div>
           </div>
-          <div className="absolute inset-0 bg-transparent border-4 border-white/20 rounded-full pixel-corners" />
-          {/* Example of adding more pixel-style elements */}
-          <div
-            className="absolute w-3 h-3 text-yellow-300 animate-spin-slow rounded-full bg-yellow-300 pixel-corners"
-            style={{
-              top: '5%',
-              left: '85%',
-              transformOrigin: '-15px 30px',
-              animationDuration: '12s',
-            }}
-          />
-          <div
-            className="absolute w-2 h-2 text-yellow-300 animate-spin-slow rounded-full bg-yellow-300 pixel-corners"
-            style={{
-              bottom: '5%',
-              right: '85%',
-              transformOrigin: '35px -15px',
-              animationDuration: '18s',
-              animationDirection: 'reverse',
-            }}
-          />
+          
+          {/* Dragon Animation - Side by side on desktop, stacked on mobile */}
+          <div className="md:w-1/2 flex items-center justify-center">
+            <div 
+              className="relative w-64 h-64 md:w-80 md:h-80"
+              style={{
+                transform: `translate3d(${mousePosition.x * -30}px, ${
+                  mousePosition.y * -30
+                }px, 0px)`,
+                transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
+              }}
+            >
+              <img 
+                src="https://media.tenor.com/xSwM0lAKOvMAAAAi/ender-dragon-end-dragon.gif" 
+                alt="Minecraft Ender Dragon" 
+                className="w-full h-auto object-contain animate-float"
+              />
+            </div>
+          </div>
         </div>
-
-        <h1
-          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground dark:text-white text-center"
-          style={{
-            fontFamily: "'Press Start 2P', cursive",
-            lineHeight: '1.2',
-            textShadow:
-              '0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3)',
-            transform: `translateZ(100px) translateY(${
-              mousePosition.y * -20
-            }px)`,
-            transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
-          }}
-        >
-          <span className="text-cow-purple block mb-2">UNLOCK</span>
-          YOUR <span className="text-cow-purple">MINECRAFT</span>
-          <br />
-          <span className="text-cow-purple">CREATION</span> POTENTIAL
-        </h1>
-
-        <p
-          className="text-lg md:text-xl mb-8 max-w-lg mx-auto text-center text-foreground/90 dark:text-white/80"
-          style={{
-            transform: `translateZ(50px)`,
-            transition: 'transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1)',
-          }}
-        >
-          Free assets, tools, and resources for Minecraft content creators, all
-          in one place.
-        </p>
-
-        <div
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full md:w-auto"
-          style={{
-            transform: `translateZ(150px)`,
-          }}
-        >
-          <Link
-            to="/resources"
-            className="pixel-btn-primary group flex items-center space-x-2 hover:scale-105 transition-transform w-full sm:w-auto"
-          >
-            <span>Browse Resources</span>
-            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Link>
-
-          <Link
-            to="/guides"
-            className="pixel-btn-secondary hover:scale-105 transition-transform w-full sm:w-auto"
-          >
-            <span>View Guides</span>
-          </Link>
-        </div>
-
-        <p className="mt-6 text-foreground/70 dark:text-white/70 text-sm md:text-base">
-          <span className="bg-cow-purple/20 px-2 py-1 rounded-md pixel-corners">
-            100% Free. No strings attached.
-          </span>
-        </p>
       </div>
 
       {/* Pixel art border frame */}
