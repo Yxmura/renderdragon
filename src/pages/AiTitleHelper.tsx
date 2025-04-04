@@ -19,7 +19,6 @@ interface TitleSuggestion {
   type: 'creative' | 'descriptive' | 'emotional' | 'trending';
 }
 
-// Mock AI generated titles
 const mockSuggestions: TitleSuggestion[] = [
   {
     id: '1',
