@@ -18,6 +18,7 @@ import DiscordServers from "./pages/DiscordServers";
 import FAQ from "./pages/FAQ";
 import TOS from "./pages/TOS";
 import Privacy from "./pages/Privacy";
+import Construction from "./pages/Construction"
 import NotFound from "./pages/NotFound";
 import { KBarProvider } from 'kbar';
 
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/faq" element={<FAQ />} />
             <Route path="/tos" element={<TOS />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/construction" element={<Construction />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
