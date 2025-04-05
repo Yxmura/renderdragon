@@ -8,7 +8,6 @@ import Testimonials from '@/components/Testimonials';
 import Stats from '@/components/Stats';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
-import LaunchOverlay from '@/components/LaunchOverlay';
 
 const Index = () => {
   useEffect(() => {
@@ -45,7 +44,6 @@ const Index = () => {
       </main>
       <Footer />
       <DonateButton />
-      <LaunchOverlay />
     </div>
   );
 };
