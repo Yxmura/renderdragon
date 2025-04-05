@@ -4,8 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Analytics } from '@vercel/analytics/react';
-import { KBarProvider } from 'kbar';
 
 import Index from "./pages/Index";
 import ResourcesHub from "./pages/ResourcesHub";
@@ -22,6 +20,7 @@ import TOS from "./pages/TOS";
 import Privacy from "./pages/Privacy";
 import Construction from "./pages/Construction"
 import NotFound from "./pages/NotFound";
+import { KBarProvider } from 'kbar';
 
 const queryClient = new QueryClient();
 
@@ -49,7 +48,6 @@ const App = () => (
             <Route path="/construction" element={<Construction />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
-            <Analytics />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
