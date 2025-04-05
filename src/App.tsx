@@ -38,7 +38,7 @@ const App = () => (
             <Route path="/guides" element={<Guides />} />
             <Route path="/youtube-videos" element={<YouTubeVideos />} />
             <Route path="/discord-servers" element={<DiscordServers />} />
-            {/* <Route path="/youtube-downloader" element={<YouTubeDownloader />} /> */}
+            <Route path="/youtube-downloader" element={<YouTubeDownloader />} />
             <Route path="/music-copyright" element={<MusicCopyright />} />
             <Route path="/ai-title-helper" element={<AiTitleHelper />} />
             <Route path="/background-generator" element={<BackgroundGenerator />} />
