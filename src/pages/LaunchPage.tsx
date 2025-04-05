@@ -70,7 +70,7 @@ const LaunchPage = () => {
         </CardContent>
       </Card>
 
-      <style jsx global>{`
+      <style>{`
         .pixel-font {
           font-family: monospace;
           text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);

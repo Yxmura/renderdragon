@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import LaunchPage from './pages/LaunchPage';
+import LaunchPage from '@/pages/LaunchPage';
 import { createPortal } from 'react-dom';
 
 const LaunchOverlay = () => {
