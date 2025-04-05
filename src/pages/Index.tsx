@@ -8,6 +8,7 @@ import Testimonials from '@/components/Testimonials';
 import Stats from '@/components/Stats';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
+import CountdownOverlay from '@/components/CountdownOverlay';
 
 const Index = () => {
   useEffect(() => {
@@ -32,6 +33,9 @@ const Index = () => {
     });
   }, []);
 
+  // Set the launch date to May 1, 2025
+  const launchDate = new Date('2025-05-01T00:00:00');
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -44,6 +48,7 @@ const Index = () => {
       </main>
       <Footer />
       <DonateButton />
+      <CountdownOverlay targetDate={launchDate} />
     </div>
   );
 };

@@ -1,9 +1,9 @@
-
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, ExternalLink, Github, Twitter, Youtube } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+import { ImageRotator } from './Navbar';
 
 const Footer = () => {
   const [cartClicked, setCartClicked] = useState(false);
@@ -38,7 +38,7 @@ const Footer = () => {
     }, 3000);
     
     toast("Website made by Team Wheels", {
-      description: "Thanks for visiting Creator On Wheels!",
+      description: "Thanks for visiting Renderdragon!",
       position: "bottom-center",
       duration: 3000,
     });
@@ -58,9 +58,9 @@ const Footer = () => {
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center space-x-2 text-xl mb-4">
               <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-pixel text-xs pixel-corners">
-                COW
+                <ImageRotator />
               </div>
-              <span className="font-pixel">Creator On Wheels</span>
+              <span className="font-pixel">Renderdragon</span>
             </Link>
             
             <p className="text-white/70 mb-6 max-w-md">
@@ -183,7 +183,7 @@ const Footer = () => {
           
           <div className="flex items-center">
             <p className="text-white/70 text-sm">
-              &copy; {currentYear} Creator On Wheels
+              &copy; {currentYear} Renderdragon
             </p>
             
             <button 

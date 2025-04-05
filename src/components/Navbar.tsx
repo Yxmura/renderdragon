@@ -36,7 +36,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Toggle } from "@/components/ui/toggle";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
-const ImageRotator = ({ className = "" }: { className?: string }) => {
+export const ImageRotator = ({ className = "" }: { className?: string }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = [
     "/renderdragon0.png",
@@ -48,19 +48,19 @@ const ImageRotator = ({ className = "" }: { className?: string }) => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 1000); // 1K ms = 1s so it chnages every s
+    }, 1000); // 1K ms = 1s so it changes every s
 
     return () => clearInterval(timer);
-  }, );
+  }, []);
 
   return (
-    <div className={`relative w-full h-full flex justify-center items-center  ${className}`}>
+    <div className={`relative w-full h-full flex justify-center items-center ${className}`}>
       {images.map((src, index) => (
         <img
           key={index}
           src={src}
           alt={`Renderdragon Logo ${index}`}
-          className={`absolute w-full pl-[3px] h-full object-contain transition-opacity duration-300 ${currentImageIndex === index ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute w-full h-full object-contain transition-opacity duration-300 ${currentImageIndex === index ? 'opacity-100' : 'opacity-0'}`}
         />
       ))}
     </div>
@@ -182,7 +182,6 @@ const Navbar = () => {
     return dropdown.links.some(link => isLinkActive(link.path));
   };
 
-  // Updated navbar style to include blur effect when scrolled
   const navbarStyle = scrolled ? {
     backdropFilter: 'blur(10px)',
     backgroundColor: theme === 'dark' 
