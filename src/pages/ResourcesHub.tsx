@@ -1,3 +1,4 @@
+
 import {
   useState,
   useEffect,
@@ -580,7 +581,7 @@ const ResourcesHub = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {filteredResourcesList.map((resource) => (
                   <div
-                    key={resource.id}
+                    key={`resource-${resource.id}`}
                     onClick={() => setSelectedResource(resource)}
                     className="pixel-card group cursor-pointer hover:border-primary transition-all duration-300"
                   >
