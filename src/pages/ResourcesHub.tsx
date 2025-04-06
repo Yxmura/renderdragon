@@ -1,3 +1,4 @@
+
 import {
   useState,
   useEffect,
@@ -21,6 +22,8 @@ import {
   Github,
   Play,
   Pause,
+  X,
+  ExternalLink,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
@@ -36,7 +39,14 @@ import { toast } from 'sonner';
 import { useKBar } from 'kbar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
-import ReactAudioPlayer from 'react-audio-player';
+import AudioPlayer from '@/components/AudioPlayer';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Resource {
   id: number;
@@ -73,6 +83,7 @@ const ResourcesHub = () => {
   const { query } = useKBar();
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Memoize the fetchResources function to prevent unnecessary re-renders
   const fetchResources = useCallback(async () => {
@@ -120,16 +131,65 @@ const ResourcesHub = () => {
     };
   }, [query, fetchResources]);
 
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    setIsSearching(true);
+    // The actual filtering happens in filteredResourcesList
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    setIsSearching(false);
+  };
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+    setIsSearching(false); // Reset search state when typing
   };
+
+  // Advanced search algorithm with keyword extraction
+  const searchFilter = useCallback((resource: Resource, query: string) => {
+    if (!query) return true;
+    
+    const searchTerms = query.toLowerCase().split(/\s+/).filter(term => term.length > 1);
+    if (searchTerms.length === 0) return true;
+    
+    // Extract resource properties for searching
+    const titleWords = resource.title.toLowerCase().split(/\s+/);
+    const categoryValue = resource.category.toLowerCase();
+    const subcategoryValue = resource.subcategory?.toLowerCase() || '';
+    
+    // Give higher relevance to exact matches
+    const exactTitleMatch = titleWords.some(word => 
+      searchTerms.some(term => word === term)
+    );
+    
+    if (exactTitleMatch) return true;
+    
+    // Partial matching
+    const titleMatches = titleWords.some(word => 
+      searchTerms.some(term => word.includes(term))
+    );
+    
+    const categoryMatches = searchTerms.some(term => 
+      categoryValue.includes(term)
+    );
+    
+    const subcategoryMatches = searchTerms.some(term => 
+      subcategoryValue.includes(term)
+    );
+    
+    return titleMatches || categoryMatches || subcategoryMatches;
+  }, []);
 
   // Memoize the filter logic to improve performance
   const filteredResources = useCallback(
     (resource: Resource) => {
-      const matchesSearch = resource.title
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+      // If we're searching, apply the advanced search algorithm
+      const matchesSearch = isSearching 
+        ? searchFilter(resource, searchQuery)
+        : resource.title.toLowerCase().includes(searchQuery.toLowerCase());
+        
       const matchesCategory = selectedCategory
         ? resource.category === selectedCategory
         : true;
@@ -143,7 +203,7 @@ const ResourcesHub = () => {
 
       return matchesSearch && matchesCategory;
     },
-    [searchQuery, selectedCategory, selectedSubcategory],
+    [searchQuery, selectedCategory, selectedSubcategory, isSearching, searchFilter],
   );
 
   const filteredResourcesList = useMemo(
@@ -226,53 +286,6 @@ const ResourcesHub = () => {
     }
   };
 
-  const AudioPlayer = ({ url }: { url: string }) => {
-    return (
-      <div>
-        <ReactAudioPlayer src={url} controls />
-      </div>
-    );
-  };
-
-  const VideoPlayer = ({ url }: { url: string }) => {
-    return (
-      <div className="relative w-full">
-        <video
-          src={url}
-          controls
-          className="w-full rounded-md aspect-video"
-        />
-      </div>
-    );
-  };
-
-  const FontSample = ({ resource }: { resource: Resource }) => {
-    const downloadURL = getDownloadURL(resource);
-    return (
-      <div
-        style={{
-          fontFamily: resource.title,
-          fontSize: '2rem',
-          textAlign: 'center',
-          padding: '1rem',
-          color: 'white',
-          backgroundColor: '#374151',
-          borderRadius: '0.5rem',
-        }}
-      >
-        The quick brown fox jumps over the lazy dog.
-        <style>
-          {`
-            @font-face {
-              font-family: '${resource.title}';
-              src: url('${downloadURL}') format('${resource.filetype}');
-            }
-          `}
-        </style>
-      </div>
-    );
-  };
-
   const ResourcePreview = ({ resource }: { resource: Resource }) => {
     const downloadURL = getDownloadURL(resource);
 
@@ -281,11 +294,17 @@ const ResourcesHub = () => {
     }
 
     if (resource.category === 'music' || resource.category === 'sfx') {
-      return <AudioPlayer url={downloadURL} />;
+      return <AudioPlayer src={downloadURL} />;
     }
 
     if (resource.category === 'animations') {
-      return <VideoPlayer url={downloadURL} />;
+      return (
+        <video
+          src={downloadURL}
+          controls
+          className="w-full rounded-md aspect-video"
+        />
+      );
     }
 
     if (resource.category === 'image') {
@@ -299,7 +318,29 @@ const ResourcesHub = () => {
     }
 
     if (resource.category === 'fonts') {
-      return <FontSample resource={resource} />;
+      return (
+        <div
+          style={{
+            fontFamily: resource.title,
+            fontSize: '2rem',
+            textAlign: 'center',
+            padding: '1rem',
+            color: 'white',
+            backgroundColor: '#374151',
+            borderRadius: '0.5rem',
+          }}
+        >
+          The quick brown fox jumps over the lazy dog.
+          <style>
+            {`
+              @font-face {
+                font-family: '${resource.title}';
+                src: url('${downloadURL}') format('${resource.filetype}');
+              }
+            `}
+          </style>
+        </div>
+      );
     }
 
     return <p>Preview not available for this type.</p>;
@@ -318,15 +359,34 @@ const ResourcesHub = () => {
 
             <div className="mb-8 flex flex-col md:flex-row gap-4">
               <div className="relative flex-grow">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  ref={inputRef}
-                  placeholder="Search resources (or press Ctrl+K)..."
-                  value={searchQuery}
-                  onChange={handleSearch}
-                  onClick={() => query.toggle()}
-                  className="pl-9 pixel-input w-full cursor-pointer"
-                />
+                <form onSubmit={handleSearchSubmit} className="relative w-full">
+                  <Input
+                    ref={inputRef}
+                    placeholder="Search resources (or press Ctrl+K)..."
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    onClick={() => query.toggle()}
+                    className="pl-9 pixel-input w-full pr-10"
+                  />
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                    <Search className="h-4 w-4" />
+                  </div>
+                  
+                  {searchQuery && (
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      size="icon" 
+                      className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8"
+                      onClick={handleClearSearch}
+                    >
+                      <X className="h-4 w-4" />
+                      <span className="sr-only">Clear search</span>
+                    </Button>
+                  )}
+                  
+                  <Button type="submit" className="sr-only">Search</Button>
+                </form>
               </div>
 
               {isMobile ? (
@@ -402,34 +462,20 @@ const ResourcesHub = () => {
                           Presets
                         </Button>
                         {selectedCategory === 'presets' && (
-                          <div className="flex flex-col gap-2 pl-4 mt-2">
-                            <Button
-                              variant={
-                                selectedSubcategory === 'davinci'
-                                  ? 'default'
-                                  : 'outline'
-                              }
-                              onClick={() => setSelectedSubcategory('davinci')}
-                              className="justify-start pixel-corners pl-4"
+                          <div className="mt-2 ml-2">
+                            <Select
+                              value={selectedSubcategory || ""}
+                              onValueChange={(value) => setSelectedSubcategory(value || null)}
                             >
-                              Davinci Resolve
-                            </Button>
-                            <Button
-                              variant={
-                                selectedSubcategory === 'premiere' ? 'default' : 'outline'
-                              }
-                              onClick={() => setSelectedSubcategory('premiere')}
-                              className="justify-start pixel-corners pl-4"
-                            >
-                              Adobe Premiere Pro
-                            </Button>
-                            <Button
-                              variant={selectedSubcategory === null ? 'default' : 'outline'}
-                              onClick={() => setSelectedSubcategory(null)}
-                              className="justify-start pixel-corners pl-4"
-                            >
-                              All Presets
-                            </Button>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select preset type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="">All Presets</SelectItem>
+                                <SelectItem value="davinci">Davinci Resolve</SelectItem>
+                                <SelectItem value="premiere">Adobe Premiere Pro</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
                         )}
                       </div>
@@ -498,36 +544,19 @@ const ResourcesHub = () => {
                     Presets
                   </Button>
                   {selectedCategory === 'presets' && (
-                    <>
-                      <Button
-                        variant={
-                          selectedSubcategory === 'davinci' ? 'default' : 'outline'
-                        }
-                        size="sm"
-                        onClick={() => setSelectedSubcategory('davinci')}
-                        className="h-10 pixel-corners pl-4"
-                      >
-                        Davinci Resolve
-                      </Button>
-                      <Button
-                        variant={
-                          selectedSubcategory === 'premiere' ? 'default' : 'outline'
-                        }
-                        size="sm"
-                        onClick={() => setSelectedSubcategory('premiere')}
-                        className="h-10 pixel-corners pl-4"
-                      >
-                        Adobe Premiere Pro
-                      </Button>
-                      <Button
-                        variant={selectedSubcategory === null ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setSelectedSubcategory(null)}
-                        className="h-10 pixel-corners pl-4"
-                      >
-                        All Presets
-                      </Button>
-                    </>
+                    <Select
+                      value={selectedSubcategory || ""}
+                      onValueChange={(value) => setSelectedSubcategory(value || null)}
+                    >
+                      <SelectTrigger className="h-10 w-[180px] pixel-corners">
+                        <SelectValue placeholder="Select preset type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All Presets</SelectItem>
+                        <SelectItem value="davinci">Davinci Resolve</SelectItem>
+                        <SelectItem value="premiere">Adobe Premiere Pro</SelectItem>
+                      </SelectContent>
+                    </Select>
                   )}
                 </div>
               )}
@@ -540,8 +569,24 @@ const ResourcesHub = () => {
                 </p>
               </div>
             ) : filteredResourcesList.length === 0 ? (
-              <div className="text-center py-16">
+              <div className="text-center py-16 space-y-6">
                 <p className="text-xl text-muted-foreground">No resources found</p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <Button 
+                    onClick={handleClearSearch} 
+                    variant="outline"
+                    className="pixel-corners"
+                  >
+                    Clear Search
+                  </Button>
+                  <Button 
+                    className="pixel-corners bg-cow-purple hover:bg-cow-purple/80"
+                    onClick={() => window.open("https://github.com/Yxmura/resources_renderdragon", "_blank")}
+                  >
+                    <Github className="mr-2 h-4 w-4" />
+                    Contribute on GitHub
+                  </Button>
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
