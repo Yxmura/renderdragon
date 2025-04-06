@@ -464,14 +464,14 @@ const ResourcesHub = () => {
                         {selectedCategory === 'presets' && (
                           <div className="mt-2 ml-2">
                             <Select
-                              value={selectedSubcategory || ""}
-                              onValueChange={(value) => setSelectedSubcategory(value || null)}
+                              value={selectedSubcategory || "all"}
+                              onValueChange={(value) => setSelectedSubcategory(value === "all" ? null : value)}
                             >
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select preset type" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="">All Presets</SelectItem>
+                                <SelectItem value="all">All Presets</SelectItem>
                                 <SelectItem value="davinci">Davinci Resolve</SelectItem>
                                 <SelectItem value="premiere">Adobe Premiere Pro</SelectItem>
                               </SelectContent>
@@ -545,14 +545,14 @@ const ResourcesHub = () => {
                   </Button>
                   {selectedCategory === 'presets' && (
                     <Select
-                      value={selectedSubcategory || ""}
-                      onValueChange={(value) => setSelectedSubcategory(value || null)}
+                      value={selectedSubcategory || "all"}
+                      onValueChange={(value) => setSelectedSubcategory(value === "all" ? null : value)}
                     >
                       <SelectTrigger className="h-10 w-[180px] pixel-corners">
                         <SelectValue placeholder="Select preset type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Presets</SelectItem>
+                        <SelectItem value="all">All Presets</SelectItem>
                         <SelectItem value="davinci">Davinci Resolve</SelectItem>
                         <SelectItem value="premiere">Adobe Premiere Pro</SelectItem>
                       </SelectContent>
