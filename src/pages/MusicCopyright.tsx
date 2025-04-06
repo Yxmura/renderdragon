@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -34,8 +33,8 @@ const MusicCopyright = () => {
         });
       }
     } catch (error) {
-      setApiKeyStatus('missing');
       console.error("Failed to check API keys:", error);
+      setApiKeyStatus('missing');
     }
   };
 
@@ -49,10 +48,8 @@ const MusicCopyright = () => {
     setResult(null);
     
     try {
-      // Check if the input is a YouTube URL
       const youtubeId = extractYouTubeID(searchQuery);
       
-      // Process the search query or YouTube URL
       const copyrightData = await checkCopyrightStatus(searchQuery, youtubeId !== null);
       
       setResult(copyrightData);
@@ -243,7 +240,6 @@ const MusicCopyright = () => {
               </div>
             )}
             
-            {/* Copyright Analysis Results */}
             {result && !isLoading && (
               <div className="pixel-card space-y-4">
                 <div className="flex justify-between items-start">

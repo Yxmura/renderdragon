@@ -1,6 +1,5 @@
 
-import { NextApiRequest, NextApiResponse } from 'next';
-
+// Custom API handler types that don't rely on Next.js
 export type ApiHandler = (req: Request, res: Response) => Promise<any>;
 
 export type Response = {
