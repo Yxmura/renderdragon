@@ -1,4 +1,3 @@
-
 import {
   useState,
   useEffect,
@@ -13,15 +12,12 @@ import {
   Image,
   Video,
   FileText,
-  Search,
   Filter,
   Copy,
   Check,
   FileAudio,
   Download,
   Github,
-  Play,
-  Pause,
   X,
   ExternalLink,
 } from 'lucide-react';
@@ -85,7 +81,6 @@ const ResourcesHub = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Memoize the fetchResources function to prevent unnecessary re-renders
   const fetchResources = useCallback(async () => {
     try {
       const response = await fetch('/resources.json');
@@ -134,39 +129,36 @@ const ResourcesHub = () => {
   const handleSearchSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     setIsSearching(true);
-    // The actual filtering happens in filteredResourcesList
   };
 
   const handleClearSearch = () => {
     setSearchQuery('');
+    setSelectedCategory(null);
+    setSelectedSubcategory(null);
     setIsSearching(false);
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setIsSearching(false); // Reset search state when typing
+    setIsSearching(false);
   };
 
-  // Advanced search algorithm with keyword extraction
   const searchFilter = useCallback((resource: Resource, query: string) => {
     if (!query) return true;
     
     const searchTerms = query.toLowerCase().split(/\s+/).filter(term => term.length > 1);
     if (searchTerms.length === 0) return true;
     
-    // Extract resource properties for searching
     const titleWords = resource.title.toLowerCase().split(/\s+/);
     const categoryValue = resource.category.toLowerCase();
     const subcategoryValue = resource.subcategory?.toLowerCase() || '';
     
-    // Give higher relevance to exact matches
     const exactTitleMatch = titleWords.some(word => 
       searchTerms.some(term => word === term)
     );
     
     if (exactTitleMatch) return true;
     
-    // Partial matching
     const titleMatches = titleWords.some(word => 
       searchTerms.some(term => word.includes(term))
     );
@@ -182,10 +174,8 @@ const ResourcesHub = () => {
     return titleMatches || categoryMatches || subcategoryMatches;
   }, []);
 
-  // Memoize the filter logic to improve performance
   const filteredResources = useCallback(
     (resource: Resource) => {
-      // If we're searching, apply the advanced search algorithm
       const matchesSearch = isSearching 
         ? searchFilter(resource, searchQuery)
         : resource.title.toLowerCase().includes(searchQuery.toLowerCase());
@@ -366,11 +356,8 @@ const ResourcesHub = () => {
                     value={searchQuery}
                     onChange={handleSearch}
                     onClick={() => query.toggle()}
-                    className="pl-9 pixel-input w-full pr-10"
+                    className="pixel-input w-full pr-10"
                   />
-                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                    <Search className="h-4 w-4" />
-                  </div>
                   
                   {searchQuery && (
                     <Button 
@@ -577,6 +564,7 @@ const ResourcesHub = () => {
                     variant="outline"
                     className="pixel-corners"
                   >
+                    <X className="mr-2 h-4 w-4" />
                     Clear Search
                   </Button>
                   <Button 
@@ -584,7 +572,7 @@ const ResourcesHub = () => {
                     onClick={() => window.open("https://github.com/Yxmura/resources_renderdragon", "_blank")}
                   >
                     <Github className="mr-2 h-4 w-4" />
-                    Contribute on GitHub
+                    Contribute Resources
                   </Button>
                 </div>
               </div>
