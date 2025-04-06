@@ -264,7 +264,7 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
-                      <ImageRotator />
+                      <Logo size="sm" />
                     </div>
                     <span>Renderdragon</span>
                   </Link>
