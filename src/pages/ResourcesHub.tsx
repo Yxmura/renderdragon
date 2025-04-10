@@ -21,6 +21,8 @@ import {
   Github,
   X,
   ExternalLink,
+  Search,
+  AlertTriangle,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
@@ -141,7 +143,11 @@ const ResourcesHub = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
-    setIsSearching(false);
+    if (e.target.value === '') {
+      setIsSearching(false);
+    } else {
+      setIsSearching(true);
+    }
   };
 
   const searchFilter = useCallback((resource: Resource, query: string) => {
@@ -177,29 +183,32 @@ const ResourcesHub = () => {
 
   const filteredResources = useCallback(
     (resource: Resource) => {
-      const matchesSearch = isSearching 
-        ? searchFilter(resource, searchQuery)
-        : resource.title.toLowerCase().includes(searchQuery.toLowerCase());
-        
+      // If no search query and no category selected, show all resources
+      if (!searchQuery && !selectedCategory) return true;
+      
+      let matchesSearch = true;
+      if (searchQuery) {
+        matchesSearch = resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        resource.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        (resource.subcategory || '').toLowerCase().includes(searchQuery.toLowerCase());
+      }
+      
       const matchesCategory = selectedCategory
         ? resource.category === selectedCategory
         : true;
+
       const matchesSubcategory = selectedSubcategory
         ? resource.subcategory === selectedSubcategory
         : true;
 
-      if (selectedCategory === 'presets') {
-        return matchesSearch && matchesCategory && matchesSubcategory;
-      }
-
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesSubcategory;
     },
-    [searchQuery, selectedCategory, selectedSubcategory, isSearching, searchFilter],
+    [searchQuery, selectedCategory, selectedSubcategory]
   );
 
   const filteredResourcesList = useMemo(
     () => resources.filter(filteredResources),
-    [resources, filteredResources],
+    [resources, filteredResources]
   );
 
   const copyCredit = () => {
@@ -558,8 +567,16 @@ const ResourcesHub = () => {
               </div>
             ) : filteredResourcesList.length === 0 ? (
               <div className="text-center py-16 space-y-6">
-                <p className="text-xl text-muted-foreground">No resources found</p>
-                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <div className="flex justify-center mb-4">
+                  <AlertTriangle className="h-12 w-12 text-yellow-500" />
+                </div>
+                <h3 className="text-2xl font-semibold">No resources found</h3>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  {searchQuery ? 
+                    `No resources match your search for "${searchQuery}"` : 
+                    "No resources found in the selected category"}
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
                   <Button 
                     onClick={handleClearSearch} 
                     variant="outline"
