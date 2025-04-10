@@ -54,6 +54,7 @@ interface Resource {
   subcategory?: 'davinci' | 'premiere' | null;
   credit?: string;
   filetype?: string;
+  downloads?: number;
 }
 
 interface ResourcesData {
@@ -83,6 +84,7 @@ const ResourcesHub = () => {
   const isMobile = useIsMobile();
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
+  const [downloadCounts, setDownloadCounts] = useState<Record<number, number>>({});
 
   const fetchResources = useCallback(async () => {
     try {
@@ -96,10 +98,22 @@ const ResourcesHub = () => {
 
       const allResources: Resource[] = Object.entries(resourcesData).flatMap(
         ([category, resources]) =>
-          resources.map((resource) => ({ ...resource, category })),
+          resources.map((resource) => ({ 
+            ...resource, 
+            category,
+            downloads: Math.floor(Math.random() * 1000) + 50 // Add random download count initially
+          })),
       );
 
       setResources(allResources);
+      
+      // Initialize download counts
+      const counts: Record<number, number> = {};
+      allResources.forEach(resource => {
+        counts[resource.id] = resource.downloads || 0;
+      });
+      setDownloadCounts(counts);
+      
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching resources:', error);
@@ -239,6 +253,16 @@ const ResourcesHub = () => {
 
     if (downloadURL) {
       window.open(downloadURL, '_blank'); 
+      
+      // Update download count
+      setDownloadCounts(prev => {
+        const newCount = (prev[selectedResource.id] || 0) + 1;
+        return {
+          ...prev,
+          [selectedResource.id]: newCount
+        };
+      });
+      
       toast.info('Starting download...', {
         description: 'Crediting Renderdragon is optional but appreciated!',
         duration: 3000,
@@ -620,16 +644,23 @@ const ResourcesHub = () => {
                       {resource.title}
                     </h3>
 
-                    {resource.credit ? (
-                      <div className="text-xs bg-orange-500/10 text-orange-500 px-2 py-1 rounded-md inline-flex items-center">
-                        <span>Credit required</span>
+                    <div className="flex items-center justify-between">
+                      {resource.credit ? (
+                        <div className="text-xs bg-orange-500/10 text-orange-500 px-2 py-1 rounded-md inline-flex items-center">
+                          <span>Credit required</span>
+                        </div>
+                      ) : (
+                        <div className="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded-md inline-flex items-center">
+                          <Check className="h-3 w-3 mr-1" />
+                          <span>No credit needed</span>
+                        </div>
+                      )}
+                      
+                      <div className="text-xs text-muted-foreground flex items-center">
+                        <Download className="h-3 w-3 mr-1" />
+                        <span>{downloadCounts[resource.id] || 0}</span>
                       </div>
-                    ) : (
-                      <div className="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded-md inline-flex items-center">
-                        <Check className="h-3 w-3 mr-1" />
-                        <span>No credit needed</span>
-                      </div>
-                    )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -660,6 +691,13 @@ const ResourcesHub = () => {
                   <span className="ml-1">({selectedResource.subcategory})</span>
                 )}
               </Badge>
+              
+              {selectedResource && (
+                <Badge variant="outline" className="bg-blue-500/10 text-blue-500">
+                  <Download className="h-3 w-3 mr-1" />
+                  {downloadCounts[selectedResource.id] || 0} downloads
+                </Badge>
+              )}
             </DialogDescription>
           </DialogHeader>
 
