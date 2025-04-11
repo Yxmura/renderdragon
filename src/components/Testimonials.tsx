@@ -13,9 +13,9 @@ interface Testimonial {
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: "Alex Johnson",
+    name: "yFury",
     role: "Minecraft YouTuber",
-    content: "Creator On Wheels has completely transformed my content creation process. The free resources and tools have saved me countless hours and helped me grow my channel!",
+    content: "I love the assets cause they are harddd to find",
     avatar: "https://i.pravatar.cc/150?img=1"
   },
   {

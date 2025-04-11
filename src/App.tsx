@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import VercelAnalytics from "@/components/VercelAnalytics";
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import CountdownOverlay from "@/components/CountdownOverlay";
 
 import Index from "./pages/Index";
@@ -34,6 +35,7 @@ const App = () => (
     <KBarProvider>
       <TooltipProvider>
         <VercelAnalytics />
+        <SpeedInsights />
         <Toaster />
         <Sonner position="bottom-right" />
         <BrowserRouter>
