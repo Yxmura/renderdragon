@@ -23,6 +23,7 @@ import {
   ExternalLink,
   Search,
   AlertTriangle,
+  FolderX,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
@@ -85,9 +86,11 @@ const ResourcesHub = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [downloadCounts, setDownloadCounts] = useState<Record<number, number>>({});
+  const [lastAction, setLastAction] = useState<string>(''); // Track the last filtering action
 
   const fetchResources = useCallback(async () => {
     try {
+      setIsLoading(true);
       const response = await fetch('/resources.json');
       if (!response.ok) {
         throw new Error(
@@ -100,7 +103,7 @@ const ResourcesHub = () => {
         ([category, resources]) =>
           resources.map((resource) => ({ 
             ...resource, 
-            category,
+            category: category as 'music' | 'sfx' | 'image' | 'animations' | 'fonts' | 'presets',
             downloads: Math.floor(Math.random() * 1000) + 50 // Add random download count initially
           })),
       );
@@ -146,17 +149,28 @@ const ResourcesHub = () => {
   const handleSearchSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     setIsSearching(true);
+    setLastAction('search');
   };
 
   const handleClearSearch = () => {
     setSearchQuery('');
-    setSelectedCategory(null);
-    setSelectedSubcategory(null);
     setIsSearching(false);
+    setLastAction('clear');
+  };
+
+  const handleCategoryChange = (category: string | null) => {
+    setSelectedCategory(category);
+    // When changing category, reset subcategory unless we're selecting 'presets'
+    if (category !== 'presets') {
+      setSelectedSubcategory(null);
+    }
+    setLastAction('category');
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+    setLastAction('search');
+    
     if (e.target.value === '') {
       setIsSearching(false);
     } else {
@@ -164,66 +178,24 @@ const ResourcesHub = () => {
     }
   };
 
-  const searchFilter = useCallback((resource: Resource, query: string) => {
-    if (!query) return true;
-    
-    const searchTerms = query.toLowerCase().split(/\s+/).filter(term => term.length > 1);
-    if (searchTerms.length === 0) return true;
-    
-    const titleWords = resource.title.toLowerCase().split(/\s+/);
-    const categoryValue = resource.category.toLowerCase();
-    const subcategoryValue = resource.subcategory?.toLowerCase() || '';
-    
-    const exactTitleMatch = titleWords.some(word => 
-      searchTerms.some(term => word === term)
-    );
-    
-    if (exactTitleMatch) return true;
-    
-    const titleMatches = titleWords.some(word => 
-      searchTerms.some(term => word.includes(term))
-    );
-    
-    const categoryMatches = searchTerms.some(term => 
-      categoryValue.includes(term)
-    );
-    
-    const subcategoryMatches = searchTerms.some(term => 
-      subcategoryValue.includes(term)
-    );
-    
-    return titleMatches || categoryMatches || subcategoryMatches;
-  }, []);
-
-  const filteredResources = useCallback(
-    (resource: Resource) => {
-      // If no search query and no category selected, show all resources
-      if (!searchQuery && !selectedCategory) return true;
+  // Determine which resources to display based on filters
+  const filteredResources = useMemo(() => {
+    return resources.filter((resource) => {
+      // Apply search query filter
+      const matchesSearch = !isSearching || 
+        resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        resource.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (resource.subcategory || '').toLowerCase().includes(searchQuery.toLowerCase());
       
-      let matchesSearch = true;
-      if (searchQuery) {
-        matchesSearch = resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        resource.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        (resource.subcategory || '').toLowerCase().includes(searchQuery.toLowerCase());
-      }
+      // Apply category filter
+      const matchesCategory = !selectedCategory || resource.category === selectedCategory;
       
-      const matchesCategory = selectedCategory
-        ? resource.category === selectedCategory
-        : true;
-
-      const matchesSubcategory = selectedSubcategory
-        ? resource.subcategory === selectedSubcategory
-        : true;
-
+      // Apply subcategory filter
+      const matchesSubcategory = !selectedSubcategory || resource.subcategory === selectedSubcategory;
+      
       return matchesSearch && matchesCategory && matchesSubcategory;
-    },
-    [searchQuery, selectedCategory, selectedSubcategory]
-  );
-
-  const filteredResourcesList = useMemo(
-    () => resources.filter(filteredResources),
-    [resources, filteredResources]
-  );
+    });
+  }, [resources, selectedCategory, selectedSubcategory, searchQuery, isSearching]);
 
   const copyCredit = () => {
     if (!selectedResource?.credit) return;
@@ -370,6 +342,16 @@ const ResourcesHub = () => {
     return <p>Preview not available for this type.</p>;
   };
 
+  // Check if we have resources in the current selected category
+  const hasCategoryResources = useMemo(() => {
+    if (!selectedCategory) return true;
+    return resources.some(resource => resource.category === selectedCategory);
+  }, [resources, selectedCategory]);
+
+  // Either no resources match filters, or the selected category has no resources
+  const shouldShowNoResourcesMessage = filteredResources.length === 0 || 
+                                      (selectedCategory && !hasCategoryResources);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -426,17 +408,14 @@ const ResourcesHub = () => {
                       <div className="flex flex-col gap-2">
                         <Button
                           variant={selectedCategory === null ? 'default' : 'outline'}
-                          onClick={() => {
-                            setSelectedCategory(null);
-                            setSelectedSubcategory(null);
-                          }}
+                          onClick={() => handleCategoryChange(null)}
                           className="justify-start pixel-corners"
                         >
                           All
                         </Button>
                         <Button
                           variant={selectedCategory === 'music' ? 'default' : 'outline'}
-                          onClick={() => setSelectedCategory('music')}
+                          onClick={() => handleCategoryChange('music')}
                           className="justify-start pixel-corners"
                         >
                           <Music className="h-4 w-4 mr-2" />
@@ -444,7 +423,7 @@ const ResourcesHub = () => {
                         </Button>
                         <Button
                           variant={selectedCategory === 'sfx' ? 'default' : 'outline'}
-                          onClick={() => setSelectedCategory('sfx')}
+                          onClick={() => handleCategoryChange('sfx')}
                           className="justify-start pixel-corners"
                         >
                           <FileAudio className="h-4 w-4 mr-2" />
@@ -452,7 +431,7 @@ const ResourcesHub = () => {
                         </Button>
                         <Button
                           variant={selectedCategory === 'image' ? 'default' : 'outline'}
-                          onClick={() => setSelectedCategory('image')}
+                          onClick={() => handleCategoryChange('image')}
                           className="justify-start pixel-corners"
                         >
                           <Image className="h-4 w-4 mr-2" />
@@ -460,7 +439,7 @@ const ResourcesHub = () => {
                         </Button>
                         <Button
                           variant={selectedCategory === 'animations' ? 'default' : 'outline'}
-                          onClick={() => setSelectedCategory('animations')}
+                          onClick={() => handleCategoryChange('animations')}
                           className="justify-start pixel-corners"
                         >
                           <Video className="h-4 w-4 mr-2" />
@@ -468,7 +447,7 @@ const ResourcesHub = () => {
                         </Button>
                         <Button
                           variant={selectedCategory === 'fonts' ? 'default' : 'outline'}
-                          onClick={() => setSelectedCategory('fonts')}
+                          onClick={() => handleCategoryChange('fonts')}
                           className="justify-start pixel-corners"
                         >
                           <FileText className="h-4 w-4 mr-2" />
@@ -476,7 +455,7 @@ const ResourcesHub = () => {
                         </Button>
                         <Button
                           variant={selectedCategory === 'presets' ? 'default' : 'outline'}
-                          onClick={() => setSelectedCategory('presets')}
+                          onClick={() => handleCategoryChange('presets')}
                           className="justify-start pixel-corners"
                         >
                           <FileText className="h-4 w-4 mr-2" />
@@ -508,10 +487,7 @@ const ResourcesHub = () => {
                   <Button
                     variant={selectedCategory === null ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => {
-                      setSelectedCategory(null);
-                      setSelectedSubcategory(null);
-                    }}
+                    onClick={() => handleCategoryChange(null)}
                     className="h-10 pixel-corners"
                   >
                     All
@@ -519,7 +495,7 @@ const ResourcesHub = () => {
                   <Button
                     variant={selectedCategory === 'music' ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setSelectedCategory('music')}
+                    onClick={() => handleCategoryChange('music')}
                     className="h-10 pixel-corners"
                   >
                     Music
@@ -527,7 +503,7 @@ const ResourcesHub = () => {
                   <Button
                     variant={selectedCategory === 'sfx' ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setSelectedCategory('sfx')}
+                    onClick={() => handleCategoryChange('sfx')}
                     className="h-10 pixel-corners"
                   >
                     SFX
@@ -535,7 +511,7 @@ const ResourcesHub = () => {
                   <Button
                     variant={selectedCategory === 'image' ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setSelectedCategory('image')}
+                    onClick={() => handleCategoryChange('image')}
                     className="h-10 pixel-corners"
                   >
                     Images
@@ -543,7 +519,7 @@ const ResourcesHub = () => {
                   <Button
                     variant={selectedCategory === 'animations' ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setSelectedCategory('animations')}
+                    onClick={() => handleCategoryChange('animations')}
                     className="h-10 pixel-corners"
                   >
                     Animations
@@ -551,7 +527,7 @@ const ResourcesHub = () => {
                   <Button
                     variant={selectedCategory === 'fonts' ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setSelectedCategory('fonts')}
+                    onClick={() => handleCategoryChange('fonts')}
                     className="h-10 pixel-corners"
                   >
                     Fonts
@@ -559,7 +535,7 @@ const ResourcesHub = () => {
                   <Button
                     variant={selectedCategory === 'presets' ? 'default' : 'outline'}
                     size="sm"
-                    onClick={() => setSelectedCategory('presets')}
+                    onClick={() => handleCategoryChange('presets')}
                     className="h-10 pixel-corners"
                   >
                     Presets
@@ -589,16 +565,18 @@ const ResourcesHub = () => {
                   Loading resources...
                 </p>
               </div>
-            ) : filteredResourcesList.length === 0 ? (
+            ) : filteredResources.length === 0 ? (
               <div className="text-center py-16 space-y-6">
                 <div className="flex justify-center mb-4">
-                  <AlertTriangle className="h-12 w-12 text-yellow-500" />
+                  <FolderX className="h-12 w-12 text-yellow-500" />
                 </div>
                 <h3 className="text-2xl font-semibold">No resources found</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  {searchQuery ? 
+                  {isSearching ? 
                     `No resources match your search for "${searchQuery}"` : 
-                    "No resources found in the selected category"}
+                    selectedCategory ? 
+                      `No resources found in the "${selectedCategory}" category` :
+                      "No resources found with the current filters"}
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
                   <Button 
@@ -607,7 +585,7 @@ const ResourcesHub = () => {
                     className="pixel-corners"
                   >
                     <X className="mr-2 h-4 w-4" />
-                    Clear Search
+                    Clear Filters
                   </Button>
                   <Button 
                     className="pixel-corners bg-cow-purple hover:bg-cow-purple/80"
@@ -620,7 +598,7 @@ const ResourcesHub = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {filteredResourcesList.map((resource) => (
+                {filteredResources.map((resource) => (
                   <div
                     key={`resource-${resource.id}`}
                     onClick={() => setSelectedResource(resource)}
