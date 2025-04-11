@@ -46,14 +46,19 @@ const ResourceDetailDialog = ({
   // Load font when a font resource is selected
   useEffect(() => {
     if (resource?.category === 'fonts' && resource.title && !loadedFonts.includes(resource.title)) {
-      const fontUrl = `https://github.com/Yxmura/resources_renderdragon/raw/refs/heads/main/fonts/${resource.title}.${resource.filetype}`;
+      const titleLowered = resource.title
+        .toLowerCase()
+        .replace(/ /g, '%20');
+      
+      // Standard URL for fonts
+      const fontUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
       
       // Create @font-face
       const fontFace = new FontFace(resource.title, `url(${fontUrl})`);
       
       fontFace.load().then((loadedFont) => {
         document.fonts.add(loadedFont);
-        setLoadedFonts(prev => [...prev, resource.title]);
+        setLoadedFonts([...loadedFonts, resource.title]);
       }).catch(err => {
         console.error('Error loading font:', err);
       });
@@ -118,12 +123,7 @@ const ResourceDetailDialog = ({
       .toLowerCase()
       .replace(/ /g, '%20');
     
-    // Special handling for fonts
-    if (resource.category === 'fonts') {
-      return `https://github.com/Yxmura/resources_renderdragon/raw/refs/heads/main/fonts/${titleLowered}.${resource.filetype}`;
-    }
-    
-    // Default URL structure for other resource types
+    // Same URL structure for all resource types
     return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
   };
 

@@ -6,6 +6,7 @@ import { useKBar } from 'kbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { useResources } from '@/hooks/useResources';
+import { Resource } from '@/types/resources';
 import ResourceFilters from '@/components/resources/ResourceFilters';
 import ResourcesList from '@/components/resources/ResourcesList';
 import ResourceDetailDialog from '@/components/resources/ResourceDetailDialog';

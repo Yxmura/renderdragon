@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Resource, ResourcesData } from '@/types/resources';
 
@@ -123,12 +122,7 @@ export const useResources = () => {
       .toLowerCase()
       .replace(/ /g, '%20');
     
-    // Special handling for fonts
-    if (resource.category === 'fonts') {
-      return `https://github.com/Yxmura/resources_renderdragon/raw/refs/heads/main/fonts/${titleLowered}.${resource.filetype}`;
-    }
-    
-    // Default URL structure for other resource types
+    // Same URL structure for all resource types
     return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
   };
 
