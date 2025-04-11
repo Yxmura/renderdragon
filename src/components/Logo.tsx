@@ -18,11 +18,11 @@ export const Logo = ({ className = "", size = "md" }: { className?: string, size
     return () => clearInterval(timer);
   }, []);
 
-  // Determine dimensions based on size prop
+  // Reduce dimensions slightly for a smaller container
   const dimensions = {
-    sm: "w-8 h-8",
-    md: "w-10 h-10",
-    lg: "w-12 h-12"
+    sm: "w-6 h-6",  // Reduced from w-8 h-8
+    md: "w-8 h-8",  // Reduced from w-10 h-10
+    lg: "w-10 h-10" // Reduced from w-12 h-12
   }[size];
 
   return (

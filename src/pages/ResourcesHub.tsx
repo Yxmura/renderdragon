@@ -87,6 +87,7 @@ const ResourcesHub = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [downloadCounts, setDownloadCounts] = useState<Record<number, number>>({});
   const [lastAction, setLastAction] = useState<string>(''); // Track the last filtering action
+  const [loadedFonts, setLoadedFonts] = useState<string[]>([]);
 
   const fetchResources = useCallback(async () => {
     try {
@@ -104,7 +105,7 @@ const ResourcesHub = () => {
           resources.map((resource) => ({ 
             ...resource, 
             category: category as 'music' | 'sfx' | 'image' | 'animations' | 'fonts' | 'presets',
-            downloads: Math.floor(Math.random() * 1000) + 50 // Add random download count initially
+            downloads: 0 // Set all resources to have 0 downloads by default
           })),
       );
 
@@ -113,7 +114,7 @@ const ResourcesHub = () => {
       // Initialize download counts
       const counts: Record<number, number> = {};
       allResources.forEach(resource => {
-        counts[resource.id] = resource.downloads || 0;
+        counts[resource.id] = 0; // Set all resources to have 0 downloads initially
       });
       setDownloadCounts(counts);
       
@@ -145,6 +146,23 @@ const ResourcesHub = () => {
       query.inputRefSetter(null);
     };
   }, [query, fetchResources]);
+
+  // Load font when a font resource is selected
+  useEffect(() => {
+    if (selectedResource?.category === 'fonts' && selectedResource.title && !loadedFonts.includes(selectedResource.title)) {
+      const fontUrl = `https://github.com/Yxmura/resources_renderdragon/raw/refs/heads/main/fonts/${selectedResource.title}.${selectedResource.filetype}`;
+      
+      // Create @font-face
+      const fontFace = new FontFace(selectedResource.title, `url(${fontUrl})`);
+      
+      fontFace.load().then((loadedFont) => {
+        document.fonts.add(loadedFont);
+        setLoadedFonts(prev => [...prev, selectedResource.title]);
+      }).catch(err => {
+        console.error('Error loading font:', err);
+      });
+    }
+  }, [selectedResource, loadedFonts]);
 
   const handleSearchSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -212,9 +230,17 @@ const ResourcesHub = () => {
 
   const getDownloadURL = (resource: Resource) => {
     if (!resource || !resource.filetype) return '';
+    
     const titleLowered = resource.title
       .toLowerCase()
       .replace(/ /g, '%20');
+    
+    // Special handling for fonts
+    if (resource.category === 'fonts') {
+      return `https://github.com/Yxmura/resources_renderdragon/raw/refs/heads/main/fonts/${titleLowered}.${resource.filetype}`;
+    }
+    
+    // Default URL structure for other resource types
     return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
   };
 
@@ -327,14 +353,9 @@ const ResourcesHub = () => {
           }}
         >
           The quick brown fox jumps over the lazy dog.
-          <style>
-            {`
-              @font-face {
-                font-family: '${resource.title}';
-                src: url('${downloadURL}') format('${resource.filetype}');
-              }
-            `}
-          </style>
+          <div className="text-xs mt-2 opacity-70">
+            Font: {resource.title}
+          </div>
         </div>
       );
     }
