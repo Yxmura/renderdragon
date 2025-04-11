@@ -7,38 +7,39 @@ interface Stat {
   label: string;
   icon: React.ElementType;
   suffix?: string;
+  dynamicFetch?: boolean;
 }
-
-const stats: Stat[] = [
-  {
-    value: 20000,
-    label: 'Content Creators',
-    icon: Users,
-    suffix: '+'
-  },
-  {
-    value: 125000,
-    label: 'Assets Downloaded',
-    icon: Download,
-    suffix: '+'
-  },
-  {
-    value: 4.8,
-    label: 'Average Rating',
-    icon: Star,
-    suffix: '/5'
-  },
-  {
-    value: 98,
-    label: 'Satisfaction Rate',
-    icon: ThumbsUp,
-    suffix: '%'
-  }
-];
 
 const Stats = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [counts, setCounts] = useState<number[]>(stats.map(() => 0));
+  const [stats, setStats] = useState<Stat[]>([
+    {
+      value: 20000,
+      label: 'Content Creators',
+      icon: Users,
+      suffix: '+'
+    },
+    {
+      value: 0, // Will be fetched dynamically
+      label: 'Assets Downloaded',
+      icon: Download,
+      suffix: '+',
+      dynamicFetch: true
+    },
+    {
+      value: 4.8,
+      label: 'Average Rating',
+      icon: Star,
+      suffix: '/5'
+    },
+    {
+      value: 98,
+      label: 'Satisfaction Rate',
+      icon: ThumbsUp,
+      suffix: '%'
+    }
+  ]);
+  const [counts, setCounts] = useState<number[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
   const countingStarted = useRef(false);
 
@@ -48,6 +49,44 @@ const Stats = () => {
     }
     return num.toString();
   };
+
+  useEffect(() => {
+    // Fetch dynamic data (downloads count)
+    const fetchDownloadsCount = async () => {
+      try {
+        const response = await fetch('/api/stats/downloads');
+        const data = await response.json();
+        
+        // Update the downloads count in the stats array
+        setStats(prevStats => {
+          return prevStats.map(stat => {
+            if (stat.dynamicFetch) {
+              return { ...stat, value: data.downloads || 125000 }; // fallback to 125000 if API fails
+            }
+            return stat;
+          });
+        });
+      } catch (error) {
+        console.error('Failed to fetch download stats:', error);
+        // Set a fallback value if fetch fails
+        setStats(prevStats => {
+          return prevStats.map(stat => {
+            if (stat.dynamicFetch) {
+              return { ...stat, value: 125000 };
+            }
+            return stat;
+          });
+        });
+      }
+    };
+
+    fetchDownloadsCount();
+  }, []);
+
+  useEffect(() => {
+    // Initialize counts array based on stats length
+    setCounts(stats.map(() => 0));
+  }, [stats]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -96,7 +135,7 @@ const Stats = () => {
         }, stepTime);
       });
     }
-  }, [isVisible]);
+  }, [isVisible, stats]);
 
   return (
     <section ref={sectionRef} className="py-20 bg-background">

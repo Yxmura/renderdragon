@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -14,29 +15,10 @@ const MusicCopyright = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<CopyrightResult | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [apiKeyStatus, setApiKeyStatus] = useState<'checking' | 'missing' | 'available'>('checking');
 
   useEffect(() => {
     document.title = 'Music Copyright Checker - Renderdragon';
-    checkApiKeys();
   }, []);
-
-  const checkApiKeys = async () => {
-    try {
-      const response = await fetch('/api/check-copyright-keys');
-      const data = await response.json();
-      setApiKeyStatus(data.keysAvailable ? 'available' : 'missing');
-      
-      if (!data.keysAvailable) {
-        toast.error("API keys missing", {
-          description: "Required API keys are not configured. Some features may be limited.",
-        });
-      }
-    } catch (error) {
-      console.error("Failed to check API keys:", error);
-      setApiKeyStatus('missing');
-    }
-  };
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
@@ -170,21 +152,6 @@ const MusicCopyright = () => {
               Check if a song is safe to use in your videos without copyright issues.
               Avoid strikes and claim problems before uploading your content.
             </p>
-            
-            {apiKeyStatus === 'missing' && (
-              <Alert className="mb-8 pixel-corners border-yellow-500">
-                <Info className="h-4 w-4 text-yellow-500" />
-                <AlertTitle className="text-yellow-500">API Keys Required</AlertTitle>
-                <AlertDescription>
-                  This tool requires API keys to be set in the .env file:
-                  <ul className="list-disc pl-5 mt-2">
-                    <li><code>VITE_YOUTUBE_API_KEY</code> - For YouTube data</li>
-                    <li><code>VITE_CONTENT_ID_API_KEY</code> - For copyright detection</li>
-                    <li><code>VITE_AUDIO_DB_API_KEY</code> - For music database access</li>
-                  </ul>
-                </AlertDescription>
-              </Alert>
-            )}
             
             <Alert className="mb-8 pixel-corners">
               <Info className="h-4 w-4" />

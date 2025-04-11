@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
+import CountdownService from '@/services/CountdownService';
 
 interface CountdownOverlayProps {
   targetDate: Date;
@@ -14,11 +15,24 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
   const [seconds, setSeconds] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const isMobile = useIsMobile();
+  const countdownService = CountdownService.getInstance();
 
   useEffect(() => {
+    // Check if the countdown should be visible
+    const shouldBeVisible = countdownService.getIsVisible();
+    setIsVisible(shouldBeVisible);
+
     const interval = setInterval(() => {
       const now = new Date();
       const difference = targetDate.getTime() - now.getTime();
+      
+      // If the target date has passed, hide the countdown globally
+      if (difference <= 0) {
+        countdownService.setIsVisible(false);
+        setIsVisible(false);
+        clearInterval(interval);
+        return;
+      }
       
       const d = Math.floor(difference / (1000 * 60 * 60 * 24));
       const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -37,8 +51,17 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === 'm') {
+        // Check if admin password was previously entered
+        if (countdownService.getHasEnteredAdminPassword()) {
+          countdownService.setIsVisible(false);
+          setIsVisible(false);
+          return;
+        }
+        
         const password = prompt("Enter admin password:");
         if (password === 'admin') {
+          countdownService.setHasEnteredAdminPassword(true);
+          countdownService.setIsVisible(false);
           setIsVisible(false);
         }
       }

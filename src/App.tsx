@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import VercelAnalytics from "@/components/VercelAnalytics";
+import CountdownOverlay from "@/components/CountdownOverlay";
 
 import Index from "./pages/Index";
 import ResourcesHub from "./pages/ResourcesHub";
@@ -24,6 +25,9 @@ import NotFound from "./pages/NotFound";
 import { KBarProvider } from 'kbar';
 
 const queryClient = new QueryClient();
+
+// Set the launch date to May 1, 2025
+const launchDate = new Date('2025-05-01T00:00:00');
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -51,6 +55,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <CountdownOverlay targetDate={launchDate} />
         </BrowserRouter>
       </TooltipProvider>
     </KBarProvider>
