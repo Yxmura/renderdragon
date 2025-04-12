@@ -1,5 +1,5 @@
 
-import { YouTubeSearchResult, SpotifyTrackInfo, VideoInfo, ChannelInfo } from '@/types/copyright';
+import { YouTubeSearchResult, SpotifyTrackInfo, VideoInfo, ChannelInfo, CopyrightResult } from '@/types/copyright';
 
 // YouTube URL pattern
 export const YOUTUBE_URL_PATTERN = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
@@ -403,5 +403,172 @@ export async function getChannelIdFromHandle(handle: string): Promise<{ channelI
   } catch (error) {
     console.error('Error getting channel ID from handle:', error);
     return null;
+  }
+}
+
+// New function to check copyright status that MusicCopyright.tsx needs
+export async function checkCopyrightStatus(query: string, isYouTubeUrl: boolean = false): Promise<CopyrightResult> {
+  try {
+    // Generate a random id for the result
+    const id = Math.random().toString(36).substring(2, 15);
+    
+    if (isYouTubeUrl) {
+      // Handle YouTube URL check
+      const youtubeInfo = await getYouTubeInfo(query);
+      
+      if (!youtubeInfo) {
+        return {
+          id,
+          title: "Unknown",
+          artist: "Unknown",
+          copyrightStatus: 'unknown',
+          details: "Could not retrieve information from YouTube",
+          source: "YouTube (Error)",
+          status: 'error',
+          message: "Failed to analyze video"
+        };
+      }
+      
+      // Determine copyright status from YouTube data
+      let copyrightStatus: 'safe' | 'likely_safe' | 'claim' | 'likely_claim' | 'block' | 'likely_block' | 'unknown';
+      let details = "";
+      
+      if (!youtubeInfo.is_copyrighted) {
+        if (youtubeInfo.license.toLowerCase().includes('creative commons')) {
+          copyrightStatus = 'safe';
+          details = "This video is under Creative Commons license and should be safe to use with proper attribution.";
+        } else {
+          copyrightStatus = 'likely_safe';
+          details = "This video appears to be free to use based on its description, but verify with the creator.";
+        }
+      } else {
+        // Check for certain keywords that indicate different levels of copyright
+        const description = youtubeInfo.description.toLowerCase();
+        const title = youtubeInfo.title.toLowerCase();
+        
+        if (
+          description.includes('copyright strike') || 
+          description.includes('not allowed') || 
+          description.includes('will be blocked')
+        ) {
+          copyrightStatus = 'block';
+          details = "This video contains content that would likely result in a copyright strike.";
+        } else if (
+          description.includes('copyright claim') || 
+          description.includes('monetized by') || 
+          description.includes('will be claimed')
+        ) {
+          copyrightStatus = 'claim';
+          details = "This video contains content that would likely result in a content ID claim.";
+        } else {
+          copyrightStatus = 'likely_claim';
+          details = "This video is likely protected by copyright and may result in claims if used.";
+        }
+      }
+      
+      return {
+        id,
+        title: youtubeInfo.title,
+        artist: youtubeInfo.channel,
+        album: "YouTube Video",
+        copyrightStatus,
+        details,
+        source: "YouTube Analysis",
+        previewUrl: youtubeInfo.url,
+        matchDetails: [
+          { type: "License", description: youtubeInfo.license },
+          { type: "Upload Date", description: youtubeInfo.upload_date },
+          { type: "View Count", description: youtubeInfo.view_count.toString() }
+        ],
+        recommendations: [
+          "Always check the video description for specific usage permissions",
+          "Contact the creator directly for explicit permission when in doubt",
+          "Attribution is often required even for 'free to use' content"
+        ]
+      };
+      
+    } else {
+      // Handle Spotify/music track check
+      const spotifyInfo = await searchSpotifyTrack(query);
+      
+      if (!spotifyInfo) {
+        return {
+          id,
+          title: query,
+          artist: "Unknown",
+          copyrightStatus: 'unknown',
+          details: "Could not find this song in music databases",
+          source: "Music Search",
+          status: 'error',
+          message: "No matching songs found"
+        };
+      }
+      
+      // Determine copyright status from Spotify data
+      let copyrightStatus: 'safe' | 'likely_safe' | 'claim' | 'likely_claim' | 'block' | 'likely_block' | 'unknown';
+      let details = "";
+      
+      if (!spotifyInfo.is_copyrighted) {
+        copyrightStatus = 'likely_safe';
+        details = "This track appears to be under a permissive license and may be safe to use with proper attribution.";
+      } else {
+        // Most commercial music will be copyrighted
+        copyrightStatus = 'claim';
+        details = "This is a commercial track that will likely result in Content ID claims if used in videos.";
+      }
+      
+      // Add more specific details based on artist reputation
+      const artist = spotifyInfo.artist.toLowerCase();
+      if (
+        artist.includes('epidemic') || 
+        artist.includes('artlist') || 
+        artist.includes('audio library') ||
+        artist.includes('no copyright')
+      ) {
+        copyrightStatus = 'likely_safe';
+        details = "This appears to be from a royalty-free music provider. If you have a valid subscription, it may be safe to use.";
+      } else if (
+        artist.includes('universal') || 
+        artist.includes('sony') || 
+        artist.includes('warner')
+      ) {
+        copyrightStatus = 'likely_block';
+        details = "This track is from a major label and will likely result in copyright strikes if used without permission.";
+      }
+      
+      return {
+        id,
+        title: spotifyInfo.title,
+        artist: spotifyInfo.artist,
+        album: spotifyInfo.album,
+        releaseYear: new Date(spotifyInfo.release_date).getFullYear(),
+        copyrightStatus,
+        details,
+        source: "Spotify",
+        previewUrl: spotifyInfo.spotify_url,
+        matchDetails: [
+          { type: "Album", description: spotifyInfo.album },
+          { type: "Release Date", description: spotifyInfo.release_date },
+          { type: "Copyright Text", description: spotifyInfo.copyright_text }
+        ],
+        recommendations: [
+          "Consider using royalty-free alternatives with similar style",
+          "YouTube Audio Library offers free music for creators",
+          "Subscription services like Epidemic Sound provide cleared music"
+        ]
+      };
+    }
+    
+  } catch (error) {
+    console.error('Error checking copyright status:', error);
+    return {
+      id: Math.random().toString(36).substring(2, 15),
+      title: query,
+      artist: "Error",
+      copyrightStatus: 'unknown',
+      details: "An error occurred while checking copyright status",
+      status: 'error',
+      message: error instanceof Error ? error.message : "Unknown error"
+    };
   }
 }

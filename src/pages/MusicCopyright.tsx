@@ -8,7 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import WaveSurferPlayer from '@/components/WaveSurferPlayer';
-import { checkCopyrightStatus, extractYouTubeID, CopyrightResult } from '@/utils/copyrightChecker';
+import { checkCopyrightStatus, extractYouTubeID } from '@/utils/copyrightChecker';
+import { CopyrightResult } from '@/types/copyright';
 
 const MusicCopyright = () => {
   const [searchQuery, setSearchQuery] = useState('');
