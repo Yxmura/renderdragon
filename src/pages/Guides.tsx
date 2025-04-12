@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import { ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import GuideCompleteButton from '@/components/GuideCompleteButton';
 
 interface GuideStep {
   title: string;
@@ -253,14 +254,17 @@ const Guides = () => {
                     Previous
                   </Button>
                   
-                  <Button 
-                    className="pixel-btn-primary"
-                    onClick={handleNextStep}
-                    disabled={currentStep === selectedGuide.steps.length - 1}
-                  >
-                    Next
-                    <ChevronRight className="h-4 w-4 ml-2" />
-                  </Button>
+                  {currentStep === selectedGuide.steps.length - 1 ? (
+                    <GuideCompleteButton guideId={selectedGuide.id.toString()} />
+                  ) : (
+                    <Button 
+                      className="pixel-btn-primary"
+                      onClick={handleNextStep}
+                    >
+                      Next
+                      <ChevronRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

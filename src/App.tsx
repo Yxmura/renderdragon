@@ -14,7 +14,6 @@ import Contact from "./pages/Contact";
 import BackgroundGenerator from "./pages/BackgroundGenerator";
 import YouTubeDownloader from "./pages/YouTubeDownloader";
 import MusicCopyright from "./pages/MusicCopyright";
-import AiTitleHelper from "./pages/AiTitleHelper";
 import Guides from "./pages/Guides";
 import YouTubeVideos from "./pages/YouTubeVideos";
 import DiscordServers from "./pages/DiscordServers";
@@ -48,7 +47,7 @@ const App = () => (
             <Route path="/discord-servers" element={<DiscordServers />} />
             <Route path="/youtube-downloader" element={<YouTubeDownloader />} />
             <Route path="/music-copyright" element={<MusicCopyright />} />
-            <Route path="/ai-title-helper" element={<AiTitleHelper />} />
+            <Route path="/ai-title-helper" element={<Construction />} />
             <Route path="/background-generator" element={<BackgroundGenerator />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/tos" element={<TOS />} />
