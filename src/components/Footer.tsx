@@ -1,6 +1,7 @@
+
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, ExternalLink, Github, Twitter, Youtube, Discord } from 'lucide-react';
+import { ShoppingCart, ExternalLink, Github, Twitter, Youtube, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import Logo from './Logo';
@@ -76,7 +77,7 @@ const Footer = () => {
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                 aria-label="Discord"
               >
-                <Discord className="h-5 w-5" />
+                <MessageSquare className="h-5 w-5" />
               </a>
               
               <a 
