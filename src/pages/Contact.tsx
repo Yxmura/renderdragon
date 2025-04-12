@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { Copy, Mail, Check, Github, Globe } from 'lucide-react';
+import { Copy, Mail, Check, Github, Globe, ExternalLink } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -56,15 +55,6 @@ const teamMembers: TeamMember[] = [
       discord: 'https://discordapp.com/users/987323487343493191'
     }
   },
-  // {
-  //   name: 'Skibidi Toilet',
-  //   role: 'Rizzler',
-  //   avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  //   socials: {
-  //     github: 'https://github.com',
-  //     discord: 'https://discord.com'
-  //   }
-  // }
 ];
 
 const Contact = () => {
@@ -141,13 +131,7 @@ const Contact = () => {
                   className="pixel-btn-primary inline-flex items-center space-x-2"
                 >
                   <span>Join Discord</span>
-                  <svg 
-                    viewBox="0 0 24 24" 
-                    className="h-4 w-4" 
-                    fill="currentColor"
-                  >
-                    <path d="M18.75 3.75H5.25a1.5 1.5 0 00-1.5 1.5v13.5a1.5 1.5 0 001.5 1.5h4.5l-1.5 3h7.5l-1.5-3h4.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5zM14.25 18h-4.5v-1.5h4.5V18zm4.5-3h-13.5V5.25h13.5V15z" />
-                  </svg>
+                  <ExternalLink className="h-4 w-4" />
                 </a>
               </div>
               
