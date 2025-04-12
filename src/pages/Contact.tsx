@@ -1,9 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { Copy, Mail, Check, Github, Globe } from 'lucide-react';
-import { 
-  ExternalLink as PixelExternalLink
-} from 'pixelarticons';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -144,8 +141,12 @@ const Contact = () => {
                   className="pixel-btn-primary inline-flex items-center space-x-2"
                 >
                   <span>Join Discord</span>
-                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
-                    <PixelExternalLink />
+                  <svg 
+                    viewBox="0 0 24 24" 
+                    className="h-4 w-4" 
+                    fill="currentColor"
+                  >
+                    <path d="M18.75 3.75H5.25a1.5 1.5 0 00-1.5 1.5v13.5a1.5 1.5 0 001.5 1.5h4.5l-1.5 3h7.5l-1.5-3h4.5a1.5 1.5 0 001.5-1.5V5.25a1.5 1.5 0 00-1.5-1.5zM14.25 18h-4.5v-1.5h4.5V18zm4.5-3h-13.5V5.25h13.5V15z" />
                   </svg>
                 </a>
               </div>

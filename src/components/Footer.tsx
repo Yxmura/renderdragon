@@ -5,14 +5,9 @@ import { ShoppingCart, Github } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import Logo from './Logo';
-// Import icons from pixelarticons
-import { 
-  Twitter as PixelTwitter, 
-  Youtube as PixelYoutube, 
-  Chat as PixelChat,
-  ExternalLink as PixelExternalLink,
-  Globe as PixelGlobe
-} from 'pixelarticons';
+
+// Instead of trying to import the full components, we'll render the SVG paths directly
+// since pixelarticons doesn't export components directly
 
 const Footer = () => {
   const [cartClicked, setCartClicked] = useState(false);
@@ -106,8 +101,12 @@ const Footer = () => {
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                 aria-label="Twitter"
               >
-                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-                  <PixelTwitter />
+                <svg 
+                  viewBox="0 0 24 24" 
+                  className="h-5 w-5" 
+                  fill="currentColor"
+                >
+                  <path d="M19 6.529a4.5 4.5 0 01-2.25 1.125 2.25 2.25 0 00-3.826 1.596v.75a7 7 0 01-5.147-4.721s-3 3 1.5 7.5a7.522 7.522 0 01-4.5 1.5c4.5 3 10.5 0 10.5-6a2.23 2.23 0 00-.04-.413A3.97 3.97 0 0019 6.529z" />
                 </svg>
               </a>
               
@@ -118,8 +117,12 @@ const Footer = () => {
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                 aria-label="YouTube"
               >
-                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-                  <PixelYoutube />
+                <svg 
+                  viewBox="0 0 24 24" 
+                  className="h-5 w-5" 
+                  fill="currentColor"
+                >
+                  <path d="M12 6.75a54.75 54.75 0 016.75.37c1.05.15 1.88.98 2.03 2.03.15 1.13.22 2.28.22 3.42 0 1.14-.07 2.29-.22 3.42-.15 1.05-.98 1.88-2.03 2.03-2.23.3-4.5.41-6.75.37-2.25.04-4.52-.07-6.75-.37-1.05-.15-1.88-.98-2.03-2.03a21.86 21.86 0 01-.22-3.42c0-1.14.07-2.29.22-3.42.15-1.05.98-1.88 2.03-2.03 2.23-.3 4.5-.41 6.75-.37m-2.25 3l5.25 3-5.25 3V9.75z" />
                 </svg>
               </a>
               
