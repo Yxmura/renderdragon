@@ -43,7 +43,12 @@ const Stats = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const countingStarted = useRef(false);
 
-  const formatNumber = (num: number) => {
+  const formatNumber = (num: number | undefined) => {
+    // Guard against undefined values
+    if (num === undefined) {
+      return '0';
+    }
+    
     if (num >= 1000) {
       return (num / 1000).toFixed(1) + 'k';
     }
@@ -157,7 +162,7 @@ const Stats = () => {
               </div>
               
               <div className="text-3xl md:text-4xl font-vt323 mb-2 text-primary animate-glow">
-                {stat.value === 4.8 ? counts[index].toFixed(1) : formatNumber(counts[index])}{stat.suffix}
+                {stat.value === 4.8 ? (counts[index] !== undefined ? counts[index].toFixed(1) : '0.0') : formatNumber(counts[index])}{stat.suffix}
               </div>
               
               <div className="text-muted-foreground text-center">
