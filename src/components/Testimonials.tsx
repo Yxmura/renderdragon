@@ -14,23 +14,23 @@ const testimonials: Testimonial[] = [
   {
     id: 1,
     name: "yFury",
-    role: "Minecraft YouTuber",
+    role: "Minecraft YouTuber & Streamer",
     content: "I love the assets cause they are harddd to find",
-    avatar: "https://i.pravatar.cc/150?img=1"
+    avatar: "https://yt3.googleusercontent.com/3Cw6xKbuZAEP_H9nb4X4oTq1aTE0q9xw5HsVZaVkDnhCZa7cmk7YaGXt2VHsUtKAH4hdRzT1Qw=s160-c-k-c0x00ffffff-no-rj""
   },
   {
     id: 2,
-    name: "Samantha Lee",
-    role: "Twitch Streamer",
-    content: "I've been using the Background Generator tool for my streams and my viewers love the results. The fact that everything is free is just amazing!",
-    avatar: "https://i.pravatar.cc/150?img=5"
+    name: "Jkingnick",
+    role: "Minecraft Youtuber",
+    content: "Website looks very professional and seems to be a really cool idea for content creators like myself",
+    avatar: "https://yt3.googleusercontent.com/HFLfDyR4bTDYlIIXO09euXCQSBIgB6DlhXDbDA4kBKUW5lgbVtl2bo0ylnKjNwk_S4WyAitcbA=s160-c-k-c0x00ffffff-no-rj"
   },
   {
     id: 3,
-    name: "Marcus Chen",
-    role: "Content Creator",
-    content: "The YouTube Downloader and AI Title Helper have become essential tools in my workflow. I recommend COW to all my creator friends!",
-    avatar: "https://i.pravatar.cc/150?img=8"
+    name: "Yamura",
+    role: "Minecraft Youtuber",
+    content: "I searched for ages for a song copyright checker for Youtube, Renderdragon was the only good option!",
+    avatar: "https://cdn.discordapp.com/avatars/877933841170432071/ee01c70b15d37af8994abfe8c4bd4509.webp"
   }
 ];
 
