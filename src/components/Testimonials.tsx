@@ -16,7 +16,7 @@ const testimonials: Testimonial[] = [
     name: "yFury",
     role: "Minecraft YouTuber & Streamer",
     content: "I love the assets cause they are harddd to find",
-    avatar: "https://yt3.googleusercontent.com/3Cw6xKbuZAEP_H9nb4X4oTq1aTE0q9xw5HsVZaVkDnhCZa7cmk7YaGXt2VHsUtKAH4hdRzT1Qw=s160-c-k-c0x00ffffff-no-rj""
+    avatar: "https://yt3.googleusercontent.com/3Cw6xKbuZAEP_H9nb4X4oTq1aTE0q9xw5HsVZaVkDnhCZa7cmk7YaGXt2VHsUtKAH4hdRzT1Qw=s160-c-k-c0x00ffffff-no-rj"
   },
   {
     id: 2,
