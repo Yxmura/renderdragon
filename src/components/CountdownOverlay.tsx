@@ -1,8 +1,18 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from 'sonner';
 import CountdownService from '@/services/CountdownService';
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface CountdownOverlayProps {
   targetDate: Date;
@@ -14,14 +24,30 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+  const [password, setPassword] = useState('');
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+  const [passwordAttempts, setPasswordAttempts] = useState(0);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const countdownService = CountdownService.getInstance();
 
+  // Initialize visibility state from service
   useEffect(() => {
-    // Check if the countdown should be visible
     const shouldBeVisible = countdownService.getIsVisible();
     setIsVisible(shouldBeVisible);
 
+    // Add specific class to body when countdown is visible to prevent scrolling
+    if (shouldBeVisible) {
+      document.body.classList.add('countdown-active');
+    }
+
+    return () => {
+      document.body.classList.remove('countdown-active');
+    };
+  }, []);
+
+  // Setup countdown timer
+  useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
       const difference = targetDate.getTime() - now.getTime();
@@ -48,8 +74,10 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
     return () => clearInterval(interval);
   }, [targetDate]);
 
+  // Monitor for keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+      // Admin shortcut with 'm' key
       if (event.key === 'm') {
         // Check if admin password was previously entered
         if (countdownService.getHasEnteredAdminPassword()) {
@@ -58,12 +86,8 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
           return;
         }
         
-        const password = prompt("Enter admin password:");
-        if (password === 'admin') {
-          countdownService.setHasEnteredAdminPassword(true);
-          countdownService.setIsVisible(false);
-          setIsVisible(false);
-        }
+        // Open password dialog
+        setIsPasswordDialogOpen(true);
       }
     };
 
@@ -74,10 +98,71 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
     };
   }, []);
 
+  // Anti-tampering protection
+  useEffect(() => {
+    if (!isVisible || !overlayRef.current) return;
+    
+    // Monitor for style changes that might hide the overlay
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          const element = mutation.target as HTMLElement;
+          
+          // Check if someone tried to hide the overlay with style changes
+          if (element.style.display === 'none' || 
+              element.style.visibility === 'hidden' || 
+              element.style.opacity === '0' ||
+              parseFloat(element.style.opacity) === 0) {
+            
+            // Reset the styles
+            element.style.display = 'flex';
+            element.style.visibility = 'visible';
+            element.style.opacity = '1';
+            
+            // Show warning
+            toast.error("Nice try! The countdown can't be hidden that way.");
+          }
+        }
+      });
+    });
+    
+    observer.observe(overlayRef.current, { 
+      attributes: true, 
+      attributeFilter: ['style', 'class'] 
+    });
+    
+    return () => observer.disconnect();
+  }, [isVisible]);
+
+  const handlePasswordSubmit = () => {
+    if (countdownService.verifyAdminPassword(password)) {
+      setIsPasswordDialogOpen(false);
+      setIsVisible(false);
+      toast.success("Admin access granted");
+    } else {
+      setPasswordAttempts(prev => prev + 1);
+      setPassword('');
+      
+      if (passwordAttempts >= 2) {
+        setIsPasswordDialogOpen(false);
+        toast.error("Too many failed attempts. Try again later.");
+        // Reset attempts after a delay
+        setTimeout(() => setPasswordAttempts(0), 30000);
+      } else {
+        toast.error("Incorrect password");
+      }
+    }
+  };
+
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center">
+    <div 
+      id="countdown-overlay"
+      ref={overlayRef}
+      className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center"
+      style={{ pointerEvents: 'all' }}
+    >
       <div className="container max-w-5xl mx-auto px-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -153,6 +238,40 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
           </motion.p>
         </motion.div>
       </div>
+
+      {/* Admin Password Dialog */}
+      <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Admin Access</DialogTitle>
+          </DialogHeader>
+          <div className="p-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="admin-password">Enter Admin Password</Label>
+              <Input
+                id="admin-password"
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handlePasswordSubmit();
+                  }
+                }}
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsPasswordDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handlePasswordSubmit}>
+                Submit
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
