@@ -39,7 +39,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Yamura',
     role: 'Lead Programmer',
-    avatar: 'src="https://cdn.discordapp.com/avatars/877933841170432071/ee01c70b15d37af8994abfe8c4bd4509.webp',
+    avatar: 'https://yt3.googleusercontent.com/qtcPrp5zfc_nACl9Ck-8UjbRQs_uNHs4j3W4FKbMg4JhTYiGXu4B3EPaXmG7H9Hu2UuAAymN=s160-c-k-c0x00ffffff-no-rj',
     socials: {
       github: 'https://github.com/Yxmura',
       discord: 'https://discordapp.com/users/877933841170432071'
@@ -60,7 +60,7 @@ const teamMembers: TeamMember[] = [
 const Contact = () => {
   const [copied, setCopied] = useState(false);
   const [activeCard, setActiveCard] = useState<number | null>(null);
-  const email = 'renderdragon+contact@proton.me';
+  const email = 'renderdragon@proton.me';
 
   useEffect(() => {
     document.title = 'Contact Us - Renderdragon';
