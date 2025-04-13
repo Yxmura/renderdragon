@@ -121,7 +121,7 @@ class CountdownService {
     } catch (e) {
       // Fallback for environments without crypto.subtle
       console.error('Crypto API not available:', e);
-      return '';
+      throw e; // Re-throw error to handle properly in verifyAdminPassword
     }
   }
 
