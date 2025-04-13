@@ -35,37 +35,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Toggle } from "@/components/ui/toggle";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-
-const ImageRotator = ({ className = "" }: { className?: string }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const images = [
-    "/renderdragon0.png",
-    "/renderdragon1.png",
-    "/renderdragon2.png",
-    "/renderdragon3.png"
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 1000); // 1K ms = 1s so it chnages every s
-
-    return () => clearInterval(timer);
-  }, );
-
-  return (
-    <div className={`relative w-full h-full flex justify-center items-center  ${className}`}>
-      {images.map((src, index) => (
-        <img
-          key={index}
-          src={src}
-          alt={`Renderdragon Logo ${index}`}
-          className={`absolute w-full pl-[3px] h-full object-contain transition-opacity duration-300 ${currentImageIndex === index ? 'opacity-100' : 'opacity-0'}`}
-        />
-      ))}
-    </div>
-  );
-};
+import Logo from './Logo';
 
 interface NavLink {
   name: string;
@@ -182,7 +152,6 @@ const Navbar = () => {
     return dropdown.links.some(link => isLinkActive(link.path));
   };
 
-  // Updated navbar style to include blur effect when scrolled
   const navbarStyle = scrolled ? {
     backdropFilter: 'blur(10px)',
     backgroundColor: theme === 'dark' 
@@ -206,8 +175,8 @@ const Navbar = () => {
           to="/" 
           className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
         >
-          <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners text-center">
-            <ImageRotator />
+          <div className="bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
+            <Logo size={isMobile ? "sm" : "md"} />
           </div>
           {!isMobile && (
             <span className="hidden md:inline animate-glow">Renderdragon</span>
@@ -295,7 +264,7 @@ const Navbar = () => {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
-                      <ImageRotator />
+                      <Logo size="sm" />
                     </div>
                     <span>Renderdragon</span>
                   </Link>

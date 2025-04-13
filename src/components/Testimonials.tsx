@@ -1,5 +1,5 @@
 
-import { Star, Quote } from 'lucide-react';
+import { Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface Testimonial {
@@ -8,33 +8,29 @@ interface Testimonial {
   role: string;
   content: string;
   avatar: string;
-  rating: number;
 }
 
 const testimonials: Testimonial[] = [
   {
     id: 1,
-    name: "Alex Johnson",
-    role: "Minecraft YouTuber",
-    content: "Renderdragon has completely transformed my content creation process. The free resources and tools have saved me countless hours and helped me grow my channel!",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    rating: 5
+    name: "yFury",
+    role: "Minecraft YouTuber & Streamer",
+    content: "I love the assets cause they are harddd to find",
+    avatar: "https://yt3.googleusercontent.com/3Cw6xKbuZAEP_H9nb4X4oTq1aTE0q9xw5HsVZaVkDnhCZa7cmk7YaGXt2VHsUtKAH4hdRzT1Qw=s160-c-k-c0x00ffffff-no-rj"
   },
   {
     id: 2,
-    name: "Samantha Lee",
-    role: "Twitch Streamer",
-    content: "I've been using the Background Generator tool for my streams and my viewers love the results. The fact that everything is free is just amazing!",
-    avatar: "https://i.pravatar.cc/150?img=5",
-    rating: 5
+    name: "Jkingnick",
+    role: "Minecraft Youtuber",
+    content: "Website looks very professional and seems to be a really cool idea for content creators like myself",
+    avatar: "https://yt3.googleusercontent.com/HFLfDyR4bTDYlIIXO09euXCQSBIgB6DlhXDbDA4kBKUW5lgbVtl2bo0ylnKjNwk_S4WyAitcbA=s160-c-k-c0x00ffffff-no-rj"
   },
   {
     id: 3,
-    name: "Marcus Chen",
-    role: "Content Creator",
-    content: "The YouTube Downloader and AI Title Helper have become essential tools in my workflow. I recommend COW to all my creator friends!",
-    avatar: "https://i.pravatar.cc/150?img=8",
-    rating: 4
+    name: "Yamura",
+    role: "Minecraft Youtuber",
+    content: "I searched for ages for a song copyright checker for Youtube, Renderdragon was the only good option!",
+    avatar: "https://cdn.discordapp.com/avatars/877933841170432071/ee01c70b15d37af8994abfe8c4bd4509.webp"
   }
 ];
 
@@ -64,7 +60,7 @@ const Testimonials = () => {
               key={testimonial.id} 
               className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 pixel-corners"
             >
-              {/* Card Header with Avatar and Rating */}
+              {/* Card Header with Avatar */}
               <div className="p-6 bg-gradient-to-r from-cow-purple/10 to-transparent border-b border-border">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-cow-purple/30 pixel-corners">
@@ -86,48 +82,10 @@ const Testimonials = () => {
                 <Quote className="absolute top-4 left-4 text-cow-purple/10 w-10 h-10" />
                 <blockquote className="relative z-10 pl-2">
                   <p className="italic text-foreground/80">"{testimonial.content}"</p>
-                  
-                  <div className="flex items-center mt-4">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          size={16} 
-                          className={`${i < testimonial.rating ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
-                        />
-                      ))}
-                    </div>
-                    <span className="ml-2 text-sm text-muted-foreground">
-                      {testimonial.rating}/5
-                    </span>
-                  </div>
                 </blockquote>
               </div>
             </div>
           ))}
-        </div>
-        
-        <div className="text-center mt-12">
-          <a 
-            href="#" 
-            className="inline-flex items-center gap-2 text-cow-purple hover:text-cow-purple-dark transition-colors"
-          >
-            <span>See more testimonials</span>
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="16" 
-              height="16" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            >
-              <path d="M5 12h14"></path>
-              <path d="m12 5 7 7-7 7"></path>
-            </svg>
-          </a>
         </div>
       </div>
     </section>

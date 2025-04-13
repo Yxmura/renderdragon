@@ -1,4 +1,3 @@
-
 /* Custom scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
@@ -247,4 +246,22 @@ body::-webkit-scrollbar-thumb:hover {
 
 .animate-spin-slow {
   animation: spin-slow 10s linear infinite;
+}
+
+/* Countdown overlay styles */
+body.countdown-active {
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+#countdown-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: all !important;
+  user-select: none !important;
 }

@@ -1,9 +1,10 @@
 
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, ExternalLink, Github, Twitter, Youtube } from 'lucide-react';
+import { ShoppingCart, Github, Twitter, Youtube, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+import Logo from './Logo';
 
 const Footer = () => {
   const [cartClicked, setCartClicked] = useState(false);
@@ -57,8 +58,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center space-x-2 text-xl mb-4">
-              <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-pixel text-xs pixel-corners">
-                COW
+              <div className="bg-cow-purple text-white flex items-center justify-center font-pixel text-xs pixel-corners">
+                <Logo size="sm" />
               </div>
               <span className="font-pixel">Renderdragon</span>
             </Link>
@@ -76,9 +77,7 @@ const Footer = () => {
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                 aria-label="Discord"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                  <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.39-.444.976-.608 1.413a18.273 18.273 0 0 0-5.487 0 12.675 12.675 0 0 0-.617-1.413.077.077 0 0 0-.079-.036 19.146 19.146 0 0 0-4.885 1.49.07.07 0 0 0-.032.028C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055c1.997 1.464 3.949 2.378 5.945 2.95a.08.08 0 0 0 .088-.028c.379-.508.716-1.038 1.005-1.589a.076.076 0 0 0-.041-.106 12.37 12.37 0 0 1-1.838-.878.077.077 0 0 1-.009-.125c.125-.093.25-.19.368-.289a.074.074 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.074.074 0 0 1 .078.009c.12.099.245.198.366.29a.077.077 0 0 1-.006.125c-.598.344-1.22.635-1.841.88a.076.076 0 0 0-.041.106c.29.55.626 1.08 1.004 1.589a.078.078 0 0 0 .086.028c2.003-.572 3.954-1.486 5.952-2.95a.077.077 0 0 0 .032-.055c.502-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.086-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.332-.946 2.418-2.157 2.418z"/>
-                </svg>
+                <MessageSquare className="h-5 w-5" />
               </a>
               
               <a 

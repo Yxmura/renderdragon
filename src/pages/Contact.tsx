@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from 'react';
-import { Copy, Mail, Check, ExternalLink, Github } from 'lucide-react';
+import { Copy, Mail, Check, Github, Globe, ExternalLink } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -10,70 +9,58 @@ interface TeamMember {
   name: string;
   role: string;
   avatar: string;
-  bio?: string;
   socials?: {
     github?: string;
     discord?: string;
+    website?: string;
   };
 }
 
 const teamMembers: TeamMember[] = [
   {
-    name: 'Alex Johnson',
+    name: 'Coder-soft',
     role: 'Founder',
-    bio: 'Creator and strategist with 10+ years in content creation and community building.',
-    avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+    avatar: 'https://cdn.discordapp.com/avatars/1094475489734819840/37da8f0271f018153b22e27bf6d05f88.webp',
     socials: {
-      github: 'https://github.com',
-      discord: 'https://discord.com'
+      github: 'https://github.com/coder-soft',
+      discord: 'https://discordapp.com/users/1094475489734819840',
+      website: 'https://coder-soft.pages.dev/'
     }
   },
   {
-    name: 'Sarah Wang',
-    role: 'Lead Developer',
-    bio: 'Full-stack developer focused on creating intuitive tools for content creators.',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2076&q=80',
+    name: 'Clover',
+    role: 'Project Lead',
+    avatar: 'https://cdn.discordapp.com/avatars/789997917661560862/affc7d403052f36ae9d5b80e4ee048da.webp',
     socials: {
-      github: 'https://github.com',
-      discord: 'https://discord.com'
+      github: 'https://github.com/CloverTheBunny',
+      discord: 'https://discordapp.com/users/789997917661560862'
     }
   },
   {
-    name: 'Miguel Torres',
-    role: 'Content Manager',
-    bio: 'Content specialist with expertise in YouTube growth strategies and analytics.',
-    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
+    name: 'Yamura',
+    role: 'Lead Programmer',
+    avatar: 'src="https://cdn.discordapp.com/avatars/877933841170432071/ee01c70b15d37af8994abfe8c4bd4509.webp',
     socials: {
-      github: 'https://github.com',
-      discord: 'https://discord.com'
+      github: 'https://github.com/Yxmura',
+      discord: 'https://discordapp.com/users/877933841170432071'
     }
   },
   {
-    name: 'Emma Chen',
-    role: 'Designer',
-    bio: 'UI/UX designer with a passion for creating engaging and accessible interfaces.',
-    avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2074&q=80',
+    name: 'IDoTheHax',
+    role: 'Gappa - Copyright checker integrator',
+    avatar: 'https://cdn.discordapp.com/avatars/987323487343493191/3187a33efcddab3592c93ceac0a6016b.webp?size=48',
     socials: {
-      github: 'https://github.com',
-      discord: 'https://discord.com'
+      github: 'https://github.com/idothehax',
+      website: 'https://idothehax.com/',
+      discord: 'https://discordapp.com/users/987323487343493191'
     }
   },
-  {
-    name: 'Chris Powell',
-    role: 'Community Manager',
-    bio: 'Community builder focused on fostering supportive spaces for creators.',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-    socials: {
-      github: 'https://github.com',
-      discord: 'https://discord.com'
-    }
-  }
 ];
 
 const Contact = () => {
   const [copied, setCopied] = useState(false);
   const [activeCard, setActiveCard] = useState<number | null>(null);
-  const email = 'renderdragon@proton.me';
+  const email = 'renderdragon+contact@proton.me';
 
   useEffect(() => {
     document.title = 'Contact Us - Renderdragon';
@@ -138,7 +125,7 @@ const Contact = () => {
                 </p>
                 
                 <a 
-                  href="https://discord.gg/d9zxkkdBWV" 
+                  href="https://discord.com/invite/Kj6AMRBX" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="pixel-btn-primary inline-flex items-center space-x-2"
@@ -151,7 +138,7 @@ const Contact = () => {
               <div>
                 <h2 className="text-2xl font-vt323 mb-4">Support Hours</h2>
                 <p className="text-muted-foreground">
-                  Our team consists of volunteers, however we try to get you a response within 48 hours.
+                  Well, we do what we can! We're all volunteers, not benefiting from the project, but if you join our Discord, we'll really try to get you an answer within 48 hours.
                 </p>
               </div>
             </div>
@@ -178,10 +165,6 @@ const Contact = () => {
                     <h3 className="text-lg font-medium">{member.name}</h3>
                     <p className="text-sm text-cow-purple font-bold mb-2">{member.role}</p>
                     
-                    {member.bio && (
-                      <p className="text-sm text-muted-foreground mb-3">{member.bio}</p>
-                    )}
-                    
                     {/* Social Icons */}
                     {member.socials && (
                       <div className="flex space-x-3 mt-auto">
@@ -194,6 +177,17 @@ const Contact = () => {
                             aria-label={`${member.name}'s GitHub`}
                           >
                             <Github className="h-4 w-4" />
+                          </a>
+                        )}
+                        {member.socials.website && (
+                          <a 
+                            href={member.socials.website} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="bg-secondary hover:bg-primary hover:text-primary-foreground p-2 rounded-md transition-colors"
+                            aria-label={`${member.name}'s Website`}
+                          >
+                            <Globe className="h-4 w-4" />
                           </a>
                         )}
                         {member.socials.discord && (
