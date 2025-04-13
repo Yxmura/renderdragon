@@ -65,16 +65,20 @@ class CountdownService {
     return this.state.hasEnteredAdminPassword;
   }
 
-  public verifyAdminPassword(password: string): boolean {
+  public async verifyAdminPassword(password: string): Promise<boolean> {
     // Hash the provided password using SHA-256
-    const hashedPassword = this.hashPassword(password);
-    
-    if (hashedPassword === this.PASSWORD_HASH) {
-      this.state.hasEnteredAdminPassword = true;
-      this.state.isVisible = false;
-      this.state.lastVerifiedTime = Date.now();
-      this.saveState();
-      return true;
+    try {
+      const hashedPassword = await this.hashPassword(password);
+      
+      if (hashedPassword === this.PASSWORD_HASH) {
+        this.state.hasEnteredAdminPassword = true;
+        this.state.isVisible = false;
+        this.state.lastVerifiedTime = Date.now();
+        this.saveState();
+        return true;
+      }
+    } catch (error) {
+      console.error('Error verifying password:', error);
     }
     
     this.incrementBypassAttempts();
@@ -103,18 +107,17 @@ class CountdownService {
     this.saveState();
   }
 
-  private hashPassword(password: string): string {
-    // Simple implementation using text encoder and crypto API
-    // In a real app, use a proper crypto library
+  private async hashPassword(password: string): Promise<string> {
+    // Implementation using text encoder and crypto API
     try {
       const encoder = new TextEncoder();
       const data = encoder.encode(password);
-      return crypto.subtle.digestSync('SHA-256', data)
-        .then(hash => {
-          return Array.from(new Uint8Array(hash))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('');
-        });
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      
+      // Convert buffer to hex string
+      return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
     } catch (e) {
       // Fallback for environments without crypto.subtle
       console.error('Crypto API not available:', e);

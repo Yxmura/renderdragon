@@ -27,6 +27,7 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
   const [password, setPassword] = useState('');
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [passwordAttempts, setPasswordAttempts] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const countdownService = CountdownService.getInstance();
@@ -134,23 +135,35 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
     return () => observer.disconnect();
   }, [isVisible]);
 
-  const handlePasswordSubmit = () => {
-    if (countdownService.verifyAdminPassword(password)) {
-      setIsPasswordDialogOpen(false);
-      setIsVisible(false);
-      toast.success("Admin access granted");
-    } else {
-      setPasswordAttempts(prev => prev + 1);
-      setPassword('');
+  const handlePasswordSubmit = async () => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      const isValid = await countdownService.verifyAdminPassword(password);
       
-      if (passwordAttempts >= 2) {
+      if (isValid) {
         setIsPasswordDialogOpen(false);
-        toast.error("Too many failed attempts. Try again later.");
-        // Reset attempts after a delay
-        setTimeout(() => setPasswordAttempts(0), 30000);
+        setIsVisible(false);
+        toast.success("Admin access granted");
       } else {
-        toast.error("Incorrect password");
+        setPasswordAttempts(prev => prev + 1);
+        setPassword('');
+        
+        if (passwordAttempts >= 2) {
+          setIsPasswordDialogOpen(false);
+          toast.error("Too many failed attempts. Try again later.");
+          // Reset attempts after a delay
+          setTimeout(() => setPasswordAttempts(0), 30000);
+        } else {
+          toast.error("Incorrect password");
+        }
       }
+    } catch (error) {
+      toast.error("An error occurred while verifying the password");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -255,18 +268,18 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === 'Enter' && !isSubmitting) {
                     handlePasswordSubmit();
                   }
                 }}
               />
             </div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsPasswordDialogOpen(false)}>
+              <Button variant="outline" onClick={() => setIsPasswordDialogOpen(false)} disabled={isSubmitting}>
                 Cancel
               </Button>
-              <Button onClick={handlePasswordSubmit}>
-                Submit
+              <Button onClick={handlePasswordSubmit} disabled={isSubmitting}>
+                {isSubmitting ? 'Submitting...' : 'Submit'}
               </Button>
             </div>
           </div>
