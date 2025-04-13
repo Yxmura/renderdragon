@@ -59,7 +59,7 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
   return (
     <div
       onClick={() => onClick(resource)}
-      className="pixel-card group cursor-pointer hover:border-primary transition-all duration-300"
+      className="pixel-card group cursor-pointer hover:border-primary transition-all duration-300 h-full"
     >
       <div className="flex justify-between items-start mb-3">
         <div

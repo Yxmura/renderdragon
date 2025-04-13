@@ -1,75 +1,61 @@
 
-import { useState } from 'react';
-import { Music, Image, Video, FileText, ArrowRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-interface Resource {
-  id: number;
-  title: string;
-  category: 'music' | 'image' | 'video' | 'preset';
-  description: string;
-  author?: string;
-}
-
-const featuredResources: Resource[] = [
-  {
-    id: 1,
-    title: 'Epic Cinematic Track',
-    category: 'music',
-    description: 'Perfect for dramatic scenes and trailers',
-    author: 'MusicMaster'
-  },
-  {
-    id: 2,
-    title: 'Pixel Art Background Pack',
-    category: 'image',
-    description: 'Set of 20 cyberpunk pixel art backgrounds',
-    author: 'PixelArtist'
-  },
-  {
-    id: 3,
-    title: 'Motion Graphics Pack',
-    category: 'video',
-    description: 'Animated lower thirds and transitions',
-  },
-  {
-    id: 4,
-    title: 'Cinematic Color Grading',
-    category: 'preset',
-    description: 'DaVinci Resolve professional grade presets',
-    author: 'ColorGuru'
-  }
-];
-
-const getCategoryIcon = (category: string) => {
-  switch (category) {
-    case 'music':
-      return <Music className="h-6 w-6" />;
-    case 'image':
-      return <Image className="h-6 w-6" />;
-    case 'video':
-      return <Video className="h-6 w-6" />;
-    default:
-      return <FileText className="h-6 w-6" />;
-  }
-};
-
-const getCategoryColor = (category: string) => {
-  switch (category) {
-    case 'music':
-      return 'bg-blue-500/10 text-blue-500';
-    case 'image':
-      return 'bg-purple-500/10 text-purple-500';
-    case 'video':
-      return 'bg-red-500/10 text-red-500';
-    default:
-      return 'bg-green-500/10 text-green-500';
-  }
-};
+import { ArrowRight } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Resource } from '@/types/resources';
+import ResourceCard from '@/components/resources/ResourceCard';
 
 const FeaturedResources = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [featuredResources, setFeaturedResources] = useState<Resource[]>([]);
+  const [downloadCounts, setDownloadCounts] = useState<Record<number, number>>({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch all resources
+    const fetchResources = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/resources.json');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch resources: ${response.status} ${response.statusText}`);
+        }
+        const resourcesData = await response.json();
+
+        // Flatten resources data
+        const allResources: Resource[] = Object.entries(resourcesData).flatMap(
+          ([category, resources]) =>
+            (resources as any[]).map((resource) => ({ 
+              ...resource, 
+              category: category as 'music' | 'sfx' | 'image' | 'animations' | 'fonts' | 'presets',
+            })),
+        );
+        
+        // Generate mock download counts for each resource
+        const counts: Record<number, number> = {};
+        allResources.forEach(resource => {
+          // Generate a random number between 50 and 500 for demo purposes
+          counts[resource.id] = Math.floor(Math.random() * 450) + 50;
+        });
+        
+        setDownloadCounts(counts);
+        
+        // Sort resources by download count (descending) and get top 4
+        const sortedResources = [...allResources].sort((a, b) => {
+          return counts[b.id] - counts[a.id];
+        }).slice(0, 4);
+        
+        setFeaturedResources(sortedResources);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching resources:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchResources();
+  }, []);
 
   return (
     <section className="py-20 bg-background cow-grid-bg">
@@ -83,49 +69,29 @@ const FeaturedResources = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredResources.map((resource) => (
-            <div
-              key={resource.id}
-              className={cn(
-                "pixel-card group transition-all duration-500 hover:shadow-lg cursor-pointer",
-                hoveredId === resource.id ? "scale-105" : ""
-              )}
-              onMouseEnter={() => setHoveredId(resource.id)}
-              onMouseLeave={() => setHoveredId(null)}
-            >
-              <div className="mb-4">
-                <div className={cn("inline-flex items-center justify-center p-2 rounded-md", getCategoryColor(resource.category))}>
-                  {getCategoryIcon(resource.category)}
-                </div>
-              </div>
-              
-              <h3 className="text-xl font-vt323 mb-2 group-hover:text-primary transition-colors">
-                {resource.title}
-              </h3>
-              
-              <p className="text-muted-foreground text-sm mb-4">
-                {resource.description}
-              </p>
-              
-              <div className="flex items-center justify-between">
-                {resource.author ? (
-                  <span className="text-xs bg-secondary px-2 py-1 rounded-md">
-                    by {resource.author}
-                  </span>
-                ) : (
-                  <span className="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded-md">
-                    No credit needed
-                  </span>
-                )}
-                
-                <span className="text-primary opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-1">
-                  <ArrowRight className="h-4 w-4" />
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">Loading featured resources...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredResources.map((resource) => (
+              <Link
+                key={resource.id}
+                to="/resources"
+                onMouseEnter={() => setHoveredId(resource.id)}
+                onMouseLeave={() => setHoveredId(null)}
+                className="block group"
+              >
+                <ResourceCard
+                  resource={resource}
+                  downloadCount={downloadCounts[resource.id] || 0}
+                  onClick={() => {}} 
+                />
+              </Link>
+            ))}
+          </div>
+        )}
 
         <div className="text-center mt-10">
           <Link 
