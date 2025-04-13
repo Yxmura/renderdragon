@@ -4,16 +4,6 @@ import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import CountdownService from '@/services/CountdownService';
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 interface CountdownOverlayProps {
   targetDate: Date;
@@ -25,10 +15,7 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
   const [minutes, setMinutes] = useState(0);
   const [seconds, setSeconds] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const [password, setPassword] = useState('');
-  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [passwordAttempts, setPasswordAttempts] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const countdownService = CountdownService.getInstance();
@@ -88,8 +75,26 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
           return;
         }
         
-        // Open password dialog
-        setIsPasswordDialogOpen(true);
+        // Show browser prompt for password
+        const password = prompt("Enter admin password to bypass countdown:");
+        if (password !== null) {
+          const isValid = countdownService.verifyAdminPassword(password);
+          
+          if (isValid) {
+            setIsVisible(false);
+            toast.success("Admin access granted");
+          } else {
+            setPasswordAttempts(prev => prev + 1);
+            
+            if (passwordAttempts >= 2) {
+              toast.error("Too many failed attempts. Try again later.");
+              // Reset attempts after a delay
+              setTimeout(() => setPasswordAttempts(0), 30000);
+            } else {
+              toast.error("Incorrect password");
+            }
+          }
+        }
       }
     };
 
@@ -98,7 +103,7 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, []);
+  }, [passwordAttempts]);
 
   // Anti-tampering protection
   useEffect(() => {
@@ -135,38 +140,6 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
     
     return () => observer.disconnect();
   }, [isVisible]);
-
-  const handlePasswordSubmit = () => {
-    if (isSubmitting) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      const isValid = countdownService.verifyAdminPassword(password);
-      
-      if (isValid) {
-        setIsPasswordDialogOpen(false);
-        setIsVisible(false);
-        toast.success("Admin access granted");
-      } else {
-        setPasswordAttempts(prev => prev + 1);
-        setPassword('');
-        
-        if (passwordAttempts >= 2) {
-          setIsPasswordDialogOpen(false);
-          toast.error("Too many failed attempts. Try again later.");
-          // Reset attempts after a delay
-          setTimeout(() => setPasswordAttempts(0), 30000);
-        } else {
-          toast.error("Incorrect password");
-        }
-      }
-    } catch (error) {
-      toast.error("An error occurred while verifying the password");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <>
@@ -254,41 +227,6 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
           </div>
         </div>
       )}
-
-      {/* Admin Password Dialog - with higher z-index to ensure it renders above the countdown */}
-      <Dialog open={isPasswordDialogOpen} onOpenChange={setIsPasswordDialogOpen}>
-        <DialogContent className="sm:max-w-md z-[200]">
-          <DialogHeader>
-            <DialogTitle>Admin Access</DialogTitle>
-            <DialogDescription>Enter the admin password to bypass the countdown.</DialogDescription>
-          </DialogHeader>
-          <div className="p-4 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="admin-password">Enter Admin Password</Label>
-              <Input
-                id="admin-password"
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !isSubmitting) {
-                    handlePasswordSubmit();
-                  }
-                }}
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsPasswordDialogOpen(false)} disabled={isSubmitting}>
-                Cancel
-              </Button>
-              <Button onClick={handlePasswordSubmit} disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Submit'}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 };
