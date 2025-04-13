@@ -15,7 +15,7 @@ class CountdownService {
     lastVerifiedTime: 0,
     bypassAttempts: 0
   };
-  private readonly PASSWORD_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"; // SHA-256 of "admin"
+  private readonly PASSWORD = "admin"; // Plain text password for simplicity
 
   private constructor() {
     // Load state from localStorage if available
@@ -65,20 +65,14 @@ class CountdownService {
     return this.state.hasEnteredAdminPassword;
   }
 
-  public async verifyAdminPassword(password: string): Promise<boolean> {
-    // Hash the provided password using SHA-256
-    try {
-      const hashedPassword = await this.hashPassword(password);
-      
-      if (hashedPassword === this.PASSWORD_HASH) {
-        this.state.hasEnteredAdminPassword = true;
-        this.state.isVisible = false;
-        this.state.lastVerifiedTime = Date.now();
-        this.saveState();
-        return true;
-      }
-    } catch (error) {
-      console.error('Error verifying password:', error);
+  public verifyAdminPassword(password: string): boolean {
+    // Simple direct password comparison
+    if (password === this.PASSWORD) {
+      this.state.hasEnteredAdminPassword = true;
+      this.state.isVisible = false;
+      this.state.lastVerifiedTime = Date.now();
+      this.saveState();
+      return true;
     }
     
     this.incrementBypassAttempts();
@@ -105,24 +99,6 @@ class CountdownService {
     }
     
     this.saveState();
-  }
-
-  private async hashPassword(password: string): Promise<string> {
-    // Implementation using text encoder and crypto API
-    try {
-      const encoder = new TextEncoder();
-      const data = encoder.encode(password);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-      
-      // Convert buffer to hex string
-      return Array.from(new Uint8Array(hashBuffer))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-    } catch (e) {
-      // Fallback for environments without crypto.subtle
-      console.error('Crypto API not available:', e);
-      throw e; // Re-throw error to handle properly in verifyAdminPassword
-    }
   }
 
   private saveState(): void {
