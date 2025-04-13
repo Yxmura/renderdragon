@@ -75,7 +75,7 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
         </div>
       </div>
 
-      <h3 className="text-lg font-vt323 mb-2 group-hover:text-primary transition-colors">
+      <h3 className="text-xl font-vt323 mb-2 group-hover:text-primary transition-colors">
         {resource.title}
       </h3>
 
