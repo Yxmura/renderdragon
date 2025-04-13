@@ -27,10 +27,10 @@ const testimonials: Testimonial[] = [
   },
   {
     id: 3,
-    name: "Yamura",
-    role: "Minecraft Youtuber",
-    content: "I searched for ages for a song copyright checker for Youtube, Renderdragon was the only good option!",
-    avatar: "https://cdn.discordapp.com/avatars/877933841170432071/ee01c70b15d37af8994abfe8c4bd4509.webp"
+    name: "ItsAlphaReturns",
+    role: "Minecraft Youtuber and Thumbnail Designer",
+    content: "Creator on wheels is a really good tool with great assets that can be useful for pretty much any YouTuber (small or big)",
+    avatar: "https://yt3.googleusercontent.com/9RbZiqYgTK5WKR-JmUbimeCKwlMwEKTDuCEs300PnCS72xzOg9uIQFckG0MlhCeOVA7zUuMp=s160-c-k-c0x00ffffff-no-rj"
   }
 ];
 

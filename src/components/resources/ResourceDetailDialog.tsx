@@ -50,10 +50,8 @@ const ResourceDetailDialog = ({
         .toLowerCase()
         .replace(/ /g, '%20');
       
-      // Standard URL for fonts
       const fontUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
       
-      // Create @font-face
       const fontFace = new FontFace(resource.title, `url(${fontUrl})`);
       
       fontFace.load().then((loadedFont) => {
@@ -116,15 +114,14 @@ const ResourceDetailDialog = ({
     }, 2000);
   };
 
-  const getDownloadURL = (resource: Resource) => {
+  const getGithubURL = (resource: Resource) => {
     if (!resource || !resource.filetype) return '';
     
     const titleLowered = resource.title
       .toLowerCase()
       .replace(/ /g, '%20');
     
-    // Same URL structure for all resource types
-    return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
+    return `https://github.com/Yxmura/resources_renderdragon/blob/main/${resource.category}/${titleLowered}.${resource.filetype}`;
   };
 
   if (!resource) return null;
@@ -155,9 +152,9 @@ const ResourceDetailDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-5 py-2">
           <div className="border border-border rounded-md p-4">
-            <h4 className="font-vt323 text-lg mb-2">Attribution</h4>
+            <h4 className="font-vt323 text-lg mb-1">Attribution</h4>
 
             {resource.credit ? (
               <div className="space-y-2">
@@ -168,7 +165,7 @@ const ResourceDetailDialog = ({
 
                 <div className="flex items-center">
                   <code className="bg-muted px-2 py-1 rounded text-sm flex-grow">
-                    Music by {resource.credit}
+                    Credit: {resource.credit}
                   </code>
 
                   <Button
@@ -214,7 +211,7 @@ const ResourceDetailDialog = ({
             </Button>
             <Button
               onClick={() => {
-                const url = getDownloadURL(resource);
+                const url = getGithubURL(resource);
                 window.open(url, '_blank');
               }}
               className="w-full pixel-btn-primary flex items-center justify-center gap-2"
