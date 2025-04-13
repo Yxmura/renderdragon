@@ -134,7 +134,7 @@ const Guides = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    document.title = 'Minecraft Guides - Creator On Wheels';
+    document.title = 'Minecraft Guides - Renderdragon';
     
     // Simulate API fetch
     setTimeout(() => {

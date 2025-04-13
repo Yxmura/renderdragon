@@ -21,7 +21,7 @@ const BackgroundGenerator = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    document.title = 'Background Generator - Creator On Wheels';
+    document.title = 'Background Generator - Renderdragon';
   }, []);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {

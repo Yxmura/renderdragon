@@ -147,7 +147,7 @@ const YouTubeVideos = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    document.title = 'YouTube Tutorials - Creator On Wheels';
+    document.title = 'YouTube Tutorials - Renderdragon';
     
     // Simulate API fetch
     setTimeout(() => {

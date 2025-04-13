@@ -102,7 +102,7 @@ const AiTitleHelper = () => {
   const [selectedTitle, setSelectedTitle] = useState<TitleSuggestion | null>(null);
 
   useEffect(() => {
-    document.title = 'AI Title Helper - Creator On Wheels';
+    document.title = 'AI Title Helper - Renderdragon';
   }, []);
 
   const handleGenerateTitles = () => {

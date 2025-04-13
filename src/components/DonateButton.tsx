@@ -28,9 +28,9 @@ const DonateButton = () => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="pixel-corners border-2 border-cow-purple">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-vt323">Buy Me a Coffee</DialogTitle>
+            <DialogTitle className="text-2xl font-vt323">Buy Us a Coffee</DialogTitle>
             <DialogDescription>
-              Support Creator On Wheels to keep everything 100% free for everyone!
+              Support Renderdragon to keep everything 100% free for everyone!
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4 py-4">
@@ -40,7 +40,7 @@ const DonateButton = () => {
               className="w-32 h-32 rounded-md object-cover pixel-corners"
             />
             <p className="text-center">
-              Your support helps us create more free resources for content creators!
+              Everything we built, is free, our only source of income is donations
             </p>
             <a
               href="https://www.buymeacoffee.com"
@@ -49,7 +49,7 @@ const DonateButton = () => {
               className="pixel-btn-primary w-full flex items-center justify-center space-x-2"
             >
               <div className="pixel-art-coffee-small mr-2"></div>
-              <span>Buy Me A Coffee</span>
+              <span>Buy Us A Coffee</span>
             </a>
           </div>
         </DialogContent>

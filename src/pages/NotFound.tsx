@@ -14,7 +14,7 @@ const NotFound = () => {
       location.pathname
     );
     
-    document.title = '404 - Page Not Found | Creator On Wheels';
+    document.title = '404 - Page Not Found | Renderdragon';
   }, [location.pathname]);
 
   return (

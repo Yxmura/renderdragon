@@ -94,7 +94,7 @@ const DiscordServers = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = 'Discord Servers - Creator On Wheels';
+    document.title = 'Discord Servers - Renderdragon';
     
     // Simulate API fetch
     setTimeout(() => {

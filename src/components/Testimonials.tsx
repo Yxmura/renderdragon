@@ -16,7 +16,7 @@ const testimonials: Testimonial[] = [
     id: 1,
     name: "Alex Johnson",
     role: "Minecraft YouTuber",
-    content: "Creator On Wheels has completely transformed my content creation process. The free resources and tools have saved me countless hours and helped me grow my channel!",
+    content: "Renderdragon has completely transformed my content creation process. The free resources and tools have saved me countless hours and helped me grow my channel!",
     avatar: "https://i.pravatar.cc/150?img=1",
     rating: 5
   },

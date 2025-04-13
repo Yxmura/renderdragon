@@ -73,10 +73,10 @@ const teamMembers: TeamMember[] = [
 const Contact = () => {
   const [copied, setCopied] = useState(false);
   const [activeCard, setActiveCard] = useState<number | null>(null);
-  const email = 'contact@creatoronwheels.com';
+  const email = 'renderdragon@proton.me';
 
   useEffect(() => {
-    document.title = 'Contact Us - Creator On Wheels';
+    document.title = 'Contact Us - Renderdragon';
   }, []);
 
   const copyToClipboard = () => {
@@ -138,7 +138,7 @@ const Contact = () => {
                 </p>
                 
                 <a 
-                  href="https://discord.com" 
+                  href="https://discord.gg/d9zxkkdBWV" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="pixel-btn-primary inline-flex items-center space-x-2"
@@ -151,7 +151,7 @@ const Contact = () => {
               <div>
                 <h2 className="text-2xl font-vt323 mb-4">Support Hours</h2>
                 <p className="text-muted-foreground">
-                  Our team is available to help Monday through Friday, 9 AM to 5 PM EST.
+                  Our team consists of volunteers, however we try to get you a response within 48 hours.
                 </p>
               </div>
             </div>

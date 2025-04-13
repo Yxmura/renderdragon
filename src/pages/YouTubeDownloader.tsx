@@ -37,7 +37,7 @@ const YouTubeDownloader = () => {
     const [filteredOptions, setFilteredOptions] = useState<DownloadOption[]>([]);
 
     useEffect(() => {
-        document.title = 'YouTube Downloader - Creator On Wheels';
+        document.title = 'YouTube Downloader - Renderdragon';
     }, []);
 
     useEffect(() => {

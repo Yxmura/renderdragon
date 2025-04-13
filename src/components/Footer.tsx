@@ -38,7 +38,7 @@ const Footer = () => {
     }, 3000);
     
     toast("Website made by Team Wheels", {
-      description: "Thanks for visiting Creator On Wheels!",
+      description: "Thanks for visiting Renderdragon!",
       position: "bottom-center",
       duration: 3000,
     });
@@ -60,7 +60,7 @@ const Footer = () => {
               <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-pixel text-xs pixel-corners">
                 COW
               </div>
-              <span className="font-pixel">Creator On Wheels</span>
+              <span className="font-pixel">Renderdragon</span>
             </Link>
             
             <p className="text-white/70 mb-6 max-w-md">
@@ -183,7 +183,7 @@ const Footer = () => {
           
           <div className="flex items-center">
             <p className="text-white/70 text-sm">
-              &copy; {currentYear} Creator On Wheels
+              &copy; {currentYear} Renderdragon
             </p>
             
             <button 

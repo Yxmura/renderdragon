@@ -83,7 +83,7 @@ const MusicCopyright = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
-    document.title = 'Music Copyright Checker - Creator On Wheels';
+    document.title = 'Music Copyright Checker - Renderdragon';
   }, []);
 
   const handleSongSearch = () => {

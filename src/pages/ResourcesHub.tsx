@@ -99,7 +99,7 @@ const ResourcesHub = () => {
   }, []);
 
   useEffect(() => {
-    document.title = 'Resources Hub - Creator On Wheels';
+    document.title = 'Resources Hub - Renderdragon';
 
     const handleKeydown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {

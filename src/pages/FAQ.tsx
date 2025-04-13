@@ -10,7 +10,7 @@ const FAQ = () => {
   const [activeTab, setActiveTab] = useState('faq');
   
   useEffect(() => {
-    document.title = 'FAQ - Creator On Wheels';
+    document.title = 'FAQ - Renderdragon';
   }, []);
 
   return (
@@ -38,10 +38,10 @@ const FAQ = () => {
                   <Accordion type="single" collapsible className="w-full">
                     <AccordionItem value="item-1">
                       <AccordionTrigger className="text-left font-medium">
-                        Is everything on Creator On Wheels really free?
+                        Is everything on Renderdragon really free?
                       </AccordionTrigger>
                       <AccordionContent className="text-muted-foreground">
-                        Yes! All resources, tools, and guides on Creator On Wheels are 100% free to use. 
+                        Yes! All resources, tools, and guides on Renderdragon are 100% free to use. 
                         We believe in supporting the Minecraft content creator community without paywalls.
                         Some resources may require attribution to the original creator, but that will be 
                         clearly marked on each resource.
@@ -54,7 +54,7 @@ const FAQ = () => {
                       </AccordionTrigger>
                       <AccordionContent className="text-muted-foreground">
                         No, you don't need to create an account to access or download any resources 
-                        from Creator On Wheels. Everything is freely available without registration.
+                        from Renderdragon. Everything is freely available without registration.
                       </AccordionContent>
                     </AccordionItem>
                     
@@ -115,10 +115,10 @@ const FAQ = () => {
                     
                     <AccordionItem value="item-8">
                       <AccordionTrigger className="text-left font-medium">
-                        Who is behind Creator On Wheels?
+                        Who is behind Renderdragon?
                       </AccordionTrigger>
                       <AccordionContent className="text-muted-foreground">
-                        Creator On Wheels was created by Team Wheels, a group of content creators 
+                        Renderdragon was created by Team Wheels, a group of content creators 
                         and developers who wanted to make content creation more accessible to everyone. 
                         You can learn more about our team on the Contact page.
                       </AccordionContent>
@@ -134,35 +134,35 @@ const FAQ = () => {
                   <div className="space-y-4 text-muted-foreground">
                     <h3 className="text-lg font-medium text-foreground">1. Acceptance of Terms</h3>
                     <p>
-                      By accessing and using Creator On Wheels ("the Website"), you accept and agree to be bound by these 
+                      By accessing and using Renderdragon ("the Website"), you accept and agree to be bound by these 
                       Terms of Service. If you do not agree to these terms, please do not use the Website.
                     </p>
                     
                     <h3 className="text-lg font-medium text-foreground">2. Use of Resources</h3>
                     <p>
-                      All resources provided on Creator On Wheels are available for free for both personal and commercial use, 
+                      All resources provided on Renderdragon are available for free for both personal and commercial use, 
                       unless otherwise stated on the specific resource. Some resources may require attribution to the original creator, 
                       which will be clearly indicated on the resource page.
                     </p>
                     
                     <h3 className="text-lg font-medium text-foreground">3. Limitation of Liability</h3>
                     <p>
-                      The resources and tools provided on Creator On Wheels are provided "as is" without any warranties, 
-                      expressed or implied. In no event shall Creator On Wheels be liable for any damages including, but not limited to, 
+                      The resources and tools provided on Renderdragon are provided "as is" without any warranties, 
+                      expressed or implied. In no event shall Renderdragon be liable for any damages including, but not limited to, 
                       direct, indirect, special, incidental or consequential damages or other losses arising out of the use of or 
                       inability to use our resources or tools.
                     </p>
                     
                     <h3 className="text-lg font-medium text-foreground">4. Copyright and Intellectual Property</h3>
                     <p>
-                      The content on Creator On Wheels, including text, graphics, logos, and software, is the property of 
-                      Creator On Wheels or its content suppliers and is protected by copyright laws. Users are granted a limited 
+                      The content on Renderdragon, including text, graphics, logos, and software, is the property of 
+                      Renderdragon or its content suppliers and is protected by copyright laws. Users are granted a limited 
                       license to download or print content from the Website for personal and commercial use.
                     </p>
                     
                     <h3 className="text-lg font-medium text-foreground">5. User Conduct</h3>
                     <p>
-                      Users of Creator On Wheels agree not to:
+                      Users of Renderdragon agree not to:
                     </p>
                     <ul className="list-disc pl-6 space-y-1">
                       <li>Use the Website for any unlawful purpose</li>
@@ -173,7 +173,7 @@ const FAQ = () => {
                     
                     <h3 className="text-lg font-medium text-foreground">6. Changes to Terms</h3>
                     <p>
-                      Creator On Wheels reserves the right to modify these Terms of Service at any time. 
+                      Renderdragon reserves the right to modify these Terms of Service at any time. 
                       Changes will be effective immediately upon posting on the Website. Your continued use of the 
                       Website after any changes indicates your acceptance of the modified terms.
                     </p>
@@ -197,7 +197,7 @@ const FAQ = () => {
                   <div className="space-y-4 text-muted-foreground">
                     <h3 className="text-lg font-medium text-foreground">1. Information We Collect</h3>
                     <p>
-                      Creator On Wheels is committed to protecting your privacy. We do not collect personal information 
+                      Renderdragon is committed to protecting your privacy. We do not collect personal information 
                       except for standard web server logs, which may include:
                     </p>
                     <ul className="list-disc pl-6 space-y-1">
@@ -215,7 +215,7 @@ const FAQ = () => {
                     
                     <h3 className="text-lg font-medium text-foreground">3. Cookies</h3>
                     <p>
-                      Creator On Wheels uses cookies to enhance your browsing experience. Cookies are small files stored on your 
+                      Renderdragon uses cookies to enhance your browsing experience. Cookies are small files stored on your 
                       device that help us provide a better user experience. You can choose to disable cookies in your browser settings, 
                       but this may affect the functionality of the Website.
                     </p>
@@ -228,7 +228,7 @@ const FAQ = () => {
                     
                     <h3 className="text-lg font-medium text-foreground">5. External Links</h3>
                     <p>
-                      Creator On Wheels may contain links to external websites. We are not responsible for the privacy practices 
+                      Renderdragon may contain links to external websites. We are not responsible for the privacy practices 
                       or content of these external sites. We encourage users to read the privacy policies of any external websites they visit.
                     </p>
                     
@@ -240,7 +240,7 @@ const FAQ = () => {
                     
                     <h3 className="text-lg font-medium text-foreground">7. Children's Privacy</h3>
                     <p>
-                      Creator On Wheels is not directed at children under the age of 13. We do not knowingly collect personal information 
+                      Renderdragon is not directed at children under the age of 13. We do not knowingly collect personal information 
                       from children under 13. If you believe we have collected personal information from a child under 13, 
                       please contact us to have it removed.
                     </p>
