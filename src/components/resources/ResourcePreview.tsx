@@ -15,7 +15,12 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
       .replace(/ /g, '%20');
     
     // Use the same URL structure for all resource types
-    return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
+    if (resource.credit) {
+      return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${resource.credit}.${resource.filetype}`;
+    }
+    else {
+      return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
+    }
   };
 
   const downloadURL = getDownloadURL(resource);

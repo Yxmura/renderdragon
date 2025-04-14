@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Resource } from '@/types/resources';
 import {
@@ -43,17 +42,24 @@ const ResourceDetailDialog = ({
 }: ResourceDetailDialogProps) => {
   const [copied, setCopied] = useState(false);
   
-  // Load font when a font resource is selected
+  // Update the font URL logic to append '__{creditName}' for resources with credit
   useEffect(() => {
     if (resource?.category === 'fonts' && resource.title && !loadedFonts.includes(resource.title)) {
       const titleLowered = resource.title
         .toLowerCase()
         .replace(/ /g, '%20');
-      
-      const fontUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
-      
+
+      let fontUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}`;
+
+      if (resource.credit) {
+        const creditName = resource.credit.replace(/ /g, '_');
+        fontUrl = `${fontUrl}__${creditName}`;
+      }
+
+      fontUrl = `${fontUrl}.${resource.filetype}`;
+
       const fontFace = new FontFace(resource.title, `url(${fontUrl})`);
-      
+
       fontFace.load().then((loadedFont) => {
         document.fonts.add(loadedFont);
         setLoadedFonts([...loadedFonts, resource.title]);
@@ -121,7 +127,7 @@ const ResourceDetailDialog = ({
       .toLowerCase()
       .replace(/ /g, '%20');
     
-    return `https://github.com/Yxmura/resources_renderdragon/blob/main/${resource.category}/${titleLowered}.${resource.filetype}`;
+    return `https://github.com/Yxmura/resources_renderdragon/blob/main/${resource.category}/${titleLowered}__${resource.credit}.${resource.filetype}`;
   };
 
   if (!resource) return null;
@@ -201,23 +207,13 @@ const ResourceDetailDialog = ({
           
           <ResourcePreview resource={resource} />
           
-          <div className="flex gap-2">
+          <div className="flex gap-2 text-center align-middle justify-center">
             <Button
               onClick={() => onDownload(resource)}
-              className="w-full pixel-btn-primary flex items-center justify-center gap-2"
+              className="w-half pixel-btn-primary flex items-center justify-center gap-2"
             >
               <Download className="h-5 w-5" />
               <span>Download Resource</span>
-            </Button>
-            <Button
-              onClick={() => {
-                const url = getGithubURL(resource);
-                window.open(url, '_blank');
-              }}
-              className="w-full pixel-btn-primary flex items-center justify-center gap-2"
-            >
-              <Github className="h-5 w-5" />
-              <span>View on GitHub</span>
             </Button>
           </div>
           <p className="text-xs text-center text-muted-foreground">

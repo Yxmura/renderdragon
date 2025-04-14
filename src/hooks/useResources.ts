@@ -122,7 +122,9 @@ export const useResources = () => {
       .toLowerCase()
       .replace(/ /g, '%20');
     
-    // Same URL structure for all resource types
+    if (resource.credit) {
+      return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${resource.credit}.${resource.filetype}`;
+    }
     return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
   };
 
