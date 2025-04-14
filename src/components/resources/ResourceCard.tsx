@@ -1,4 +1,3 @@
-
 import { Badge } from '@/components/ui/badge';
 import { 
   Music, 
@@ -6,14 +5,13 @@ import {
   Video, 
   FileText, 
   FileAudio,
-  Download,
   Check
 } from 'lucide-react';
 import { Resource } from '@/types/resources';
 
 interface ResourceCardProps {
   resource: Resource;
-  downloadCount: number;
+  downloadCount: number; // Keeping the prop for now to maintain compatibility
   onClick: (resource: Resource) => void;
 }
 
@@ -90,11 +88,6 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             <span>No credit needed</span>
           </div>
         )}
-        
-        <div className="text-xs text-muted-foreground flex items-center">
-          <Download className="h-3 w-3 mr-1" />
-          <span>{downloadCount || 0}</span>
-        </div>
       </div>
     </div>
   );

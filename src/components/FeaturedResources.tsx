@@ -2,18 +2,15 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Resource } from '@/types/resources';
 import ResourceCard from '@/components/resources/ResourceCard';
 
 const FeaturedResources = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
   const [featuredResources, setFeaturedResources] = useState<Resource[]>([]);
-  const [downloadCounts, setDownloadCounts] = useState<Record<number, number>>({});
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch all resources
     const fetchResources = async () => {
       try {
         setIsLoading(true);
@@ -23,7 +20,6 @@ const FeaturedResources = () => {
         }
         const resourcesData = await response.json();
 
-        // Flatten resources data
         const allResources: Resource[] = Object.entries(resourcesData).flatMap(
           ([category, resources]) =>
             (resources as any[]).map((resource) => ({ 
@@ -32,19 +28,8 @@ const FeaturedResources = () => {
             })),
         );
         
-        // Generate mock download counts for each resource
-        const counts: Record<number, number> = {};
-        allResources.forEach(resource => {
-          // Generate a random number between 50 and 500 for demo purposes
-          counts[resource.id] = Math.floor(Math.random() * 450) + 50;
-        });
-        
-        setDownloadCounts(counts);
-        
         // Sort resources by download count (descending) and get top 4
-        const sortedResources = [...allResources].sort((a, b) => {
-          return counts[b.id] - counts[a.id];
-        }).slice(0, 4);
+        const sortedResources = [...allResources].slice(0, 4);
         
         setFeaturedResources(sortedResources);
         setIsLoading(false);
@@ -85,7 +70,7 @@ const FeaturedResources = () => {
               >
                 <ResourceCard
                   resource={resource}
-                  downloadCount={downloadCounts[resource.id] || 0}
+                  downloadCount={0}
                   onClick={() => {}} 
                 />
               </Link>
