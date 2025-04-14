@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -7,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from 'sonner';
-import WaveSurferPlayer from '@/components/WaveSurferPlayer';
 import { checkCopyrightStatus, extractYouTubeID } from '@/utils/copyrightChecker';
 import { CopyrightResult } from '@/types/copyright';
 
@@ -26,18 +24,17 @@ const MusicCopyright = () => {
       toast.error("Please enter a song title, artist, or YouTube URL");
       return;
     }
-    
+
     setIsLoading(true);
     setResult(null);
-    
+
     try {
-      const youtubeId = extractYouTubeID(searchQuery);
-      
-      const copyrightData = await checkCopyrightStatus(searchQuery, youtubeId !== null);
-      
+      const isYouTube = extractYouTubeID(searchQuery) !== null;
+      const copyrightData = await checkCopyrightStatus(searchQuery, isYouTube);
+
       setResult(copyrightData);
       setIsPlaying(false);
-      
+
       if (copyrightData.status === 'error') {
         toast.error("Error checking copyright", {
           description: copyrightData.message || "Failed to analyze the song",
@@ -208,7 +205,7 @@ const MusicCopyright = () => {
               </div>
             )}
             
-            {result && !isLoading && (
+            {!isLoading && result && (
               <div className="pixel-card space-y-4">
                 <div className="flex justify-between items-start">
                   <div>
@@ -218,26 +215,15 @@ const MusicCopyright = () => {
                       {result.releaseYear && `• ${result.releaseYear}`}
                     </p>
                   </div>
-                  
                   {getCopyrightBadge(result.copyrightStatus)}
                 </div>
-                
                 <div className="bg-accent/30 rounded-md p-4">
                   <h3 className="font-vt323 mb-2">Copyright Information</h3>
                   <p className="text-muted-foreground mb-2">{result.details}</p>
-                  
                   {result.source && (
                     <p className="text-xs text-muted-foreground">Source: {result.source}</p>
                   )}
                 </div>
-                
-                {result.previewUrl && (
-                  <div className="bg-muted/30 rounded-md p-4">
-                    <h3 className="font-vt323 mb-3">Audio Preview</h3>
-                    <WaveSurferPlayer audioUrl={result.previewUrl} />
-                  </div>
-                )}
-                
                 {result.matchDetails && (
                   <div className="bg-muted/30 rounded-md p-4">
                     <h3 className="font-vt323 mb-2">Match Details</h3>
@@ -251,7 +237,6 @@ const MusicCopyright = () => {
                     </div>
                   </div>
                 )}
-                
                 {result.recommendations && (
                   <div className="bg-muted/30 rounded-md p-4">
                     <h3 className="font-vt323 mb-2">Recommendations</h3>

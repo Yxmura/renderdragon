@@ -1,4 +1,3 @@
-
 import { YouTubeSearchResult, SpotifyTrackInfo, VideoInfo, ChannelInfo, CopyrightResult } from '@/types/copyright';
 
 // YouTube URL pattern
@@ -12,8 +11,8 @@ export function extractYouTubeID(url: string): string | null {
 
 // Cache mechanism for copyright checking
 class CopyrightCache {
-  private cache: Record<string, any> = {};
-  
+  private cache: Record<string, VideoInfo | SpotifyTrackInfo | null> = {};
+
   constructor() {
     try {
       const savedCache = localStorage.getItem('copyright_cache');
@@ -25,12 +24,12 @@ class CopyrightCache {
       this.cache = {};
     }
   }
-  
-  get(key: string): any | null {
+
+  get(key: string): VideoInfo | SpotifyTrackInfo | null {
     return this.cache[key] || null;
   }
-  
-  set(key: string, value: any): void {
+
+  set(key: string, value: VideoInfo | SpotifyTrackInfo | null): void {
     this.cache[key] = value;
     try {
       localStorage.setItem('copyright_cache', JSON.stringify(this.cache));
@@ -42,50 +41,55 @@ class CopyrightCache {
 
 const copyrightCache = new CopyrightCache();
 
-// YouTube information extraction
+// Enhanced YouTube information extraction
 export async function getYouTubeInfo(url: string): Promise<VideoInfo | null> {
-  // Check cache first
   const cachedInfo = copyrightCache.get(url);
   if (cachedInfo) {
-    return cachedInfo;
+    if (cachedInfo && 'channel' in cachedInfo) {
+        return cachedInfo as VideoInfo;
+    }
+    return null;
   }
-  
+
   try {
     const videoId = extractYouTubeID(url);
     if (!videoId) return null;
-    
-    // In a real implementation, this would call the YouTube API
-    // For now, we'll simulate the response with sample data
+
     const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails,statistics&key=${import.meta.env.VITE_YOUTUBE_API_KEY}`);
-    
+
     if (!response.ok) {
       throw new Error(`YouTube API error: ${response.status}`);
     }
-    
+
     const data = await response.json();
-    
+
     if (!data.items || data.items.length === 0) {
       return null;
     }
-    
+
     const videoData = data.items[0];
     const snippet = videoData.snippet;
     const contentDetails = videoData.contentDetails;
     const statistics = videoData.statistics;
-    
-    // Determine copyright status from title and description
-    const title = snippet.title.toLowerCase();
-    const description = snippet.description.toLowerCase();
+
     const licenseString = snippet.licensedContent ? 'Standard YouTube License' : 'Creative Commons';
-    
-    const isCreativeCommons = licenseString.toLowerCase() === 'creative commons' || 
-                              description.includes('creative commons');
-                              
-    const noCopyrightTerms = ['no copyright', 'free to use', 'royalty-free', 'copyright free', 'public domain', 'royalty free music'];
-    const containsNoCopyright = noCopyrightTerms.some(term => title.includes(term) || description.includes(term));
-    
-    const isCopyrighted = !(isCreativeCommons || containsNoCopyright);
-    
+
+    const noCopyrightTerms = [
+      'no copyright',
+      'copyright-free',
+      'royalty-free',
+      'free to use',
+      'public domain',
+      'creative commons'
+    ];
+
+    const containsNoCopyright = noCopyrightTerms.some(term =>
+      snippet.title.toLowerCase().includes(term) ||
+      snippet.description.toLowerCase().includes(term)
+    );
+
+    const isCopyrighted = !(licenseString.toLowerCase() === 'creative commons' || containsNoCopyright);
+
     const videoInfo: VideoInfo = {
       title: snippet.title,
       channel: snippet.channelTitle,
@@ -98,10 +102,9 @@ export async function getYouTubeInfo(url: string): Promise<VideoInfo | null> {
       upload_date: snippet.publishedAt,
       url: `https://www.youtube.com/watch?v=${videoId}`
     };
-    
-    // Save to cache
+
     copyrightCache.set(url, videoInfo);
-    
+
     return videoInfo;
   } catch (error) {
     console.error('Error getting YouTube info:', error);
@@ -109,19 +112,24 @@ export async function getYouTubeInfo(url: string): Promise<VideoInfo | null> {
   }
 }
 
-// Spotify search
+// Enhanced Spotify search
 export async function searchSpotifyTrack(query: string): Promise<SpotifyTrackInfo | null> {
+  const cachedInfo = copyrightCache.get(query);
+  if (cachedInfo) {
+    if (cachedInfo && 'artist' in cachedInfo) {
+        return cachedInfo as SpotifyTrackInfo;
+    }
+    return null;
+  }
+
   try {
-    // In a real implementation, this would call the Spotify API
-    // For demonstration, we'll use a mock implementation
     const spotifyClientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
     const spotifyClientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
-    
+
     if (!spotifyClientId || !spotifyClientSecret) {
       throw new Error('Spotify API credentials not configured');
     }
-    
-    // Get access token (this would normally be done with proper OAuth flow)
+
     const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
@@ -130,37 +138,35 @@ export async function searchSpotifyTrack(query: string): Promise<SpotifyTrackInf
       },
       body: 'grant_type=client_credentials'
     });
-    
+
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
-    
-    // Search for tracks
+
     const searchResponse = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`
       }
     });
-    
+
     const searchData = await searchResponse.json();
-    
+
     if (!searchData.tracks || !searchData.tracks.items || searchData.tracks.items.length === 0) {
       return null;
     }
-    
+
     const track = searchData.tracks.items[0];
-    
-    // Get album details to check for copyright
+
     const albumResponse = await fetch(`https://api.spotify.com/v1/albums/${track.album.id}`, {
       headers: {
         'Authorization': `Bearer ${accessToken}`
       }
     });
-    
+
     const albumData = await albumResponse.json();
-    
+
     let copyrighted = true;
     let copyrightText = 'No copyright information available';
-    
+
     if (albumData.copyrights && albumData.copyrights.length > 0) {
       copyrightText = albumData.copyrights[0].text;
       const copyrightLower = copyrightText.toLowerCase();
@@ -170,10 +176,10 @@ export async function searchSpotifyTrack(query: string): Promise<SpotifyTrackInf
         copyrighted = false;
       }
     }
-    
-    return {
+
+    const trackInfo: SpotifyTrackInfo = {
       title: track.name,
-      artist: track.artists.map((a: any) => a.name).join(', '),
+      artist: track.artists.map((a: { name: string }) => a.name).join(', '),
       album: track.album.name,
       release_date: track.album.release_date,
       spotify_url: track.external_urls.spotify,
@@ -181,6 +187,10 @@ export async function searchSpotifyTrack(query: string): Promise<SpotifyTrackInf
       is_copyrighted: copyrighted,
       copyright_text: copyrightText
     };
+
+    copyrightCache.set(query, trackInfo);
+
+    return trackInfo;
   } catch (error) {
     console.error('Error searching Spotify:', error);
     return null;
@@ -188,7 +198,7 @@ export async function searchSpotifyTrack(query: string): Promise<SpotifyTrackInf
 }
 
 // Main copyright check function
-export async function checkCopyright(query: string): Promise<{ type: 'youtube' | 'spotify' | 'unknown', data: any }> {
+export async function checkCopyright(query: string): Promise<{ type: 'youtube' | 'spotify' | 'unknown', data: VideoInfo | SpotifyTrackInfo | null }> {
   if (query.match(YOUTUBE_URL_PATTERN)) {
     const info = await getYouTubeInfo(query);
     return { type: 'youtube', data: info };
@@ -202,10 +212,7 @@ export async function checkCopyright(query: string): Promise<{ type: 'youtube' |
     // No results
     return { 
       type: 'unknown', 
-      data: { 
-        error: 'No results found',
-        message: 'Could not find any information for the provided query'
-      } 
+      data: null
     };
   }
 }
@@ -241,7 +248,7 @@ export function formatDuration(isoDuration: string): string {
 }
 
 // Get video info directly via YouTube API
-export async function getVideoInfo(videoUrl: string): Promise<any> {
+export async function getVideoInfo(videoUrl: string): Promise<VideoInfo | null> {
   try {
     const videoId = extractYouTubeID(videoUrl);
     if (!videoId) throw new Error('Invalid YouTube URL');
@@ -257,34 +264,21 @@ export async function getVideoInfo(videoUrl: string): Promise<any> {
     }
     
     const video = videoData.items[0];
-    const channelId = video.snippet.channelId;
-    
-    // Get channel details
-    const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/channels?id=${channelId}&part=snippet,statistics&key=${apiKey}`);
-    const channelData = await channelResponse.json();
-    
-    if (!channelData.items || channelData.items.length === 0) {
-      throw new Error('Channel not found');
-    }
-    
-    const channel = channelData.items[0];
-    
     return {
       title: video.snippet.title,
+      channel: video.snippet.channelTitle,
+      license: video.snippet.licensedContent ? 'Standard YouTube License' : 'Creative Commons',
+      is_copyrighted: !video.snippet.licensedContent,
       description: video.snippet.description,
-      channel_title: video.snippet.channelTitle,
-      publish_date: video.snippet.publishedAt,
-      views: video.statistics.viewCount || '0',
-      likes: video.statistics.likeCount || '0',
-      comments: video.statistics.commentCount || '0',
+      thumbnail: video.snippet.thumbnails.high?.url,
       duration: video.contentDetails.duration,
-      channel_subscribers: channel.statistics.subscriberCount || '0',
-      channel_videos: channel.statistics.videoCount || '0',
-      thumbnail: video.snippet.thumbnails.high?.url
+      view_count: parseInt(video.statistics.viewCount || '0'),
+      upload_date: video.snippet.publishedAt,
+      url: `https://www.youtube.com/watch?v=${videoId}`
     };
   } catch (error) {
     console.error('Error getting video info:', error);
-    throw error;
+    return null;
   }
 }
 

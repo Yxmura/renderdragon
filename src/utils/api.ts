@@ -1,10 +1,9 @@
-
 // Custom API handler types that don't rely on Next.js
-export type ApiHandler = (req: Request, res: Response) => Promise<any>;
+export type ApiHandler = (req: Request, res: Response) => Promise<void>;
 
 export type Response = {
   status: (code: number) => Response;
-  json: (data: any) => void;
+  json: (data: Record<string, unknown>) => void;
   setHeader: (name: string, value: string) => void;
 };
 
