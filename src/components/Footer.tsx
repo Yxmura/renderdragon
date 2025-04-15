@@ -1,10 +1,10 @@
-
 import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Github, Twitter, Youtube, MessageSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import Logo from './Logo';
+import HyperpingBadge from '@/components/ui/StatusBadge';
 
 const Footer = () => {
   const [cartClicked, setCartClicked] = useState(false);
@@ -181,7 +181,9 @@ const Footer = () => {
 
             <div className="text-center w-full text-white/60 justify-center align-middle"><a href="https://www.flaticon.com/free-icons/pixel" title="pixel icons">Pixel icons - Flaticon</a></div>
           </div>
-          
+
+          <HyperpingBadge />
+
           <div className="flex items-center">
             <p className="text-white/70 text-sm">
               &copy; {currentYear} Renderdragon
