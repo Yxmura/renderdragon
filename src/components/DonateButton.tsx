@@ -22,7 +22,7 @@ const DonateButton = () => {
       >
         <div className="absolute inset-0 rounded-full bg-cow-purple-dark/30 group-hover:bg-cow-purple-dark/50 animate-ping opacity-75"></div>
         <div className="relative flex items-center justify-center">
-          <Coffee className="h-6 w-6 text-white" />
+          <img className='w-7 h-7' src='/assets/donate.png' alt='donate'></img>
         </div>
         <span className="sr-only">Donate</span>
       </Button>
@@ -42,12 +42,12 @@ const DonateButton = () => {
           <div className="flex flex-col items-center space-y-6 py-4">
             <div className="relative w-full h-48 overflow-hidden rounded-lg">
               <img
-                src="https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2675&q=80"
+                src="https://imgs.search.brave.com/WIED0Ngc7Xi4_V_tGdmoNRa20eCToFgq7BhlUW03PwQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvOTEw/MTk1OTg4L3Bob3Rv/L3BpenphLW1hcmdh/cml0YS5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9WlBsb3ZF/c2JGV0pxNk0za0xS/OTh1MGVvOE5DWWlG/RXVSamtNS1FDd0g0/MD0"
                 alt="Coffee cup"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
-                <p className="text-white font-medium">Every donation helps us create more free tools</p>
+                <p className="text-white font-medium">Donations are our only source of income</p>
               </div>
             </div>
             
@@ -71,7 +71,7 @@ const DonateButton = () => {
               </div>
               
               <a
-                href="https://www.buymeacoffee.com"
+                href="https://www.buymeacoffee.com/renderdragon"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-cow-purple hover:bg-cow-purple-dark text-white font-bold py-3 px-4 rounded-md w-full flex items-center justify-center space-x-2 transition-colors group relative overflow-hidden"
@@ -80,7 +80,7 @@ const DonateButton = () => {
                   <div className="h-48 w-48 bg-white/10 rounded-full animate-ping"></div>
                 </div>
                 <Coffee className="h-5 w-5" />
-                <span>Buy Me A Coffee</span>
+                <span>Donate - every penny matters</span>
               </a>
             </div>
           </div>
