@@ -1,4 +1,3 @@
-
 import { useRef, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -6,6 +5,7 @@ import { useKBar } from 'kbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { useResources } from '@/hooks/useResources';
+import { useDownloadCounts } from '@/hooks/useDownloadCounts';
 import { Resource } from '@/types/resources';
 import ResourceFilters from '@/components/resources/ResourceFilters';
 import ResourcesList from '@/components/resources/ResourcesList';
@@ -21,7 +21,6 @@ const ResourcesHub = () => {
     selectedSubcategory,
     isLoading,
     isSearching,
-    downloadCounts,
     loadedFonts,
     setLoadedFonts,
     filteredResources,
@@ -33,6 +32,9 @@ const ResourcesHub = () => {
     handleSearch,
     handleDownload,
   } = useResources();
+
+  const resourceIds = resources.map((resource) => resource.id);
+  const { downloadCounts } = useDownloadCounts(resourceIds);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const { query } = useKBar();
@@ -116,7 +118,7 @@ const ResourcesHub = () => {
         resource={selectedResource}
         onClose={() => setSelectedResource(null)}
         onDownload={onDownload}
-        downloadCount={selectedResource?.id ? downloadCounts[selectedResource.id] || 0 : 0}
+        downloadCount={downloadCounts[selectedResource?.id ?? -1] || 0}
         loadedFonts={loadedFonts}
         setLoadedFonts={setLoadedFonts}
       />

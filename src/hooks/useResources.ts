@@ -1,13 +1,41 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Resource, ResourcesData } from '@/types/resources';
+import { useDownloadCounts } from '@/hooks/useDownloadCounts'
+
+let resourceIds: number[] = [];
+
+// Utility to normalize numbers and words
+const numberWordMap: Record<string, string> = {
+  'zero': '0', 'one': '1', 'two': '2', 'three': '3', 'four': '4',
+  'five': '5', 'six': '6', 'seven': '7', 'eight': '8', 'nine': '9',
+  'ten': '10', 'eleven': '11', 'twelve': '12', 'thirteen': '13', 'fourteen': '14',
+  'fifteen': '15', 'sixteen': '16', 'seventeen': '17', 'eighteen': '18', 'nineteen': '19',
+  'twenty': '20'
+};
+const digitWordMap: Record<string, string> = Object.fromEntries(
+  Object.entries(numberWordMap).map(([k, v]) => [v, k])
+);
+function normalizeText(text: string): string {
+  let normalized = text.toLowerCase();
+  // Replace number words with digits
+  for (const [word, digit] of Object.entries(numberWordMap)) {
+    normalized = normalized.replace(new RegExp(`\\b${word}\\b`, 'g'), digit);
+  }
+  // Replace digits with number words
+  for (const [digit, word] of Object.entries(digitWordMap)) {
+    normalized = normalized.replace(new RegExp(`\\b${digit}\\b`, 'g'), word);
+  }
+  return normalized;
+}
 
 export const useResources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
-  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
+  const { downloadCounts: externalDownloadCounts, incrementDownload } = useDownloadCounts(resourceIds);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [downloadCounts, setDownloadCounts] = useState<Record<number, number>>({});
   const [lastAction, setLastAction] = useState<string>('');
@@ -24,16 +52,19 @@ export const useResources = () => {
       }
       const resourcesData = (await response.json()) as ResourcesData;
 
+      let globalIndex = 0; // Global index to ensure unique IDs across categories
       const allResources: Resource[] = Object.entries(resourcesData).flatMap(
         ([category, resources]) =>
           resources.map((resource) => ({ 
             ...resource, 
+            id: resource.id || `${category}-${globalIndex++}`, // Generate unique ID using category and global index
             category: category as 'music' | 'sfx' | 'image' | 'animations' | 'fonts' | 'presets',
             downloads: 0 // Set all resources to have 0 downloads by default
           })),
       );
 
       setResources(allResources);
+      resourceIds = allResources.map(r => r.id); // Set resourceIds after resources are fetched
       
       // Initialize download counts
       const counts: Record<number, number> = {};
@@ -98,12 +129,16 @@ export const useResources = () => {
 
   // Determine which resources to display based on filters
   const filteredResources = useMemo(() => {
+    const normalizedQuery = normalizeText(searchQuery);
     return resources.filter((resource) => {
-      // Apply search query filter
+      const titleNorm = normalizeText(resource.title || '');
+      const categoryNorm = normalizeText(resource.category || '');
+      const subcategoryNorm = normalizeText(resource.subcategory || '');
+      // Apply search query filter (case-insensitive, number-word aware)
       const matchesSearch = !isSearching || 
-        resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        resource.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (resource.subcategory || '').toLowerCase().includes(searchQuery.toLowerCase());
+        titleNorm.includes(normalizedQuery) ||
+        categoryNorm.includes(normalizedQuery) ||
+        subcategoryNorm.includes(normalizedQuery);
       
       // Apply category filter
       const matchesCategory = !selectedCategory || resource.category === selectedCategory;
@@ -136,14 +171,8 @@ export const useResources = () => {
     if (downloadURL) {
       window.open(downloadURL, '_blank'); 
       
-      // Update download count
-      setDownloadCounts(prev => {
-        const newCount = (prev[resource.id] || 0) + 1;
-        return {
-          ...prev,
-          [resource.id]: newCount
-        };
-      });
+      // update download count
+      incrementDownload(resource.id)
       
       return true;
     }
@@ -160,7 +189,7 @@ export const useResources = () => {
     selectedSubcategory,
     isLoading,
     isSearching,
-    downloadCounts,
+    downloadCounts: externalDownloadCounts,
     lastAction,
     loadedFonts,
     setLoadedFonts,

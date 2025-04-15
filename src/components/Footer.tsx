@@ -178,6 +178,8 @@ const Footer = () => {
             <Link to="/privacy" className="text-white/70 hover:text-white transition-colors">
               Privacy
             </Link>
+
+            <div className="text-center w-full text-white/60 justify-center align-middle"><a href="https://www.flaticon.com/free-icons/pixel" title="pixel icons">Pixel icons - Flaticon</a></div>
           </div>
           
           <div className="flex items-center">
