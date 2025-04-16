@@ -9,6 +9,11 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
+  if (!process.env.OPENAI_API_KEY) {
+    console.error('OPENAI_API_KEY is not set');
+    return res.status(500).json({ message: 'Server misconfiguration: missing API key' });
+  }
+
   const { description, keywords, creativity } = req.body;
 
   if (!description) {
@@ -18,18 +23,24 @@ export default async function handler(req, res) {
   try {
     const prompt = `Generate 5 YouTube video titles for a video described as "${description}". Incorporate these keywords: ${keywords || 'none'}. The creativity level is ${creativity} (0-100, where 0 is factual and 100 is highly creative). Each title should have a 'type' (creative, descriptive, emotional, or trending). Return a JSON array of objects in the format: [{title: "Title text", type: "creative | descriptive | emotional | trending"}]`;
 
-    const completion = await openai.completions.create({
-      model: 'text-davinci-003', // or 'gpt-3.5-turbo' with chat completions (requires different call)
-      prompt,
-      max_tokens: 200,
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a helpful assistant that generates YouTube video titles.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
       temperature: creativity / 100,
       n: 1,
-      stop: null,
     });
 
-    const rawText = completion.choices[0].text.trim();
+    const rawText = completion.choices[0].message.content.trim();
 
-    // Parse AI response JSON safely
     let generatedTitles;
     try {
       generatedTitles = JSON.parse(rawText);
@@ -43,7 +54,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Add IDs and placeholder metrics
     const suggestions = generatedTitles.map((title, i) => ({
       id: String(i),
       title: title.title,
