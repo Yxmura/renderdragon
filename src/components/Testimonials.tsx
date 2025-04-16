@@ -27,10 +27,10 @@ const testimonials: Testimonial[] = [
   },
   {
     id: 3,
-    name: "ItsAlphaReturns",
-    role: "Minecraft Youtuber and Thumbnail Designer",
-    content: "Creator on wheels is a really good tool with great assets that can be useful for pretty much any YouTuber (small or big)",
-    avatar: "https://yt3.googleusercontent.com/9RbZiqYgTK5WKR-JmUbimeCKwlMwEKTDuCEs300PnCS72xzOg9uIQFckG0MlhCeOVA7zUuMp=s160-c-k-c0x00ffffff-no-rj"
+    name: "stove",
+    role: "Minecraft Youtuber",
+    content: "I am Glad that i can Legally download youtube tools without getting 308 viruses!!",
+    avatar: "https://2cu76k77cd.ufs.sh/f/1TT1D8b4nz0qw3MC7WniSMKsrf1HTZCm3biQt2DXBGeu6zdF"
   }
 ];
 
