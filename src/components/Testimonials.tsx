@@ -27,9 +27,16 @@ const testimonials: Testimonial[] = [
   },
   {
     id: 3,
+    name: "AlphaReturns",
+     role: "Minecraft Youtuber and Thumbnail Designer",
+     content: "Creator on wheels is a really good tool with great assets that can be useful for pretty much any YouTuber (small or big)",
+     avatar: "https://yt3.googleusercontent.com/9RbZiqYgTK5WKR-JmUbimeCKwlMwEKTDuCEs300PnCS72xzOg9uIQFckG0MlhCeOVA7zUuMp=s160-c-k-c0x00ffffff-no-rj"
+  },
+  {
+    id: 4,
     name: "stove",
     role: "Minecraft Youtuber",
-    content: "I am Glad that i can Legally download youtube tools without getting 308 viruses!!",
+    content: "I am glad that i can legally download youtube tools without getting 308 viruses!!",
     avatar: "https://2cu76k77cd.ufs.sh/f/1TT1D8b4nz0qw3MC7WniSMKsrf1HTZCm3biQt2DXBGeu6zdF"
   }
 ];
@@ -37,7 +44,6 @@ const testimonials: Testimonial[] = [
 const Testimonials = () => {
   return (
     <section className="py-16 bg-background relative overflow-hidden">
-      {/* Pixel Art Background Elements */}
       <div className="absolute inset-0 pointer-events-none opacity-10">
         <div className="absolute top-10 left-10 w-8 h-8 bg-cow-purple pixel-corners"></div>
         <div className="absolute bottom-12 right-12 w-6 h-6 bg-cow-purple pixel-corners"></div>
@@ -54,13 +60,12 @@ const Testimonials = () => {
           Don't just take our word for it - hear from the content creators who use our tools every day
         </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {testimonials.map((testimonial, index) => (
             <div 
               key={testimonial.id} 
               className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 pixel-corners"
             >
-              {/* Card Header with Avatar */}
               <div className="p-6 bg-gradient-to-r from-cow-purple/10 to-transparent border-b border-border">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-cow-purple/30 pixel-corners">

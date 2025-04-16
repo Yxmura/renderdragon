@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const prompt = `Generate 5 YouTube video titles for a video described as "${description}". Incorporate these keywords: ${keywords || 'none'}. The creativity level is ${creativity} (0-100, where 0 is factual and 100 is highly creative). Each title should have a 'type' (creative, descriptive, emotional, or trending). Return a JSON array of objects in the format: [{title: "Title text", type: "creative | descriptive | emotional | trending"}]`;
+    const prompt = `Generate 3 YouTube video titles for a video described as "${description}". Incorporate these keywords: ${keywords || 'none'}. The creativity level is ${creativity} (0-100, where 0 is factual and 100 is highly creative). Each title should have a 'type' (creative, descriptive, emotional, or trending). Return a JSON array of objects in the format: [{title: "Title text", type: "creative | descriptive | emotional | trending"}]`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
