@@ -182,7 +182,7 @@ const Footer = () => {
             <div className="text-center w-full text-white/60 justify-center align-middle"><a href="https://www.flaticon.com/free-icons/pixel" title="pixel icons">Pixel icons - Flaticon</a></div>
           </div>
 
-          <HyperpingBadge />
+          <HyperpingBadge/>
 
           <div className="flex items-center">
             <p className="text-white/70 text-sm">

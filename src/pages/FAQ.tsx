@@ -86,7 +86,7 @@ const FAQ = () => {
                         How can I submit my own resources to share?
                       </AccordionTrigger>
                       <AccordionContent className="text-muted-foreground">
-                        We love community contributions! Please contact us through our Contact page 
+                        We love community contributions! Please contact us in our Discord server which you can join on our Contact page 
                         with details about your resource. We'll review it and potentially add it to our collection, 
                         giving you full credit as the creator.
                       </AccordionContent>
@@ -108,8 +108,8 @@ const FAQ = () => {
                         How often are new resources added?
                       </AccordionTrigger>
                       <AccordionContent className="text-muted-foreground">
-                        We add new resources regularly, typically several times per month. 
-                        Follow our social media channels to stay updated on new additions.
+                        We add new resources regularly, but it depends on the community. 
+                        If you want to contribute please join our Discord server!
                       </AccordionContent>
                     </AccordionItem>
                     
@@ -257,7 +257,7 @@ const FAQ = () => {
                     </p>
                     
                     <p className="text-sm">
-                      Last updated: November 2023
+                      Last updated: 16 April 2025
                     </p>
                   </div>
                 </div>
