@@ -23,6 +23,7 @@ import Privacy from "./pages/Privacy";
 import Construction from "./pages/Construction"
 import NotFound from "./pages/NotFound";
 import { KBarProvider } from 'kbar';
+import AiTitleHelper from "./pages/AiTitleHelper";
 
 const queryClient = new QueryClient();
 
@@ -47,7 +48,7 @@ const App = () => (
             <Route path="/discord-servers" element={<DiscordServers />} />
             <Route path="/youtube-downloader" element={<YouTubeDownloader />} />
             <Route path="/music-copyright" element={<MusicCopyright />} />
-            <Route path="/ai-title-helper" element={<Construction />} />
+            <Route path="/ai-title-helper" element={<AiTitleHelper />} />
             <Route path="/background-generator" element={<BackgroundGenerator />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/tos" element={<TOS />} />
