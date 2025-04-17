@@ -29,7 +29,7 @@ const testimonials: Testimonial[] = [
     id: 3,
     name: "AlphaReturns",
      role: "Minecraft Youtuber and Thumbnail Designer",
-     content: "Creator on wheels is a really good tool with great assets that can be useful for pretty much any YouTuber (small or big)",
+     content: "Renderdragon is a really good tool with great assets that can be useful for pretty much any YouTuber (small or big)",
      avatar: "https://yt3.googleusercontent.com/9RbZiqYgTK5WKR-JmUbimeCKwlMwEKTDuCEs300PnCS72xzOg9uIQFckG0MlhCeOVA7zUuMp=s160-c-k-c0x00ffffff-no-rj"
   },
   {
@@ -60,7 +60,7 @@ const Testimonials = () => {
           Don't just take our word for it - hear from the content creators who use our tools every day
         </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {testimonials.map((testimonial, index) => (
             <div 
               key={testimonial.id} 
@@ -68,7 +68,7 @@ const Testimonials = () => {
             >
               <div className="p-6 bg-gradient-to-r from-cow-purple/10 to-transparent border-b border-border">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-cow-purple/30 pixel-corners">
+                  <div className="w-14 h-14 rounded-full  border-2 border-cow-purple/30 pixel-corners">
                     <img 
                       src={testimonial.avatar} 
                       alt={testimonial.name} 
