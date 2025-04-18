@@ -1,69 +1,80 @@
-# Welcome to your Lovable project
+<h1 align="center">
+  🐉🔥 Renderdragon 🔥🐉
+</h1>
 
-## Project info
+<p align="center">
+  <img src="https://renderdragon.vercel.app/renderdragon.png" alt="Renderdragon Logo" width="200" />
+</p>
 
-**URL**: https://lovable.dev/projects/3aa49ef4-4af1-4418-a80c-70d403bcc63c
+<p align="center">
+  <b>FREE Tools & Assets for Minecraft YouTube Creators</b><br>
+  No ads. No gimmicks. Just pure creative power.<br>
+  <a href="https://renderdragon.vercel.app">🌐 renderdragon.vercel.app</a> •
+  <a href="https://discord.com/invite/d9zxkkdBWV">💬 Join our Discord</a>
+</p>
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 🧱 What is Renderdragon?
 
-**Use Lovable**
+**Renderdragon** is your ultimate toolkit for creating **Minecraft YouTube content**. Whether you're crafting a cinematic masterpiece or just getting started with Let’s Plays, we’ve got you covered — **totally free** and **ad-free**.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3aa49ef4-4af1-4418-a80c-70d403bcc63c) and start prompting.
+### 🔧 Included Tools:
+- 🎵 Royalty-Free **Music & SFX Library**
+- 🎬 **Animations** & visual overlays
+- 🤖 **AI-Powered Title Generator**
+- 📥 **YouTube Video Downloader**
+- ⚠️ **Copyright Checker**
 
-Changes made via Lovable will be committed automatically to this repo.
+> All with a **pixel art** feel and built just for creators.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🚀 Why Renderdragon?
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- 🟩 **No ads, no sketchy popups**
+- 🟦 Built **by creators, for creators**
+- 🟨 Everything tailored for **Minecraft content**
+- 🟪 Beautiful retro UI with **pixel art** aesthetic
+- 🟥 100% **free to use**, forever
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🐉 Our Mascot
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Meet the **Enderdragon with fire breath** — our fierce but friendly symbol of power, creativity, and Minecraft-y goodness. 🔥
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 📡 Join the Community
 
-**Edit a file directly in GitHub**
+💬 Hop into the conversation and get sneak peeks of new assets:
+👉 [discord.gg/d9zxkkdBWV](https://discord.com/invite/d9zxkkdBWV)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+---
 
-**Use GitHub Codespaces**
+## 📎 Links
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- 🌐 Website: [renderdragon.vercel.app](https://renderdragon.vercel.app)
+- 📢 Twitter: https://x.com/_renderdragon
+- 🎥 YouTube: https://www.youtube.com/channel/UCOheNYpPEHcS2ljttRmllxg
 
-## What technologies are used for this project?
+---
 
-This project is built with .
+## 🛠️ Tech Stack (for the curious)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+> Built using **Vite**, **React**, **Tailwind css**, **Shadcn/ui**, and a dash of **voxel magic**.
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/3aa49ef4-4af1-4418-a80c-70d403bcc63c) and click on Share -> Publish.
+## ⭐ Support / Contribute
 
-## I want to use a custom domain - is that possible?
+Right now we're focused on helping creators — not donations. If you want to contribute, join our [Discord](https://discord.com/invite/d9zxkkdBWV), share your ideas, or help spread the word!
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+> 💚 Built with passion for Minecraft creators everywhere.
+
+---
+
+<p align="center">
+  <i>"Fuel your channel. Feed the dragon."</i> 🐉
+</p>

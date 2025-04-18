@@ -25,10 +25,10 @@ function HyperpingBadge() {
           "dotOutage": "#E95858",
           "dotMaintenance": "#0070F3",
           "dotNeutral": "#0070F3",
-          "operational": "Systems operational",
-          "incident": "Under investigation",
-          "outage": "System outage",
-          "maintenance": "Under maintenance"
+          "operational": "",
+          "incident": "",
+          "outage": "",
+          "maintenance": ""
         });
         isInitialized.current = true;
       } else {

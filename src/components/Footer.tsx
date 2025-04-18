@@ -74,7 +74,7 @@ const Footer = () => {
             
             <div className="flex space-x-4 mb-6">
               <a 
-                href="https://discord.com" 
+                href="https://discord.com/invite/d9zxkkdBWV" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
@@ -84,7 +84,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="https://twitter.com" 
+                href="https://x.com/_renderdragon" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
@@ -94,7 +94,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="https://youtube.com" 
+                href="https://www.youtube.com/channel/UCOheNYpPEHcS2ljttRmllxg" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
@@ -170,22 +170,25 @@ const Footer = () => {
         
         <div className="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
-            <Link to="/faq" className="text-white/70 hover:text-white transition-colors">
+            <Link to="/faq" className="text-white/70 hover:text-white transition-colors text-sm">
               FAQ
             </Link>
             
-            <Link to="/tos" className="text-white/70 hover:text-white transition-colors">
+            <Link to="/tos" className="text-white/70 hover:text-white transition-colors text-sm">
               Terms
             </Link>
             
-            <Link to="/privacy" className="text-white/70 hover:text-white transition-colors">
+            <Link to="/privacy" className="text-white/70 hover:text-white transition-colors text-sm">
               Privacy
             </Link>
 
-            <div className="text-center w-full text-white/60 justify-center align-middle"><a href="https://www.flaticon.com/free-icons/pixel" title="pixel icons">Pixel icons - Flaticon</a></div>
-          </div>
+            <HyperpingBadge />
 
-          <HyperpingBadge/>
+            <div className="text-white/70 text-sm">
+              <span className="mr-4">Not associated with Mojang or Microsoft</span>
+              <a href="https://www.flaticon.com/free-icons/pixel" title="pixel icons" className="hover:text-white transition-colors">Icons by Flaticon</a>
+            </div>
+          </div>
 
           <div className="flex items-center">
             <p className="text-white/70 text-sm">
@@ -196,7 +199,6 @@ const Footer = () => {
               ref={cartButtonRef}
               onClick={handleCartClick}
               className="ml-4 p-2 bg-white/10 hover:bg-white/20 rounded-md transition-all duration-1000"
-              aria-label="Easter egg"
               disabled={cartClicked}
             >
               <ShoppingCart className="h-5 w-5" />
