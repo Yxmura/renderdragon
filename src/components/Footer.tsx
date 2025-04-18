@@ -104,7 +104,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="https://github.com" 
+                href="https://github.com/Yxmura/renderdragon" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
