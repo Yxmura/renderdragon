@@ -81,13 +81,8 @@ const Testimonials = () => {
                   </div>
                 </div>
               </div>
-<<<<<<< HEAD
-              
-              {/* da content of da card */}
-=======
 
               {/* Card Content */}
->>>>>>> faee21fbbda64adfd850547828c7c44fd488774b
               <div className="p-6 relative">
                 <Quote className="absolute top-4 left-4 text-cow-purple/10 w-10 h-10" />
                 <blockquote className="relative z-10 pl-2">
