@@ -1,7 +1,6 @@
-
 import { Resource } from '@/types/resources';
 import ResourceCard from './ResourceCard';
-import { FolderX, X, Github, Search } from 'lucide-react';
+import { FolderX, X, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ResourcesListProps {
@@ -29,9 +28,8 @@ const ResourcesList = ({
   onClearFilters,
   hasCategoryResources
 }: ResourcesListProps) => {
-  // Either no resources match filters, or the selected category has no resources
-  const shouldShowNoResourcesMessage = filteredResources.length === 0 || 
-                                     (selectedCategory && !hasCategoryResources);
+  //  no resources match filters or the category has 0 resources
+  const shouldShowNoResourcesMessage = filteredResources.length === 0 || (selectedCategory && !hasCategoryResources);
   
   if (isLoading) {
     return (

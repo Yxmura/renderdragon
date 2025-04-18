@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { Users, Download, Star, ThumbsUp } from 'lucide-react';
 
@@ -7,33 +6,31 @@ interface Stat {
   label: string;
   icon: React.ElementType;
   suffix?: string;
-  dynamicFetch?: boolean;
 }
 
 const Stats = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [stats, setStats] = useState<Stat[]>([
     {
-      value: 20000,
+      value: 50,
       label: 'Content Creators',
       icon: Users,
       suffix: '+'
     },
     {
-      value: 0, // Will be fetched dynamically
+      value: 100,
       label: 'Assets Downloaded',
       icon: Download,
       suffix: '+',
-      dynamicFetch: true
     },
     {
-      value: 4.8,
+      value: 4.6,
       label: 'Average Rating',
       icon: Star,
       suffix: '/5'
     },
     {
-      value: 98,
+      value: 90,
       label: 'Satisfaction Rate',
       icon: ThumbsUp,
       suffix: '%'
@@ -44,52 +41,21 @@ const Stats = () => {
   const countingStarted = useRef(false);
 
   const formatNumber = (num: number | undefined) => {
-    // Guard against undefined values
     if (num === undefined) {
       return '0';
     }
     
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'k';
+    if (Number.isInteger(num)) {
+      if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'k';
+      }
+      return num.toString();
     }
-    return num.toString();
+    
+    return num.toFixed(1);
   };
 
   useEffect(() => {
-    // Fetch dynamic data (downloads count)
-    const fetchDownloadsCount = async () => {
-      try {
-        const response = await fetch('/api/stats/downloads');
-        const data = await response.json();
-        
-        // Update the downloads count in the stats array
-        setStats(prevStats => {
-          return prevStats.map(stat => {
-            if (stat.dynamicFetch) {
-              return { ...stat, value: data.downloads || 125000 }; // fallback to 125000 if API fails
-            }
-            return stat;
-          });
-        });
-      } catch (error) {
-        console.error('Failed to fetch download stats:', error);
-        // Set a fallback value if fetch fails
-        setStats(prevStats => {
-          return prevStats.map(stat => {
-            if (stat.dynamicFetch) {
-              return { ...stat, value: 125000 };
-            }
-            return stat;
-          });
-        });
-      }
-    };
-
-    fetchDownloadsCount();
-  }, []);
-
-  useEffect(() => {
-    // Initialize counts array based on stats length
     setCounts(stats.map(() => 0));
   }, [stats]);
 
@@ -103,13 +69,14 @@ const Stats = () => {
       { threshold: 0.1 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const currentRef = sectionRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, []);
@@ -120,8 +87,8 @@ const Stats = () => {
       
       stats.forEach((stat, index) => {
         const target = stat.value;
-        const duration = 2000; // ms
-        const stepTime = 50; // ms
+        const duration = 2000;
+        const stepTime = 50; 
         const steps = duration / stepTime;
         const increment = target / steps;
         let current = 0;
@@ -134,7 +101,7 @@ const Stats = () => {
           }
           setCounts(prev => {
             const newCounts = [...prev];
-            newCounts[index] = Math.floor(current);
+            newCounts[index] = current;
             return newCounts;
           });
         }, stepTime);
@@ -162,7 +129,7 @@ const Stats = () => {
               </div>
               
               <div className="text-3xl md:text-4xl font-vt323 mb-2 text-primary animate-glow">
-                {stat.value === 4.8 ? (counts[index] !== undefined ? counts[index].toFixed(1) : '0.0') : formatNumber(counts[index])}{stat.suffix}
+                {formatNumber(counts[index])}{stat.suffix}
               </div>
               
               <div className="text-muted-foreground text-center">

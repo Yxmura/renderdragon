@@ -263,7 +263,7 @@ const YouTubeVideos = () => {
       
       <Footer />
       
-      {/* Video Detail Dialog */}
+      {/* Video skibidi Dialog */}
       <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
         <DialogContent className="sm:max-w-4xl pixel-corners overflow-y-auto max-h-[90vh] custom-scrollbar">
           <DialogHeader>

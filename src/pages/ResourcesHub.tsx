@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useKBar } from 'kbar';
@@ -10,8 +10,11 @@ import { Resource } from '@/types/resources';
 import ResourceFilters from '@/components/resources/ResourceFilters';
 import ResourcesList from '@/components/resources/ResourcesList';
 import ResourceDetailDialog from '@/components/resources/ResourceDetailDialog';
+import { Button } from '@/components/ui/button';
+import { ArrowUp } from 'lucide-react';
 
 const ResourcesHub = () => {
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const {
     resources,
     selectedResource,
@@ -44,20 +47,41 @@ const ResourcesHub = () => {
     document.title = 'Resources Hub - Renderdragon';
 
     const handleKeydown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+      // Only trigger kbar search if not already focused in an input
+      const isInputFocused = document.activeElement?.tagName === 'INPUT';
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k' && !isInputFocused) {
         e.preventDefault();
         query.toggle();
       }
     };
 
     window.addEventListener('keydown', handleKeydown);
-    query.inputRefSetter(inputRef.current);
 
     return () => {
       window.removeEventListener('keydown', handleKeydown);
       query.inputRefSetter(null);
     };
   }, [query]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.pageYOffset > 400;
+      setShowScrollTop(scrolled);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
 
   const onDownload = (resource: Resource) => {
     const success = handleDownload(resource);
@@ -72,7 +96,7 @@ const ResourcesHub = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
       <Navbar />
 
       <main className="flex-grow pt-24 pb-16 cow-grid-bg custom-scrollbar">
@@ -122,6 +146,17 @@ const ResourcesHub = () => {
         loadedFonts={loadedFonts}
         setLoadedFonts={setLoadedFonts}
       />
+
+      {showScrollTop && (
+        <Button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 z-[9999] h-12 w-12 rounded-full shadow-lg bg-cow-purple hover:bg-cow-purple-dark transition-all duration-300 opacity-90 hover:opacity-100 text-white border-2 border-white/10 scroll-button-enter"
+          size="icon"
+          aria-label="Scroll to top"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </Button>
+      )}
     </div>
   );
 };

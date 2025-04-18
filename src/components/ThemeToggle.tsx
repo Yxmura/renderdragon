@@ -1,16 +1,17 @@
-
 import { useEffect, useState } from 'react';
-import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import PixelSvgIcon from './PixelSvgIcon';
 
 export function ThemeToggle({ className }: { className?: string }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return localStorage.getItem('theme') as 'light' | 'dark' ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  });
 
   useEffect(() => {
     const storedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
     if (storedTheme) {
       setTheme(storedTheme);
       document.documentElement.classList.toggle('dark', storedTheme === 'dark');
@@ -28,19 +29,25 @@ export function ThemeToggle({ className }: { className?: string }) {
   };
 
   return (
-    <Button 
-      variant="ghost" 
-      size="icon" 
+    <Button
+      variant="ghost"
+      size="icon"
       onClick={toggleTheme}
       className={cn(
-        "relative overflow-hidden transition-colors animate-glow rounded-full w-10 h-10", 
+        'relative overflow-hidden transition-colors animate-glow rounded-full w-10 h-10',
         className
       )}
       aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
       style={{ transform: 'none' }}
     >
-      <Sun className={`h-5 w-5 absolute transition-all duration-300 text-foreground ${theme === 'light' ? 'opacity-100 transform scale-100 rotate-0' : 'opacity-0 transform scale-0 -rotate-90'}`} />
-      <Moon className={`h-5 w-5 absolute transition-all duration-300 text-foreground ${theme === 'dark' ? 'opacity-100 transform scale-100 rotate-0' : 'opacity-0 transform scale-0 rotate-90'}`} />
+      <span className="absolute inset-0 flex items-center justify-center">
+        <span className="flex items-center justify-center w-full h-full transition-all duration-300 absolute top-0 left-0" style={{zIndex: theme === 'light' ? 2 : 1, opacity: theme === 'light' ? 1 : 0, transform: theme === 'light' ? 'scale(1) rotate(0deg)' : 'scale(0) rotate(-90deg)'}}>
+          <PixelSvgIcon name="sun" className="h-5 w-5" />
+        </span>
+        <span className="flex items-center justify-center w-full h-full transition-all duration-300 absolute top-0 left-0" style={{zIndex: theme === 'dark' ? 2 : 1, opacity: theme === 'dark' ? 1 : 0, transform: theme === 'dark' ? 'scale(1) rotate(0deg)' : 'scale(0) rotate(90deg)'}}>
+          <PixelSvgIcon name="moon" className="h-5 w-5" />
+        </span>
+      </span>
       <span className="sr-only">Toggle theme</span>
     </Button>
   );

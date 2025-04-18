@@ -165,7 +165,7 @@ const Contact = () => {
                     <h3 className="text-lg font-medium">{member.name}</h3>
                     <p className="text-sm text-cow-purple font-bold mb-2">{member.role}</p>
                     
-                    {/* Social Icons */}
+                    {/* socials */}
                     {member.socials && (
                       <div className="flex space-x-3 mt-auto">
                         {member.socials.github && (

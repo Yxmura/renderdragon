@@ -1,83 +1,69 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Users, ExternalLink, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { JoinServerIcon } from '@/components/JoinServerIcon';
+import { Badge } from '@/components/ui/badge';
+
+type Category = 'editing' | 'design';
 
 interface DiscordServer {
   id: number;
   name: string;
   description: string;
   members: number;
-  categories: string[];
   inviteUrl: string;
-  verified: boolean;
   image?: string;
+  categories: Category[];
 }
 
-// Mock Discord servers data
-const mockServers: DiscordServer[] = [
+const SERVERS_DATA: DiscordServer[] = [
   {
     id: 1,
-    name: 'Minecraft Builders',
-    description: 'A community focused on Minecraft building techniques, tutorials, and showcasing your creations. Perfect for content creators looking for build inspiration.',
-    members: 25842,
-    categories: ['building', 'tutorials', 'showcase'],
-    inviteUrl: 'https://discord.gg/example',
-    verified: true,
-    image: 'https://images.unsplash.com/photo-1614680376408-16afbd2f6b4b?auto=format&fit=crop&q=80&w=2574'
+    name: 'Creator Coaster',
+    description: "Creator Coaster server will be your best friend through out your content creation journey, varying from assets up to professional editors & artists that are willing to help you no matter what! No matter what you need help in, we're down to help you by having active staff & helpers that would be pleased to help!",
+    members: 12500,
+    inviteUrl: 'https://discord.gg/uvWYV82f8J',
+    image: 'https://cdn.discordapp.com/icons/1075932452842909806/a_40d64cc9e3aabcd7b42a6027a399d2e6.webp?size=100&quality=lossless',
+    categories: ['editing', 'design']
   },
   {
     id: 2,
-    name: 'Content Creator Hub',
-    description: 'Connect with other Minecraft content creators, share tips, get feedback on your videos, and find collaboration opportunities.',
-    members: 14503,
-    categories: ['networking', 'feedback', 'collaboration'],
-    inviteUrl: 'https://discord.gg/example',
-    verified: true,
-    image: 'https://images.unsplash.com/photo-1611651105904-5fa9be0292e3?auto=format&fit=crop&q=80&w=2071'
+    name: 'Minecraft Design Hub',
+    description: 'The Minecraft Design Hub is run by qualified designers with an extensive background in the GFX industry. We enjoy making designs, playing games and helping the community. In this community, you can purchase designs from our top notch designers.',
+    members: 6000,
+    inviteUrl: 'https://discord.gg/vYprQ9sK4v',
+    image: 'https://cdn.discordapp.com/icons/972091816004444170/f4457c7980f91b0bbbc2ecb7af0f0ecf.webp?size=100&quality=lossless',
+    categories: ['design']
   },
   {
     id: 3,
-    name: 'Redstone Engineers',
-    description: 'For Minecraft technical players and content creators focused on redstone contraptions, farms, and technical builds.',
-    members: 32104,
-    categories: ['redstone', 'technical', 'farms'],
-    inviteUrl: 'https://discord.gg/example',
-    verified: false,
-    image: 'https://images.unsplash.com/photo-1613484838923-bfbbbf3a4d4a?auto=format&fit=crop&q=80&w=2070'
+    name: 'Thumbnailers',
+    description: "Thumbnailers is a thriving community for Minecraft thumbnail designers. Whether you're a beginner or a pro, you'll find resources, feedback, and help to improve your skills and showcase your work. Join us to elevate your designs!",
+    members: 2500,
+    inviteUrl: 'https://discord.gg/thumbnail',
+    image: 'https://cdn.discordapp.com/icons/1102968474894082081/1f868f37cb129b50e27497984a7b020d.png?size=4096',
+    categories: ['design']
   },
   {
     id: 4,
-    name: 'Minecraft Thumbnails & Graphics',
-    description: 'A server dedicated to the art of creating eye-catching thumbnails, channel art, and graphics for Minecraft content.',
-    members: 8752,
-    categories: ['design', 'thumbnails', 'graphics'],
-    inviteUrl: 'https://discord.gg/example',
-    verified: true,
-    image: 'https://images.unsplash.com/photo-1617296538902-887900d9b592?auto=format&fit=crop&q=80&w=2070'
+    name: 'EditHub',
+    description: "EditHub is the ultimate content creation hub for editors, designers, and creators looking to grow and improve. Whether you're searching for high-quality presets, assets, or expert advice, this server has everything you need in one place. Connect with like-minded individuals who are passionate about editing, content creation, and digital media.",
+    members: 1500,
+    inviteUrl: 'https://discord.gg/rrFFMAut3r',
+    image: 'https://cdn.discordapp.com/icons/1014715191075811328/a_609aa97aad2f2726480ffe8b5b15567c.webp',
+    categories: ['design', 'editing']
   },
   {
     id: 5,
-    name: 'Minecraft SMP Community',
-    description: 'The place to find SMP (Survival Multiplayer) partners and servers for your Minecraft content. Great for storyline and collaboration content.',
-    members: 18935,
-    categories: ['smp', 'roleplay', 'survival'],
-    inviteUrl: 'https://discord.gg/example',
-    verified: false,
-    image: 'https://images.unsplash.com/photo-1627163439134-7a8c47e08208?auto=format&fit=crop&q=80&w=2532'
-  },
-  {
-    id: 6,
-    name: 'Minecraft Mods & Plugins',
-    description: 'Discover the latest mods and plugins for your Minecraft content. Get technical support and connect with mod developers.',
-    members: 29764,
-    categories: ['mods', 'plugins', 'technical'],
-    inviteUrl: 'https://discord.gg/example',
-    verified: true,
-    image: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?auto=format&fit=crop&q=80&w=2574'
+    name: 'Renderdragon',
+    description: "Our official Discord server where you can suggest assets, contact us for questions or suggestions and more. We live by our community and we'd love to hear your feedback!", 
+    members: 100,
+    inviteUrl: 'https://discord.gg/d9zxkkdBWV',
+    image: 'https://cdn.discordapp.com/icons/1317605088558190602/7217661b197ef804501ddbe6eb749cd0.webp?size=100&quality=lossless',
+    categories: ['editing', 'design']
   }
 ];
 
@@ -91,17 +77,15 @@ const formatMemberCount = (count: number): string => {
 const DiscordServers = () => {
   const [servers, setServers] = useState<DiscordServer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     document.title = 'Discord Servers - Renderdragon';
     
-    // Simulate API fetch
     setTimeout(() => {
-      setServers(mockServers);
+      setServers(SERVERS_DATA);
       setIsLoading(false);
     }, 500);
-  }, []);
+  }, []); // Empty dependency array since we're using static data
 
   const handleJoinServer = (server: DiscordServer) => {
     window.open(server.inviteUrl, '_blank');
@@ -110,19 +94,7 @@ const DiscordServers = () => {
     });
   };
 
-  const filterCategories = (servers: DiscordServer[]): string[] => {
-    const categories = new Set<string>();
-    servers.forEach(server => {
-      server.categories.forEach(category => {
-        categories.add(category);
-      });
-    });
-    return Array.from(categories).sort();
-  };
-
-  const filteredServers = selectedCategory
-    ? servers.filter(server => server.categories.includes(selectedCategory))
-    : servers;
+  const filteredServers = servers;  // No more category filtering
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -148,85 +120,60 @@ const DiscordServers = () => {
               </div>
             ) : (
               <>
-                <div className="mb-8 flex flex-wrap gap-2 justify-center">
-                  <Button
-                    variant={selectedCategory === null ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedCategory(null)}
-                    className="pixel-corners"
-                  >
-                    All Categories
-                  </Button>
-                  
-                  {filterCategories(servers).map(category => (
-                    <Button
-                      key={category}
-                      variant={selectedCategory === category ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setSelectedCategory(category)}
-                      className="pixel-corners"
-                    >
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </Button>
-                  ))}
-                </div>
-                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {filteredServers.map(server => (
                     <div 
                       key={server.id}
-                      className="pixel-card overflow-hidden"
+                      className="pixel-card overflow-hidden p-6 flex flex-col h-full"
                     >
-                      {server.image && (
-                        <div className="h-40 overflow-hidden -mx-4 -mt-4 mb-4 relative">
-                          <img 
-                            src={server.image} 
-                            alt={server.name} 
-                            className="w-full h-40 object-cover"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-card to-transparent"></div>
-                        </div>
-                      )}
-                      
-                      <div className="flex justify-between items-start mb-3">
-                        <h3 className="text-xl font-vt323">
-                          {server.name} 
-                          {server.verified && (
-                            <span className="ml-2 inline-flex items-center px-2 py-1 rounded-full bg-green-500/10 text-green-500 text-xs">
-                              <Check className="h-3 w-3 mr-1" />
-                              Verified
-                            </span>
-                          )}
-                        </h3>
+                      <div className="flex items-center gap-4 mb-4">
+                        {server.image && (
+                          <div className="flex-shrink-0">
+                            <img 
+                              src={server.image} 
+                              alt={server.name} 
+                              className="w-16 h-16 rounded-full object-cover ring-2 ring-border"
+                            />
+                          </div>
+                        )}
                         
-                        <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-xs flex items-center">
-                          <Users className="h-3 w-3 mr-1" />
-                          {formatMemberCount(server.members)} members
-                        </span>
+                        <div className="flex flex-col">
+                          <h3 className="text-xl font-vt323">
+                            {server.name}
+                          </h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <div className="flex gap-2">
+                              {server.categories.map((category) => (
+                                <Badge 
+                                  key={category}
+                                  variant="secondary" 
+                                  className="capitalize"
+                                >
+                                  {category}
+                                </Badge>
+                              ))}
+                            </div>
+                            <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-xs flex items-center">
+                              <Users className="h-3 w-3 mr-1" />
+                              {formatMemberCount(server.members)} members
+                            </span>
+                          </div>
+                        </div>
                       </div>
                       
-                      <p className="text-muted-foreground mb-4">
+                      <p className="text-muted-foreground flex-grow">
                         {server.description}
                       </p>
                       
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {server.categories.map(category => (
-                          <span 
-                            key={category}
-                            className="bg-accent text-accent-foreground px-2 py-1 rounded-md text-xs"
-                          >
-                            {category}
-                          </span>
-                        ))}
+                      <div className="mt-4">
+                        <Button 
+                          onClick={() => handleJoinServer(server)}
+                          className="w-full pixel-btn-primary flex items-center justify-center"
+                        >
+                          Join Server
+                          <JoinServerIcon />
+                        </Button>
                       </div>
-                      
-                      <Button 
-                        onClick={() => handleJoinServer(server)}
-                        className="w-full pixel-btn-primary flex items-center justify-center"
-                      >
-                        Join Server
-                        <ExternalLink className="h-4 w-4 ml-2" />
-                      </Button>
                     </div>
                   ))}
                 </div>

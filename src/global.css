@@ -265,3 +265,57 @@ body.countdown-active {
   pointer-events: all !important;
   user-select: none !important;
 }
+
+/* Scroll to top button */
+.scroll-to-top-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.scroll-to-top-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms, transform 200ms;
+}
+
+.scroll-to-top-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-to-top-exit-active {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 200ms, transform 200ms;
+}
+
+/* Scroll to top button animations */
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.scroll-button-enter {
+  animation: slide-in 0.3s ease forwards;
+}
+
+.scroll-button-exit {
+  animation: slide-out 0.3s ease forwards;
+}

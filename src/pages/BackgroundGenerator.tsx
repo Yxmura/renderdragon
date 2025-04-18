@@ -320,7 +320,6 @@ const BackgroundGenerator = () => {
                     </div>
                   )}
                   
-                  {/* Hidden canvas for generating images */}
                   <canvas ref={canvasRef} className="hidden"></canvas>
                 </div>
                 

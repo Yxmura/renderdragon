@@ -4,15 +4,6 @@ import {
   ChevronDown, 
   Menu, 
   X, 
-  Home, 
-  MessageSquare, 
-  BookOpen, 
-  Video, 
-  MessageCircle, 
-  Download, 
-  Music, 
-  Bot, 
-  Image,
   Sun,
   Moon,
   Skull
@@ -36,40 +27,41 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Toggle } from "@/components/ui/toggle";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import Logo from './Logo';
+import PixelSvgIcon from './PixelSvgIcon';
 
 interface NavLink {
   name: string;
   path: string;
-  icon: React.ElementType;
+  icon: string;
 }
 
 interface NavDropdown {
   name: string;
-  icon: React.ElementType;
+  icon: string;
   links: NavLink[];
 }
 
 const mainLinks: (NavLink | NavDropdown)[] = [
-  { name: 'Home', path: '/', icon: Home },
-  { name: 'Contact', path: '/contact', icon: MessageSquare },
+  { name: 'Home', path: '/', icon: 'home' },
+  { name: 'Contact', path: '/contact', icon: 'contact' },
   { 
     name: 'Resources', 
-    icon: BookOpen,
+    icon: 'resources',
     links: [
-      { name: 'Resources Hub', path: '/resources', icon: BookOpen },
-      { name: 'Guides', path: '/guides', icon: BookOpen },
-      { name: 'YouTube Videos', path: '/youtube-videos', icon: Video },
-      { name: 'Discord Servers', path: '/discord-servers', icon: MessageCircle },
+      { name: 'Resources Hub', path: '/resources', icon: 'resources-hub' },
+      { name: 'Guides', path: '/guides', icon: 'guides' },
+      { name: 'YouTube Videos', path: '/youtube-videos', icon: 'yt-videos' },
+      { name: 'Discord Servers', path: '/discord-servers', icon: 'discord' },
     ]
   },
   {
     name: 'Tools',
-    icon: Download,
+    icon: 'tools',
     links: [
-      { name: 'YouTube Downloader', path: '/construction', icon: Download },
-      { name: 'Music Copyright Checker', path: '/music-copyright', icon: Music },
-      { name: 'AI Title Helper', path: '/ai-title-helper', icon: Bot },
-      { name: 'Background Generator', path: '/background-generator', icon: Image },
+      { name: 'YouTube Downloader', path: '/construction', icon: 'yt-downloader' },
+      { name: 'Music Copyright Checker', path: '/music-copyright', icon: 'music' },
+      { name: 'AI Title Helper', path: '/ai-title-helper', icon: 'bot' },
+      { name: 'Background Generator', path: '/background-generator', icon: 'background' },
     ]
   }
 ];
@@ -152,30 +144,35 @@ const Navbar = () => {
     return dropdown.links.some(link => isLinkActive(link.path));
   };
 
-  const navbarStyle = scrolled ? {
-    backdropFilter: 'blur(10px)',
+  const navbarStyle = {
     backgroundColor: theme === 'dark' 
-      ? `rgba(20, 20, 30, ${scrollProgress * 0.8})` 
-      : `rgba(255, 255, 255, ${scrollProgress * 0.8})`,
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    borderBottom: `1px solid rgba(155, 135, 245, ${scrollProgress * 0.3})`
-  } : {
-    backgroundColor: 'transparent',
+      ? `rgba(10, 10, 20, ${scrolled ? scrollProgress * 0.95 : 0.25})` 
+      : `rgba(255, 255, 255, ${scrolled ? scrollProgress * 0.95 : 0.25})`,
+    borderBottom: `1px solid rgba(155, 135, 245, ${scrolled ? scrollProgress * 0.2 : 0.1})`,
+    backdropFilter: 'blur(12px)',
+    WebkitBackdropFilter: 'blur(12px)',
+    right: 'calc(100vw - 100%)' 
   };
 
   return (
     <header 
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? 'py-2' : 'py-4'
       }`}
-      style={navbarStyle}
     >
-      <div className="container mx-auto px-4 flex justify-between items-center">
+      <div 
+        className="absolute inset-0"
+        style={{
+          zIndex: -1,
+          ...navbarStyle,
+        }}
+      />
+      <div className="container mx-auto px-4 flex justify-between items-center relative z-10">
         <Link 
           to="/" 
           className="flex items-center space-x-2 text-xl md:text-2xl font-bold tracking-wider"
         >
-          <div className="bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
+          <div className="flex items-center justify-center">
             <Logo size={isMobile ? "sm" : "md"} />
           </div>
           {!isMobile && (
@@ -190,9 +187,9 @@ const Navbar = () => {
               <Link 
                 key={index} 
                 to={link.path} 
-                className={`flex items-center space-x-1 transition-colors ${isLinkActive(link.path) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
+                className={`flex items-center transition-colors ${isLinkActive(link.path) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
               >
-                <link.icon className="w-4 h-4" />
+                {/* no icons for desktop */}
                 <span>{link.name}</span>
               </Link>
             ) : (
@@ -212,10 +209,10 @@ const Navbar = () => {
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="ghost" 
-                      className={`flex items-center space-x-1 transition-colors ${isDropdownActive(link) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
+                      className={`flex items-center transition-colors ${isDropdownActive(link) ? 'text-primary' : 'text-foreground hover:text-primary'}`}
                       style={{ transform: 'none' }}
                     >
-                      <link.icon className="w-4 h-4" />
+                      {/* no icons on desktop */}
                       <span>{link.name}</span>
                       <ChevronDown className="w-4 h-4" />
                     </Button>
@@ -226,9 +223,9 @@ const Navbar = () => {
                         <DropdownMenuItem key={subIndex} asChild>
                           <Link 
                             to={subLink.path} 
-                            className={`flex items-center space-x-2 px-2 py-2 cursor-pointer ${isLinkActive(subLink.path) ? 'text-primary bg-accent/50' : ''}`}
+                            className={`flex items-center px-2 py-2 cursor-pointer ${isLinkActive(subLink.path) ? 'text-primary bg-accent/50' : ''}`}
                           >
-                            <subLink.icon className="w-4 h-4" />
+                            {/* fuck the desktop icons */}
                             <span>{subLink.name}</span>
                           </Link>
                         </DropdownMenuItem>
@@ -263,7 +260,7 @@ const Navbar = () => {
                     className="flex items-center space-x-2 text-xl font-bold"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <div className="w-8 h-8 bg-cow-purple text-white flex items-center justify-center font-bold text-xs pixel-corners">
+                    <div className="w-8 h-8 flex items-center justify-center font-bold text-xs">
                       <Logo size="sm" />
                     </div>
                     <span>Renderdragon</span>
@@ -278,7 +275,7 @@ const Navbar = () => {
                         to={link.path} 
                         className={`flex items-center space-x-3 text-lg py-3 border-b border-border ${isLinkActive(link.path) ? 'text-primary' : ''}`}
                       >
-                        <link.icon className="w-5 h-5" />
+                        <PixelSvgIcon name={link.icon} className="w-5 h-5" />
                         <span>{link.name}</span>
                       </Link>
                     ) : (
@@ -290,7 +287,7 @@ const Navbar = () => {
                       >
                         <CollapsibleTrigger className="w-full flex items-center justify-between text-lg py-3">
                           <div className="flex items-center space-x-3">
-                            <link.icon className="w-5 h-5" />
+                            <PixelSvgIcon name={link.icon} className="w-5 h-5" />
                             <span>{link.name}</span>
                           </div>
                           <ChevronDown 
@@ -307,7 +304,7 @@ const Navbar = () => {
                                 to={subLink.path}
                                 className={`flex items-center space-x-3 py-2 ${isLinkActive(subLink.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
                               >
-                                <subLink.icon className="w-4 h-4" />
+                                <PixelSvgIcon name={subLink.icon} className="w-4 h-4" />
                                 <span>{subLink.name}</span>
                               </Link>
                             ))}
@@ -327,12 +324,12 @@ const Navbar = () => {
                 >
                   {theme === 'dark' ? (
                     <>
-                      <Moon className="h-5 w-5" />
+                      <PixelSvgIcon name="moon" className="h-5 w-5" />
                       <span>Dark Mode</span>
                     </>
                   ) : (
                     <>
-                      <Sun className="h-5 w-5" />
+                      <PixelSvgIcon name="sun" className="h-5 w-5" />
                       <span>Light Mode</span>
                     </>
                   )}
@@ -344,7 +341,7 @@ const Navbar = () => {
       </div>
       
       {scrolled && (
-        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-background/20">
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-background/20 z-20">
           <div 
             className="h-full bg-cow-purple transition-all duration-300 animate-pulse-neon"
             style={{ width: `${scrollProgress * 100}%` }}

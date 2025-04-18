@@ -41,7 +41,7 @@ const Hero = () => {
         transformStyle: 'preserve-3d',
       }}
     >
-      {/* Pixel Art Shapes - Background elements */}
+      {/* shapes bg elements */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -60,21 +60,20 @@ const Hero = () => {
           className="absolute left-[25%] bottom-[25%] w-18 h-18 border-2 border-cow-purple/30 transform rotate-12 animate-float-vertical"
           style={{ animationDelay: '-6s' }}
         />
-        {/* Pixel art rectangles */}
+        {/* rectangles */}
         <div className="absolute top-[40%] left-[40%] w-12 h-8 bg-cow-purple/20 rounded-sm pixel-corners" />
         <div className="absolute bottom-[30%] right-[30%] w-8 h-12 bg-cow-purple/20 rounded-sm pixel-corners" />
 
-        {/* Additional pixel art elements */}
+        {/* more */}
         <div className="absolute top-[15%] right-[15%] w-6 h-6 bg-cow-purple/30 pixel-corners" />
         <div className="absolute bottom-[15%] left-[15%] w-6 h-6 bg-cow-purple/30 pixel-corners" />
         <div className="absolute top-[60%] left-[10%] w-4 h-10 bg-cow-purple/20 pixel-corners" />
         <div className="absolute top-[25%] left-[60%] w-10 h-4 bg-cow-purple/20 pixel-corners" />
       </div>
 
-      {/* Main Content - Two column layout on desktop, stacked on mobile */}
+      {/* Main Content */}
       <div className="container relative z-10 mx-auto px-4 pb-[48px]">
         <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between">
-          {/* Text Content */}
           <div className="md:w-1/2 text-center md:text-left md:pr-8 mt-8 md:mt-0">
             <h1
               className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground dark:text-white"
@@ -125,7 +124,6 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Dragon Animation - Keep this static too */}
           <div className="md:w-1/2 flex items-center justify-center">
             <div className="relative w-64 h-64 md:w-80 md:h-80">
               <img
@@ -138,7 +136,7 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Pixel art border frame */}
+      {/* border frame  thigny */}
       <div className="absolute inset-4 border-2 border-dashed border-cow-purple/30 pointer-events-none hidden" />
     </section>
   );

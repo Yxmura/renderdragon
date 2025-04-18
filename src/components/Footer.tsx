@@ -57,8 +57,11 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="flex items-center space-x-2 text-xl mb-4">
-              <div className="bg-cow-purple text-white flex items-center justify-center font-pixel text-xs pixel-corners">
+            <Link 
+              to="/" 
+              className="flex items-center space-x-2 text-xl font-bold mb-4"
+            >
+              <div className="flex items-center justify-center">
                 <Logo size="sm" />
               </div>
               <span className="font-pixel">Renderdragon</span>

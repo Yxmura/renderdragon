@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -33,7 +32,7 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
     return () => {
       document.body.classList.remove('countdown-active');
     };
-  }, []);
+  }, [countdownService]);
 
   // Setup countdown timer
   useEffect(() => {
@@ -61,7 +60,7 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
     }, 1000);
     
     return () => clearInterval(interval);
-  }, [targetDate]);
+  }, [targetDate, countdownService]);
 
   // Monitor for keyboard shortcuts
   useEffect(() => {
@@ -103,7 +102,7 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [passwordAttempts]);
+  }, [passwordAttempts, countdownService]);
 
   // Anti-tampering protection
   useEffect(() => {
@@ -158,19 +157,12 @@ const CountdownOverlay = ({ targetDate }: CountdownOverlayProps) => {
               className="text-center"
             >
               <div className="mb-8 md:mb-12">
-                <div className="w-24 h-24 md:w-32 md:h-32 mx-auto relative">
-                  <div className="absolute inset-0 w-full h-full flex justify-center items-center">
-                    {[0, 1, 2, 3].map((index) => (
-                      <img
-                        key={index}
-                        src={`/renderdragon${index}.png`}
-                        alt={`Renderdragon Logo ${index}`}
-                        className={`absolute w-full h-full object-contain transition-opacity duration-300 ${
-                          Math.floor(seconds % 4) === index ? 'opacity-100' : 'opacity-0'
-                        }`}
-                      />
-                    ))}
-                  </div>
+                <div className="w-24 h-24 md:w-32 md:h-32 mx-auto">
+                  <img
+                    src="/renderdragon.png"
+                    alt="Renderdragon Logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <motion.h1 
                   className="text-3xl md:text-5xl lg:text-7xl font-bold mt-6 md:mt-8 mb-2 md:mb-4 text-white"

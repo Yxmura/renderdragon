@@ -82,7 +82,7 @@ const Testimonials = () => {
                 </div>
               </div>
               
-              {/* Card Content */}
+              {/* da content of da card */}
               <div className="p-6 relative">
                 <Quote className="absolute top-4 left-4 text-cow-purple/10 w-10 h-10" />
                 <blockquote className="relative z-10 pl-2">

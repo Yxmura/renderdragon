@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,7 +56,10 @@ const ResourceFilters = ({
             placeholder="Search resources (or press Ctrl+K)..."
             value={searchQuery}
             onChange={onSearch}
-            onClick={toggleKBar}
+            onClick={(e) => {
+              // Prevent the click from triggering kbar if user is intending to type
+              e.stopPropagation();
+            }}
             className="pixel-input w-full pr-10"
           />
           
