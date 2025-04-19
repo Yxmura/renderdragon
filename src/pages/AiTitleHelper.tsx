@@ -24,8 +24,6 @@ import { Card } from '@/components/ui/card';
 interface TitleSuggestion {
     id: string;
     title: string;
-    clicks: number;
-    ctr: number;
     type: 'creative' | 'descriptive' | 'emotional' | 'trending';
 }
 
