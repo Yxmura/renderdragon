@@ -9,7 +9,7 @@
 <p align="center">
   <b>FREE Tools & Assets for Minecraft YouTube Creators</b><br>
   No ads. No gimmicks. Just pure creative power.<br>
-  <a href="https://renderdragon.vercel.app">🌐 renderdragon.vercel.app</a> •
+  <a href="https://renderdragon.org">🌐 renderdragon.vercel.app</a> •
   <a href="https://discord.com/invite/d9zxkkdBWV">💬 Join our Discord</a>
 </p>
 
@@ -55,7 +55,7 @@ Meet the **Enderdragon with fire breath** — our fierce but friendly symbol of 
 
 ## 📎 Links
 
-- 🌐 Website: [renderdragon.vercel.app](https://renderdragon.vercel.app)
+- 🌐 Website: [renderdragon.vercel.app](https://renderdragon.org)
 - 📢 Twitter: https://x.com/_renderdragon
 - 🎥 YouTube: https://www.youtube.com/channel/UCOheNYpPEHcS2ljttRmllxg
 
