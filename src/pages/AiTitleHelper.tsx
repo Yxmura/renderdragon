@@ -343,17 +343,6 @@ const AiTitleHelper = () => {
                                                                 {title.title.length} characters
                                                             </div>
                                                         </div>
-
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="text-xs flex flex-col text-right">
-                                                                <span className="font-medium">
-                                                                    Est. CTR: {title.ctr}%
-                                                                </span>
-                                                                <span className="text-muted-foreground">
-                                                                    Score: {title.clicks}/100
-                                                                </span>
-                                                            </div>
-                                                        </div>
                                                     </div>
                                                 </div>
                                             ))}
@@ -391,19 +380,6 @@ const AiTitleHelper = () => {
                                                     {getTitleTypeBadge(selectedTitle.type)}
                                                     <span className="text-xs text-muted-foreground">
                                                         {selectedTitle.title.length} characters
-                                                    </span>
-                                                </div>
-
-                                                <div className="text-xs">
-                                                    <span className="text-muted-foreground">
-                                                        Estimated performance:{' '}
-                                                    </span>
-                                                    <span className="font-medium">
-                                                        {selectedTitle.clicks >= 95
-                                                            ? 'Excellent'
-                                                            : selectedTitle.clicks >= 90
-                                                                ? 'Great'
-                                                                : 'Good'}
                                                     </span>
                                                 </div>
                                             </div>

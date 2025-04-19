@@ -55,8 +55,6 @@ export default async function handler(req, res) {
       id: String(i),
       title: title.title,
       type: title.type,
-      clicks: Math.floor(Math.random() * 100),
-      ctr: +(Math.random() * 15).toFixed(1),
     }));
 
     return res.status(200).json({ titles: suggestions });
