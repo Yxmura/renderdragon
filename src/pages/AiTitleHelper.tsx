@@ -64,7 +64,6 @@ const AiTitleHelper = () => {
     const [videoDescription, setVideoDescription] = useState('');
     const [titleSuggestions, setTitleSuggestions] = useState<TitleSuggestion[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [keywords, setKeywords] = useState('');
     const [creativity, setCreativity] = useState([50]);
     const [selectedTitle, setSelectedTitle] = useState<TitleSuggestion | null>(
         null
@@ -90,7 +89,6 @@ const AiTitleHelper = () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               description: videoDescription,
-              keywords,
               creativity: creativity[0],
             }),
           });
@@ -184,16 +182,6 @@ const AiTitleHelper = () => {
                                             value={videoDescription}
                                             onChange={(e) => setVideoDescription(e.target.value)}
                                             className="pixel-corners h-32"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium">Keywords (optional)</label>
-                                        <Input
-                                            placeholder="minecraft, tutorial, build, etc."
-                                            value={keywords}
-                                            onChange={(e) => setKeywords(e.target.value)}
-                                            className="pixel-corners"
                                         />
                                     </div>
 
