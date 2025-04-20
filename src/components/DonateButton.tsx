@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,6 +8,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Coffee, Sparkles } from 'lucide-react';
+import SupportersList from './SupportersList';
 
 const DonateButton = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,21 +35,12 @@ const DonateButton = () => {
               <span>Support Renderdragon</span>
             </DialogTitle>
             <DialogDescription>
-              Your donations help us keep creating free resources for Minecraft content creators!
+              Donations are our only source of income
             </DialogDescription>
           </DialogHeader>
           
           <div className="flex flex-col items-center space-y-6 py-4">
-            <div className="relative w-full h-48 overflow-hidden rounded-lg">
-              <img
-                src="https://imgs.search.brave.com/WIED0Ngc7Xi4_V_tGdmoNRa20eCToFgq7BhlUW03PwQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvOTEw/MTk1OTg4L3Bob3Rv/L3BpenphLW1hcmdh/cml0YS5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9WlBsb3ZF/c2JGV0pxNk0za0xS/OTh1MGVvOE5DWWlG/RXVSamtNS1FDd0g0/MD0"
-                alt="Coffee cup"
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
-                <p className="text-white font-medium">Donations are our only source of income</p>
-              </div>
-            </div>
+            <SupportersList />
             
             <div className="space-y-4 w-full">
               <div className="flex flex-col space-y-2">
