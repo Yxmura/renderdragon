@@ -3,13 +3,13 @@
 </h1>
 
 <p align="center">
-  <img src="https://renderdragon.vercel.app/renderdragon.png" alt="Renderdragon Logo" width="200" />
+  <img src="https://renderdragon.org/renderdragon.png" alt="Renderdragon Logo" width="200" />
 </p>
 
 <p align="center">
   <b>FREE Tools & Assets for Minecraft YouTube Creators</b><br>
   No ads. No gimmicks. Just pure creative power.<br>
-  <a href="https://renderdragon.vercel.app">🌐 renderdragon.vercel.app</a> •
+  <a href="https://renderdragon.org">🌐 renderdragon.org</a> •
   <a href="https://discord.com/invite/d9zxkkdBWV">💬 Join our Discord</a>
 </p>
 
@@ -49,13 +49,13 @@ Meet the **Enderdragon with fire breath** — our fierce but friendly symbol of 
 ## 📡 Join the Community
 
 💬 Hop into the conversation and get sneak peeks of new assets:
-👉 [discord.gg/d9zxkkdBWV](https://discord.com/invite/d9zxkkdBWV)
+👉 [discord.renderdragon.org](https://discord.renderdragon.org)
 
 ---
 
 ## 📎 Links
 
-- 🌐 Website: [renderdragon.vercel.app](https://renderdragon.vercel.app)
+- 🌐 Website: [renderdragon.org](https://renderdragon.org)
 - 📢 Twitter: https://x.com/_renderdragon
 - 🎥 YouTube: https://www.youtube.com/channel/UCOheNYpPEHcS2ljttRmllxg
 
@@ -69,7 +69,7 @@ Meet the **Enderdragon with fire breath** — our fierce but friendly symbol of 
 
 ## ⭐ Support / Contribute
 
-Right now we're focused on helping creators — not donations. If you want to contribute, join our [Discord](https://discord.com/invite/d9zxkkdBWV), share your ideas, or help spread the word!
+Right now we're focused on helping creators — not donations. If you want to contribute, join our [Discord](https://discord.renderdragon.org), share your ideas, or help spread the word!
 
 > 💚 Built with passion for Minecraft creators everywhere.
 

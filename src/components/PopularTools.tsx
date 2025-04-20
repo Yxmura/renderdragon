@@ -19,7 +19,7 @@ const tools: Tool[] = [
     title: 'YouTube Downloader',
     description: 'Download videos from YouTube to use in your content',
     icon: Download,
-    path: '/youtube-downloader',
+    path: '/construction',
     color: 'from-red-500/80 to-red-600/80'
   },
   {
@@ -52,13 +52,13 @@ const PopularTools = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   return (
-    <section className="py-20 bg-cow-dark">
+    <section className="py-20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-vt323 mb-4 text-white">
+          <h2 className="text-3xl md:text-4xl font-vt323 mb-4">
             Popular <span className="text-cow-purple">Tools</span>
           </h2>
-          <p className="text-white/70 max-w-2xl mx-auto">
+          <p className=" max-w-2xl mx-auto">
             Free tools to streamline your content creation workflow
           </p>
         </div>

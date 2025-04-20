@@ -125,7 +125,7 @@ const Contact = () => {
                 </p>
                 
                 <a 
-                  href="https://discord.com/invite/Kj6AMRBX" 
+                  href="https://discord.renderdragon.org" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="pixel-btn-primary inline-flex items-center space-x-2"

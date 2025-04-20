@@ -74,7 +74,7 @@ const Footer = () => {
             
             <div className="flex space-x-4 mb-6">
               <a 
-                href="https://discord.com/invite/d9zxkkdBWV" 
+                href="https://discord.renderdragon.org" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
