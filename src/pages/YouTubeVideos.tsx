@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -18,90 +17,108 @@ interface VideoCategory {
 interface Video {
   id: string;
   title: string;
-  thumbnail: string;
   creator: string;
   duration: string;
-  description: string;
   url: string;
+  thumbnail: string;
 }
 
-// Mock videos data
-const mockVideoCategories: VideoCategory[] = [
+const generateVideoData = (id: string, title: string, creator: string, duration: string): Video => {
+  return {
+    id,
+    title,
+    creator,
+    duration,
+    url: `https://www.youtube.com/watch?v=${id}`,
+    thumbnail: `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+  };
+};
+
+const defaultVideoCategories: VideoCategory[] = [
   {
     id: 1,
     name: 'How to Make Thumbnails',
     description: 'Learn how to create eye-catching Minecraft thumbnails that get clicks',
     videos: [
-      {
-        id: 'v1',
-        title: 'Create Professional Minecraft Thumbnails (Free Tools)',
-        thumbnail: 'https://images.unsplash.com/photo-1627163439134-7a8c47e08208?auto=format&fit=crop&q=80&w=2532',
-        creator: 'PixelPro',
-        duration: '12:34',
-        description: 'Learn how to create professional Minecraft thumbnails using only free tools like GIMP and Canva. This tutorial covers composition, text placement, and visual effects.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      },
-      {
-        id: 'v2',
-        title: 'Thumbnail Psychology: Colors That Get Clicks',
-        thumbnail: 'https://images.unsplash.com/photo-1614680376573-df3480f0c6ff?auto=format&fit=crop&q=80&w=2574',
-        creator: 'MinecraftMastery',
-        duration: '8:27',
-        description: 'Discover the psychology behind thumbnail colors and how they affect click-through rates. Learn which color combinations work best for different types of Minecraft content.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      },
-      {
-        id: 'v3',
-        title: 'Text Effects for Minecraft Thumbnails',
-        thumbnail: 'https://images.unsplash.com/photo-1633051501119-9756c6fb094e?auto=format&fit=crop&q=80&w=1995',
-        creator: 'CreativeBlocker',
-        duration: '15:42',
-        description: 'Master text effects that make your thumbnail titles pop. Learn techniques for 3D text, glowing effects, and custom shadows in Photoshop.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      },
-      {
-        id: 'v4',
-        title: '5 Thumbnail Mistakes to Avoid',
-        thumbnail: 'https://images.unsplash.com/photo-1617296538902-887900d9b592?auto=format&fit=crop&q=80&w=2070',
-        creator: 'RedstoneRocket',
-        duration: '10:18',
-        description: 'Avoid these common thumbnail mistakes that could be hurting your channel growth. Learn what works and what doesn\'t based on data from successful Minecraft channels.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      }
-    ]
+      generateVideoData(
+        '9QkyhxA38NU',
+        'How to make CLEAN Minecraft Thumbnails! (photoshop)',
+        'painpega',
+        '12:17'
+      ),
+      generateVideoData(
+        'BuwyONAeqqc',
+        'How To Create Minecraft Thumbnails || 2022 [UPDATED]',
+        'Seltop',
+        '9:00'
+      ),
+      generateVideoData(
+        't3E7hZmfN3g',
+        'How To Make CLEAN Bedwars Thumbnails! (Photoshop)',
+        'painpega',
+        '15:43'
+      ),
+      generateVideoData(
+        'GLxrsOQj9qs',
+        'How to Make INSANE Minecraft 1v1 THUMBNAILS',
+        'wkso',
+        '49:50'
+      ),
+      generateVideoData(
+        'GNEAhE8c5sM',
+        'How To Make FREE Minecraft PVP Texture Pack Thumbnail (Photopea)',
+        'TriplePVP',
+        '15:57'
+      ),
+      generateVideoData(
+        'GfSpbUOjvLA',
+        'How to make Minecraft Thumbnails BETTER',
+        'ItsProger',
+        '7:08'
+      ),
+    ],
   },
   {
     id: 2,
     name: 'How to Edit in Premiere Pro',
-    description: 'Tutorials for editing Minecraft videos in Adobe Premiere Pro',
+    description: 'Tutorials for editing Minecraft videos in Adobe Premiere Pro & After Effects',
     videos: [
-      {
-        id: 'v5',
-        title: 'Premiere Pro Basics for Minecraft Content Creators',
-        thumbnail: 'https://images.unsplash.com/photo-1635514569146-8e8bb34fe2f5?auto=format&fit=crop&q=80&w=1877',
-        creator: 'EditMaster',
-        duration: '22:16',
-        description: 'Start your Premiere Pro journey with this comprehensive beginner tutorial designed specifically for Minecraft content creators. Learn the interface, basic cuts, and essential tools.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      },
-      {
-        id: 'v6',
-        title: 'Custom Transitions for Minecraft Videos',
-        thumbnail: 'https://images.unsplash.com/photo-1614680376739-8360a29eb024?auto=format&fit=crop&q=80&w=2574',
-        creator: 'PremierePro Tips',
-        duration: '14:53',
-        description: 'Create custom transitions that match your Minecraft content style. This tutorial shows you how to design transitions that look professional without using expensive plugins.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      },
-      {
-        id: 'v7',
-        title: 'Color Grading Minecraft Footage',
-        thumbnail: 'https://images.unsplash.com/photo-1626379801357-537572de4ad6?auto=format&fit=crop&q=80&w=1932',
-        creator: 'ColorGuru',
-        duration: '18:09',
-        description: 'Learn how to color grade your Minecraft footage to create different moods and visual styles. This tutorial covers Lumetri Color tools and basic color theory.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      }
+      generateVideoData(
+        'yO52Tx60Keg',
+        'Premiere Pro Tutorial for Beginners 2025 - Everything You NEED to KNOW! (UPDATED)',
+        'Vince Opra',
+        '28:58'
+      ),
+      generateVideoData(
+        'rNJMh4lHxp4',
+        'After Effects For Beginners 2025 | Everything You NEED to KNOW!',
+        'Vince Opra',
+        '17:46'
+      ),
+      generateVideoData(
+        'RmMpeXWP3I8',
+        'How To Edit VIRAL Minecraft Videos',
+        'ItsProger',
+        '11:19'
+      ),
+      generateVideoData(
+        'lYj7Mouw-dc',
+        'How to Edit a Gaming Video in 2023 (For Beginners)',
+        'Finzar',
+        '13:54'
+      ),
+      generateVideoData(
+        'sLgHqZSe2o0',
+        'How to edit SO good your viewers get addicted to your videos',
+        'Learn By Leo',
+        '14:31'
+      ),
+      generateVideoData(
+        '5Z0L6WlmpvU',
+        'How To Create The BEST 3D Minecraft Animations (Like ccLeaf)',
+        'JMLG',
+        '13:22'
+      ),
     ]
   },
   {
@@ -109,33 +126,36 @@ const mockVideoCategories: VideoCategory[] = [
     name: 'How to Edit in DaVinci Resolve',
     description: 'Tutorials for editing Minecraft videos in DaVinci Resolve',
     videos: [
-      {
-        id: 'v8',
-        title: 'DaVinci Resolve: Complete Guide for Minecraft YouTubers',
-        thumbnail: 'https://images.unsplash.com/photo-1634757439914-e7ffc3c79fdc?auto=format&fit=crop&q=80&w=1964',
-        creator: 'ResolveMaster',
-        duration: '28:45',
-        description: 'A comprehensive guide to DaVinci Resolve for Minecraft content creators. Learn how to set up your project, edit footage, add effects, and optimize your export settings.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      },
-      {
-        id: 'v9',
-        title: 'Advanced Color Grading in DaVinci Resolve',
-        thumbnail: 'https://images.unsplash.com/photo-1613484838923-bfbbbf3a4d4a?auto=format&fit=crop&q=80&w=2070',
-        creator: 'ColorNode',
-        duration: '20:37',
-        description: 'Take your Minecraft videos to the next level with advanced color grading techniques in DaVinci Resolve. Learn how to use nodes, power windows, and custom LUTs.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      },
-      {
-        id: 'v10',
-        title: 'Fusion Effects for Minecraft Videos',
-        thumbnail: 'https://images.unsplash.com/photo-1611651105904-5fa9be0292e3?auto=format&fit=crop&q=80&w=2071',
-        creator: 'FusionFrenzy',
-        duration: '16:22',
-        description: 'Create custom visual effects for your Minecraft videos using the Fusion tab in DaVinci Resolve. Learn how to make particle effects, text animations, and more.',
-        url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-      }
+      generateVideoData(
+        'qDHnCFMZ9HA',
+        'Introduction to DaVinci Resolve - [Full Course] for Beginners (2024)',
+        'Casey Faris',
+        '4:39:23'
+      ),
+      generateVideoData(
+        '4DJm9Ki8nwo',
+        'Intro To 3D | DaVinci Resolve Tutorial',
+        'EliableFX',
+        '12:58'
+      ),
+      generateVideoData(
+        'yh-ilLqKMmM',
+        "Motion Graphics: A Beginner's Guide (Everything You Need To Know)",
+        'Filmic Footprints - Felix Bäuml',
+        '15:59'
+      ),
+      generateVideoData(
+        'cBGaCgHC-6k',
+        "How To Import and Animate 3D Minecraft Objects in DaVinci Resolve",
+        'Kire Atanasov',
+        '0:29'
+      ),
+      generateVideoData(
+        '9rNe-BUJNKM',
+        "How To Edit A Gaming Montage \\ Davinci Resolve No Plugins \\ Basics Editing Tutorial",
+        'Yume',
+        '16:48'
+      ),
     ]
   }
 ];
@@ -149,10 +169,9 @@ const YouTubeVideos = () => {
   useEffect(() => {
     document.title = 'YouTube Tutorials - Renderdragon';
     
-    // Simulate API fetch
     setTimeout(() => {
-      setVideoCategories(mockVideoCategories);
-      setOpenCategories([1]); // Open the first category by default
+      setVideoCategories(defaultVideoCategories);
+      setOpenCategories([1]);
       setIsLoading(false);
     }, 500);
   }, []);
@@ -287,13 +306,6 @@ const YouTubeVideos = () => {
                 allowFullScreen
                 className="w-full aspect-video rounded-md"
               ></iframe>
-            </div>
-            
-            <div className="space-y-4">
-              <h3 className="text-lg font-vt323">Description</h3>
-              <p className="text-muted-foreground">
-                {selectedVideo?.description}
-              </p>
             </div>
             
             <Button 
