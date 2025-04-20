@@ -113,6 +113,7 @@ const AiTitleHelper = () => {
               description: 'Click on a title to select it',
             });
           }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           console.error('Error generating titles:', error);
           toast.error(`Error: ${error.message || 'Failed to generate titles'}`);

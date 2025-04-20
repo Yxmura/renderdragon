@@ -7,7 +7,6 @@ interface Testimonial {
   name: string;
   role: string;
   content: string;
-  avatar: string;
 }
 
 const testimonials: Testimonial[] = [
@@ -16,28 +15,24 @@ const testimonials: Testimonial[] = [
     name: "yFury",
     role: "Minecraft YouTuber & Streamer",
     content: "I love the assets cause they are harddd to find",
-    avatar: "https://yt3.googleusercontent.com/3Cw6xKbuZAEP_H9nb4X4oTq1aTE0q9xw5HsVZaVkDnhCZa7cmk7YaGXt2VHsUtKAH4hdRzT1Qw=s160-c-k-c0x00ffffff-no-rj"
-  },
+    },
   {
     id: 2,
     name: "Jkingnick",
     role: "Minecraft Youtuber",
     content: "Website looks very professional and seems to be a really cool idea for content creators like myself",
-    avatar: "https://yt3.googleusercontent.com/HFLfDyR4bTDYlIIXO09euXCQSBIgB6DlhXDbDA4kBKUW5lgbVtl2bo0ylnKjNwk_S4WyAitcbA=s160-c-k-c0x00ffffff-no-rj"
-  },
+    },
   {
     id: 3,
     name: "AlphaReturns",
      role: "Minecraft Youtuber and Thumbnail Designer",
      content: "Renderdragon is a really good tool with great assets that can be useful for pretty much any YouTuber (small or big)",
-     avatar: "https://yt3.googleusercontent.com/9RbZiqYgTK5WKR-JmUbimeCKwlMwEKTDuCEs300PnCS72xzOg9uIQFckG0MlhCeOVA7zUuMp=s160-c-k-c0x00ffffff-no-rj"
-  },
+     },
   {
     id: 4,
-    name: "stove",
+    name: "flowey",
     role: "Minecraft Youtuber",
-    content: "I am glad that i can legally download youtube tools without getting 308 viruses!!",
-    avatar: "https://2cu76k77cd.ufs.sh/f/1TT1D8b4nz0qw3MC7WniSMKsrf1HTZCm3biQt2DXBGeu6zdF"
+    content: "I am glad that i can legally download youtube tools without getting 308 viruses!!"
   }
 ];
 
@@ -70,7 +65,7 @@ const Testimonials = () => {
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 overflow-hidden border-2 border-cow-purple/30 rounded-full">
                     <img 
-                      src={testimonial.avatar} 
+                      src={`/assets/${testimonial.name}.jpg`}
                       alt={testimonial.name} 
                       className="w-full h-full object-cover rounded-full"
                     />
