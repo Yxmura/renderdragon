@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { toast } from 'sonner';
 import { checkCopyrightStatus, extractYouTubeID } from '@/utils/copyrightChecker';
 import { CopyrightResult } from '@/types/copyright';
+import DonateButton from '@/components/DonateButton';
 
 const MusicCopyright = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -262,6 +263,7 @@ const MusicCopyright = () => {
       </main>
       
       <Footer />
+      <DonateButton />
     </div>
   );
 };

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { JoinServerIcon } from '@/components/JoinServerIcon';
 import { Badge } from '@/components/ui/badge';
+import DonateButton from '@/components/DonateButton';
 
 type Category = 'editing' | 'design';
 
@@ -184,6 +185,7 @@ const DiscordServers = () => {
       </main>
       
       <Footer />
+      <DonateButton />
     </div>
   );
 };

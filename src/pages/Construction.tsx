@@ -1,9 +1,9 @@
-
-import React from "react";
+import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Construction as ConstructionIcon } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import DonateButton from "@/components/DonateButton";
 
 const Construction = () => {
   return (
@@ -44,6 +44,7 @@ const Construction = () => {
       </div>
       
       <Footer />
+      <DonateButton />
     </div>
   );
 };

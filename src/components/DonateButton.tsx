@@ -28,9 +28,9 @@ const DonateButton = () => {
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-md border-2 border-cow-purple bg-gradient-to-b from-background to-background/95 backdrop-blur-sm">
+        <DialogContent className="sm:max-w-md+1 border-2 border-cow-purple bg-gradient-to-b from-background to-background/95 backdrop-blur-sm">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+            <DialogTitle className="text-xl font-bold flex items-center gap-2">
               <Coffee className="h-6 w-6 text-cow-purple" />
               <span>Support Renderdragon</span>
             </DialogTitle>

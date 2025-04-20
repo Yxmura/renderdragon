@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { BookOpen } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import DonateButton from '@/components/DonateButton';
 
 interface Guide {
   id: number;
@@ -121,6 +122,7 @@ const Guides = () => {
       </main>
 
       <Footer />
+      <DonateButton />
     </div>
   );
 };

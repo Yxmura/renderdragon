@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import DonateButton from '@/components/DonateButton';
 import {
     Wand2,
     Copy,
@@ -399,6 +400,7 @@ const AiTitleHelper = () => {
             </main>
 
             <Footer />
+            <DonateButton />
         </div>
     );
 };

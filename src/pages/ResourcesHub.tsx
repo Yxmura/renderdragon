@@ -12,6 +12,7 @@ import ResourcesList from '@/components/resources/ResourcesList';
 import ResourceDetailDialog from '@/components/resources/ResourceDetailDialog';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
+import DonateButton from '@/components/DonateButton';
 
 const ResourcesHub = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -137,6 +138,7 @@ const ResourcesHub = () => {
       </main>
 
       <Footer />
+      <DonateButton />
 
       <ResourceDetailDialog
         resource={selectedResource}

@@ -1,7 +1,7 @@
-
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import DonateButton from '@/components/DonateButton';
 import { ChevronDown } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -65,7 +65,7 @@ const FAQ = () => {
                       <AccordionContent className="text-muted-foreground">
                         Yes, you can use our resources in your monetized content (YouTube videos, Twitch streams, etc.). 
                         Just be sure to check if the specific resource requires attribution to the original creator. 
-                        This information will be clearly displayed on each resource's page.
+                        This information will be clearly displayed on each resource's page. Crediting us is optional but appreciated.
                       </AccordionContent>
                     </AccordionItem>
                     
@@ -74,10 +74,7 @@ const FAQ = () => {
                         How accurate is the Music Copyright Checker?
                       </AccordionTrigger>
                       <AccordionContent className="text-muted-foreground">
-                        Our Music Copyright Checker provides general guidance based on known information 
-                        about songs, but copyright policies can change frequently. While we strive to provide 
-                        accurate information, we recommend double-checking with the official sources 
-                        or using YouTube's Content ID system before publishing.
+                        Our Music Copyright Checker provides general guidance based on known information about songs, but copyright policies can change frequently. While we strive to provide accurate information, we recommend double-checking with the official sources or using YouTube's Content ID system before publishing. Alternatives are finding copyright-free music on Youtube or paying for Epidemicsound.
                       </AccordionContent>
                     </AccordionItem>
                     
@@ -123,6 +120,15 @@ const FAQ = () => {
                         You can learn more about our team on the Contact page.
                       </AccordionContent>
                     </AccordionItem>
+
+                    <AccordionItem value="item-8">
+                      <AccordionTrigger className="text-left font-medium">
+                        I got a copyright claim on my video, what should I do?
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground">
+                        We understand that copyright claims can be frustrating especially when our mission has been to provide copyright-free assets. Now, copyright laws change from day to day and we try to keep our resources up to date. Please create a ticket in our Discord server and we will remove the resource from our collection as soon as possible.
+                      </AccordionContent>
+                    </AccordionItem>
                   </Accordion>
                 </div>
               </TabsContent>
@@ -130,61 +136,84 @@ const FAQ = () => {
               <TabsContent value="tos" className="mt-6">
                 <div className="pixel-card space-y-6">
                   <h2 className="text-2xl font-vt323">Terms of Service</h2>
-                  
+
                   <div className="space-y-4 text-muted-foreground">
                     <h3 className="text-lg font-medium text-foreground">1. Acceptance of Terms</h3>
                     <p>
                       By accessing and using Renderdragon ("the Website"), you accept and agree to be bound by these 
                       Terms of Service. If you do not agree to these terms, please do not use the Website.
                     </p>
-                    
+
                     <h3 className="text-lg font-medium text-foreground">2. Use of Resources</h3>
                     <p>
                       All resources provided on Renderdragon are available for free for both personal and commercial use, 
-                      unless otherwise stated on the specific resource. Some resources may require attribution to the original creator, 
+                      unless otherwise stated on the specific resource. Some assets may require attribution to the original creator, 
                       which will be clearly indicated on the resource page.
                     </p>
-                    
+
                     <h3 className="text-lg font-medium text-foreground">3. Limitation of Liability</h3>
                     <p>
-                      The resources and tools provided on Renderdragon are provided "as is" without any warranties, 
-                      expressed or implied. In no event shall Renderdragon be liable for any damages including, but not limited to, 
-                      direct, indirect, special, incidental or consequential damages or other losses arising out of the use of or 
-                      inability to use our resources or tools.
+                      All resources and tools on Renderdragon are provided "as is" without any warranties, expressed or implied. 
+                      In no event shall Renderdragon be liable for any damages including, but not limited to, 
+                      direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use 
+                      the Website, its resources, or its tools.
                     </p>
-                    
+
                     <h3 className="text-lg font-medium text-foreground">4. Copyright and Intellectual Property</h3>
                     <p>
-                      The content on Renderdragon, including text, graphics, logos, and software, is the property of 
-                      Renderdragon or its content suppliers and is protected by copyright laws. Users are granted a limited 
-                      license to download or print content from the Website for personal and commercial use.
+                      The content on Renderdragon, including but not limited to text, graphics, logos, and software, is either 
+                      the property of Renderdragon or used with permission from the respective creators. 
+                      All content is protected under applicable intellectual property laws. Users are granted a limited, 
+                      non-exclusive license to download and use resources for their own projects, subject to any additional 
+                      terms specified on individual resource pages.
                     </p>
-                    
-                    <h3 className="text-lg font-medium text-foreground">5. User Conduct</h3>
+
+                    <h3 className="text-lg font-medium text-foreground">5. Copyright Issues</h3>
                     <p>
-                      Users of Renderdragon agree not to:
+                      Renderdragon is a free library of community-submitted and openly available resources for content creators.
+                      While we strive to ensure that most assets are copyright-free or licensed for commercial use, 
+                      we do not and cannot guarantee that every resource is completely copyright-free.
                     </p>
+                    <p>
+                      Renderdragon does not claim ownership over all assets hosted or linked on this platform. These resources 
+                      are owned by their respective creators and contributors. If a user receives a copyright claim on platforms 
+                      such as YouTube, Twitch, Kick, or others, it is the user's responsibility to contact the original creator 
+                      of the resource for clarification.
+                    </p>
+                    <p>
+                      By using assets from Renderdragon, users acknowledge and accept that they do so at their own risk. 
+                      Renderdragon is not liable for any copyright claims or disputes that may arise from the use of 
+                      these resources.
+                    </p>
+                    <p>
+                      If you believe a resource violates copyright or wish to request its removal, please use the Contact page 
+                      to report it. We take such concerns seriously and will respond promptly.
+                    </p>
+
+                    <h3 className="text-lg font-medium text-foreground">6. User Conduct</h3>
+                    <p>Users of Renderdragon agree not to:</p>
                     <ul className="list-disc pl-6 space-y-1">
-                      <li>Use the Website for any unlawful purpose</li>
-                      <li>Attempt to gain unauthorized access to any part of the Website</li>
-                      <li>Resell or redistribute resources from the Website as their own</li>
-                      <li>Claim ownership of resources provided on the Website</li>
+                      <li>Use the Website for any unlawful or malicious purpose</li>
+                      <li>Attempt to gain unauthorized access to any part of the Website or its servers</li>
+                      <li>Resell, redistribute, or reupload resources from the Website as their own</li>
+                      <li>Falsely claim ownership or authorship of any resource found on the Website</li>
                     </ul>
-                    
-                    <h3 className="text-lg font-medium text-foreground">6. Changes to Terms</h3>
+
+                    <h3 className="text-lg font-medium text-foreground">7. Changes to Terms</h3>
                     <p>
-                      Renderdragon reserves the right to modify these Terms of Service at any time. 
-                      Changes will be effective immediately upon posting on the Website. Your continued use of the 
-                      Website after any changes indicates your acceptance of the modified terms.
+                      Renderdragon reserves the right to modify or update these Terms of Service at any time without prior notice. 
+                      Changes will be effective immediately upon posting. Continued use of the Website after any changes 
+                      constitutes your acceptance of the revised terms.
                     </p>
-                    
-                    <h3 className="text-lg font-medium text-foreground">7. Contact Information</h3>
+
+                    <h3 className="text-lg font-medium text-foreground">8. Contact Information</h3>
                     <p>
-                      If you have any questions about these Terms of Service, please contact us through the Contact page.
+                      If you have any questions about these Terms of Service, copyright concerns, or need assistance, 
+                      please reach out to us via the Contact page on <a href="https://renderdragon.org" className="underline">renderdragon.org</a>.
                     </p>
-                    
+
                     <p className="text-sm">
-                      Last updated: November 2023
+                      Last updated: April 2025
                     </p>
                   </div>
                 </div>
@@ -257,7 +286,7 @@ const FAQ = () => {
                     </p>
                     
                     <p className="text-sm">
-                      Last updated: 16 April 2025
+                      Last updated: April 2025
                     </p>
                   </div>
                 </div>
@@ -267,6 +296,7 @@ const FAQ = () => {
         </div>
       </main>
       
+      <DonateButton />
       <Footer />
     </div>
   );

@@ -1,9 +1,9 @@
-
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Home } from 'lucide-react';
+import DonateButton from '@/components/DonateButton';
 
 const NotFound = () => {
   const location = useLocation();
@@ -52,6 +52,7 @@ const NotFound = () => {
       </main>
       
       <Footer />
+      <DonateButton />
     </div>
   );
 };

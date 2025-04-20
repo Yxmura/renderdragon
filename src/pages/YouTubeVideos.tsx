@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import DonateButton from '@/components/DonateButton';
 import { ChevronRight, ChevronLeft, Play, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -281,6 +282,7 @@ const YouTubeVideos = () => {
       </main>
       
       <Footer />
+      <DonateButton />
       
       {/* Video skibidi Dialog */}
       <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
