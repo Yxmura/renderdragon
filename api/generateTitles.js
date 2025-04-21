@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const withTimeout = (promise, timeout = 30000) => {
+// Increased default timeout to 45 seconds
+const withTimeout = (promise, timeout = 45000) => {
   return Promise.race([
     promise,
     new Promise((_, reject) =>
@@ -31,7 +32,6 @@ export default async function handler(req, res) {
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    // Changed model back to 2.5-flash as requested
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-04-17' });
 
     // Added examples of successful Minecraft titles directly into the prompt
@@ -41,12 +41,12 @@ export default async function handler(req, res) {
     const generationConfig = {
       temperature: temperatureValue,
       topP: temperatureValue,
-      maxOutputTokens: 200,
+      maxOutputTokens: 200, // Keep this relatively low to encourage faster responses
     };
 
     const result = await withTimeout(
-      model.generateContent(prompt, generationConfig),
-      30000
+      model.generateContent(prompt, generationConfig)
+      // No need to pass 30000 if the default is changed above
     );
 
     const response = result.response;
@@ -98,12 +98,14 @@ export default async function handler(req, res) {
     console.error('Generation error:', error);
 
     if (error.message === 'Request timed out') {
+      // This specific error message is caught and returns 504
       return res.status(504).json({
         message: 'The request took too long to complete. Please try again.',
         error: error.message
       });
     }
 
+    // Other errors return 500
     const errorMessage = error.message || 'Failed to generate titles due to an internal error';
     return res.status(500).json({
       message: errorMessage,
