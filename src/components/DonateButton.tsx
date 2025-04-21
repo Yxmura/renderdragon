@@ -17,7 +17,7 @@ const DonateButton = () => {
     <>
       <Button 
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-6 rounded-full w-14 h-14 shadow-lg z-40 bg-cow-purple hover:bg-cow-purple-dark transition-all duration-300 group"
+        className="fixed bottom-6 left-6 rounded-full w-14 h-14 shadow-lg z-40 bg-cow-purple hover:bg-cow-purple-dark transition-all duration-300 group motion-scale-in-[0.5] motion-opacity-in-[0%] motion-duration-[250ms] motion-ease-spring-bouncier"
         aria-label="Donate"
       >
         <div className="absolute inset-0 rounded-full bg-cow-purple-dark/30 group-hover:bg-cow-purple-dark/50 animate-ping opacity-75"></div>

@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import FeaturedResources from '@/components/FeaturedResources';
@@ -31,15 +32,50 @@ const Index = () => {
     });
   }, []);
 
+  const fadeInUp = {
+    initial: { opacity: 0, y: 60 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6, ease: "easeOut" }
+  };
+
+  const stagger = {
+    initial: { opacity: 0 },
+    whileInView: { opacity: 1 },
+    viewport: { once: true },
+    transition: { staggerChildren: 0.2 }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
-        <Hero />
-        <FeaturedResources />
-        <PopularTools />
-        <Testimonials />
-        <Stats />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <Hero />
+        </motion.div>
+        
+        <motion.div {...fadeInUp}>
+          <FeaturedResources />
+        </motion.div>
+
+        <motion.div {...fadeInUp}>
+          <PopularTools />
+        </motion.div>
+
+        <motion.section {...stagger}>
+          <Testimonials />
+        </motion.section>
+
+        <motion.div
+          {...fadeInUp}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <Stats />
+        </motion.div>
       </main>
       <Footer />
       <DonateButton />

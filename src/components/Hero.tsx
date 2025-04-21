@@ -110,7 +110,7 @@ const Hero = () => {
       transition: {
         duration: 2,
         repeat: Number.POSITIVE_INFINITY,
-        repeatType: "reverse",
+        repeatType: 'mirror' as const,
       },
     },
   }
@@ -227,7 +227,7 @@ const Hero = () => {
             whileTap={{ scale: 0.95 }}
           >
             <Link
-              href="/resources"
+              to="/resources"
               className="pixel-btn-primary inline-flex items-center gap-2 px-6 py-3 text-sm transition-transform"
             >
               <motion.span
@@ -248,7 +248,7 @@ const Hero = () => {
             whileTap={{ scale: 0.95 }}
           >
             <Link
-              href="/guides"
+              to="/guides"
               className="pixel-btn-secondary inline-flex items-center gap-2 px-6 py-3 text-sm transition-transform"
             >
               <motion.span

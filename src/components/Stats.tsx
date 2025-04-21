@@ -1,143 +1,232 @@
-import { useState, useEffect, useRef } from 'react';
-import { Users, Download, Star, ThumbsUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { motion, useAnimation } from 'framer-motion';
+import { useInView } from 'react-intersection-observer';
+import { Download, Users, Film, Music } from 'lucide-react';
 
-interface Stat {
-  value: number;
-  label: string;
-  icon: React.ElementType;
-  suffix?: string;
-}
+const stats = [
+  {
+    icon: Download,
+    value: 300,
+    suffix: "+",
+    label: "Resources Downloaded"
+  },
+  {
+    icon: Users,
+    value: 100,
+    suffix: "+",
+    label: "Active Creators"
+  },
+  {
+    icon: Film,
+    value: 1000,
+    suffix: "+",
+    label: "Animations & Assets"
+  },
+  {
+    icon: Music,
+    value: 50,
+    suffix: "+",
+    label: "Music Tracks"
+  }
+];
 
 const Stats = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [stats, setStats] = useState<Stat[]>([
-    {
-      value: 50,
-      label: 'Content Creators',
-      icon: Users,
-      suffix: '+'
-    },
-    {
-      value: 100,
-      label: 'Assets Downloaded',
-      icon: Download,
-      suffix: '+',
-    },
-    {
-      value: 4.6,
-      label: 'Average Rating',
-      icon: Star,
-      suffix: '/5'
-    },
-    {
-      value: 90,
-      label: 'Satisfaction Rate',
-      icon: ThumbsUp,
-      suffix: '%'
-    }
-  ]);
-  const [counts, setCounts] = useState<number[]>([]);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const countingStarted = useRef(false);
-
-  const formatNumber = (num: number | undefined) => {
-    if (num === undefined) {
-      return '0';
-    }
-    
-    if (Number.isInteger(num)) {
-      if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'k';
-      }
-      return num.toString();
-    }
-    
-    return num.toFixed(1);
-  };
+  const [counts, setCounts] = useState(stats.map(() => 0));
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.2
+  });
 
   useEffect(() => {
-    setCounts(stats.map(() => 0));
-  }, [stats]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const currentRef = sectionRef.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (isVisible && !countingStarted.current) {
-      countingStarted.current = true;
-      
+    if (inView) {
+      controls.start("visible");
       stats.forEach((stat, index) => {
-        const target = stat.value;
-        const duration = 2000;
-        const stepTime = 50; 
-        const steps = duration / stepTime;
-        const increment = target / steps;
-        let current = 0;
+        const steps = 30;
+        const stepValue = stat.value / steps;
+        let currentStep = 0;
 
-        const timer = setInterval(() => {
-          current += increment;
-          if (current >= target) {
-            current = target;
-            clearInterval(timer);
+        const interval = setInterval(() => {
+          if (currentStep < steps) {
+            setCounts(prev => 
+              prev.map((count, i) => 
+                i === index ? Math.min(Math.ceil(stepValue * (currentStep + 1)), stat.value) : count
+              )
+            );
+            currentStep++;
+          } else {
+            clearInterval(interval);
           }
-          setCounts(prev => {
-            const newCounts = [...prev];
-            newCounts[index] = current;
-            return newCounts;
-          });
-        }, stepTime);
+        }, 50);
       });
     }
-  }, [isVisible, stats]);
+  }, [inView, controls]);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { 
+      opacity: 0,
+      scale: 0.5,
+      y: 50
+    },
+    visible: { 
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        damping: 15,
+        stiffness: 100
+      }
+    }
+  };
 
   return (
-    <section ref={sectionRef} className="py-20 bg-background">
+    <section className="py-20 bg-background cow-grid-bg">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-vt323 mb-4">
-            Trusted By <span className="text-cow-purple">Creators</span>
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-4xl md:text-5xl font-vt323 mb-4">
+            Our <span className="text-cow-purple">Numbers</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             Join thousands of content creators who use our resources daily
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.div
+          ref={ref}
+          variants={containerVariants}
+          initial="hidden"
+          animate={controls}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12"
+        >
           {stats.map((stat, index) => (
-            <div key={index} className="flex flex-col items-center p-6 pixel-card">
-              <div className="mb-4 p-3 bg-primary/10 text-primary rounded-full">
-                <stat.icon className="h-6 w-6" />
-              </div>
+            <motion.div
+              key={index}
+              variants={cardVariants}
+              className="relative group"
+            >
+              <motion.div
+                className="absolute -inset-1 bg-gradient-to-r from-cow-purple/50 via-primary/50 to-cow-purple/50 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-500 opacity-75 group-hover:opacity-100 group-hover:scale-110"
+                animate={{
+                  background: [
+                    "linear-gradient(45deg, rgba(155, 135, 245, 0.5) 0%, rgba(155, 135, 245, 0.2) 100%)",
+                    "linear-gradient(225deg, rgba(155, 135, 245, 0.5) 0%, rgba(155, 135, 245, 0.2) 100%)",
+                    "linear-gradient(45deg, rgba(155, 135, 245, 0.5) 0%, rgba(155, 135, 245, 0.2) 100%)"
+                  ]
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
               
-              <div className="text-3xl md:text-4xl font-vt323 mb-2 text-primary animate-glow">
-                {formatNumber(counts[index])}{stat.suffix}
-              </div>
-              
-              <div className="text-muted-foreground text-center">
-                {stat.label}
-              </div>
-            </div>
+              <motion.div 
+                className="relative flex flex-col items-center p-8 md:p-10 rounded-xl bg-background/95 backdrop-blur border-2 border-cow-purple/20 shadow-xl"
+                whileHover={{ 
+                  scale: 1.05,
+                  transition: { 
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 15 
+                  }
+                }}
+              >
+                <motion.div
+                  className="mb-6"
+                  whileHover={{
+                    scale: 1.2,
+                    rotate: [0, -15, 15, -15, 15, 0],
+                    transition: {
+                      duration: 0.6,
+                      ease: "easeInOut"
+                    }
+                  }}
+                >
+                  <div className="relative">
+                    <motion.div 
+                      className="absolute inset-0 bg-cow-purple/30 rounded-full blur-md"
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        opacity: [0.5, 0.8, 0.5]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    <div className="relative p-4 bg-primary/10 text-primary rounded-full">
+                      <stat.icon className="h-8 w-8 md:h-10 md:w-10" />
+                    </div>
+                  </div>
+                </motion.div>
+
+                <motion.div 
+                  className="text-4xl md:text-5xl xl:text-6xl font-vt323 mb-4 text-primary relative group-hover:text-cow-purple transition-colors duration-300"
+                  whileHover={{
+                    scale: 1.1,
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  <span className="relative z-10">
+                    {counts[index].toLocaleString()}{stat.suffix}
+                  </span>
+                  <motion.div
+                    className="absolute inset-0 bg-cow-purple/10 blur-sm rounded-lg -z-10"
+                    initial={false}
+                    whileHover={{
+                      scale: 1.2,
+                      opacity: [0.1, 0.3, 0.1],
+                      transition: {
+                        duration: 1,
+                        repeat: Infinity
+                      }
+                    }}
+                  />
+                </motion.div>
+
+                <motion.div 
+                  className="text-lg md:text-xl text-muted-foreground text-center font-medium relative"
+                  initial={{ opacity: 0.8 }}
+                  whileHover={{
+                    opacity: 1,
+                    scale: 1.05,
+                    transition: { duration: 0.2 }
+                  }}
+                >
+                  {stat.label}
+                  <motion.div
+                    className="absolute -bottom-2 left-0 right-0 h-0.5 bg-cow-purple/50"
+                    initial={{ width: "0%", left: "50%" }}
+                    whileHover={{
+                      width: "100%",
+                      left: "0%",
+                      transition: { duration: 0.3 }
+                    }}
+                  />
+                </motion.div>
+              </motion.div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
