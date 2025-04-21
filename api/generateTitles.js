@@ -31,9 +31,11 @@ export default async function handler(req, res) {
 
   try {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    // Changed model back to 2.5-flash as requested
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-04-17' });
 
-    const prompt = `Generate 3 YouTube video titles for a video described as "${description}". The creativity level is ${creativity} (0-100, where 0 is factual and 100 is highly creative). Each title should have a 'type' (creative, descriptive, emotional, or trending). Return only a JSON array of objects in the format: [{title: "Title text", type: "creative | descriptive | emotional | trending"}]. Do not include any other text or formatting outside the JSON.`;
+    // Added examples of successful Minecraft titles directly into the prompt
+    const prompt = `Generate 3 YouTube video titles for a video described as "${description}". Consider examples of past successful Minecraft titles like "I Survived 100 Days in HARDCORE Minecraft", "Building the ULTIMATE Secret Base", "Exploring The DEEPEST Cave in Minecraft", "The Rarest Item I've Ever Found!", "My First Time Beating The Ender Dragon". The creativity level is ${creativity} (0-100, where 0 is factual and 100 is highly creative). Each title should have a 'type' (creative, descriptive, emotional, or trending). Return only a JSON array of objects in the format: [{title: "Title text", type: "creative | descriptive | emotional | trending"}]. Do not include any other text or formatting outside the JSON.`;
 
     const temperatureValue = Math.max(0.1, Math.min(1, creativity / 100));
     const generationConfig = {
@@ -59,7 +61,11 @@ export default async function handler(req, res) {
 
     let generatedTitles;
     try {
-      const cleanedText = text.replace(/```json\s*\n/g, '').replace(/```/g, '').trim();
+      // Robust cleaning for various markdown formats the model might use
+      const cleanedText = text
+        .replace(/```json\s*\n/g, '') // Remove ```json and following newline
+        .replace(/```/g, '')       // Remove any remaining ```
+        .trim();                  // Trim whitespace
 
       generatedTitles = JSON.parse(cleanedText);
 
