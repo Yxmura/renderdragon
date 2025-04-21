@@ -103,7 +103,7 @@ export default async function handler(req, res) {
 
     if (error.message === 'Request timed out') {
       return res.status(504).json({
-        message: 'The request took too long to complete. Please try again.',
+        message: 'Timeout exceeded, please try again later.',
         error: error.message
       });
     }
