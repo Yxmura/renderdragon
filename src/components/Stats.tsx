@@ -139,9 +139,9 @@ const Stats = () => {
               />
               
               <motion.div 
-                className="relative flex flex-col items-center p-8 md:p-10 rounded-xl bg-background/95 backdrop-blur border-2 border-cow-purple/20 shadow-xl"
+                className="relative flex flex-col items-center p-6 md:p-8 rounded-xl bg-background/95 backdrop-blur border-2 border-cow-purple/20 shadow-xl"
                 whileHover={{ 
-                  scale: 1.05,
+                  scale: 1.03,
                   transition: { 
                     type: "spring",
                     stiffness: 300,
@@ -152,8 +152,8 @@ const Stats = () => {
                 <motion.div
                   className="mb-6"
                   whileHover={{
-                    scale: 1.2,
-                    rotate: [0, -15, 15, -15, 15, 0],
+                    scale: 1.1,
+                    rotate: [0, -10, 10, -10, 10, 0],
                     transition: {
                       duration: 0.6,
                       ease: "easeInOut"
@@ -162,10 +162,10 @@ const Stats = () => {
                 >
                   <div className="relative">
                     <motion.div 
-                      className="absolute inset-0 bg-cow-purple/30 rounded-full blur-md"
+                      className="absolute inset-0 bg-cow-purple/20 rounded-full blur-sm"
                       animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.5, 0.8, 0.5]
+                        scale: [1, 1.1, 1],
+                        opacity: [0.2, 0.3, 0.2]
                       }}
                       transition={{
                         duration: 2,
@@ -190,7 +190,7 @@ const Stats = () => {
                     {counts[index].toLocaleString()}{stat.suffix}
                   </span>
                   <motion.div
-                    className="absolute inset-0 bg-cow-purple/10 blur-sm rounded-lg -z-10"
+                    className="absolute inset-0  blur-sm rounded-lg -z-10"
                     initial={false}
                     whileHover={{
                       scale: 1.2,
