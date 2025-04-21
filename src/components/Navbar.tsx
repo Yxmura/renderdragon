@@ -151,7 +151,7 @@ const Navbar = () => {
     borderBottom: `1px solid rgba(155, 135, 245, ${scrolled ? scrollProgress * 0.2 : 0.1})`,
     backdropFilter: 'blur(12px)',
     WebkitBackdropFilter: 'blur(12px)',
-    transform: 'translateZ(0)',
+    width: 'calc(100vw - 12px)' 
   };
 
   return (
@@ -159,7 +159,6 @@ const Navbar = () => {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? 'py-2' : 'py-4'
       }`}
-      style={navbarStyle}
     >
       <div 
         className="absolute inset-0"

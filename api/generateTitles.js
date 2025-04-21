@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Increased default timeout to 45 seconds
-const withTimeout = (promise, timeout = 45000) => {
+// Increased timeout to 60 seconds for slower connections
+const withTimeout = (promise, timeout = 60000) => {
   return Promise.race([
     promise,
     new Promise((_, reject) =>
@@ -34,38 +34,42 @@ export default async function handler(req, res) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-04-17' });
 
-    // Added examples of successful Minecraft titles directly into the prompt
     const prompt = `Generate 3 YouTube video titles for a video described as "${description}". Consider examples of past successful Minecraft titles like "I Survived 100 Days in HARDCORE Minecraft", "Building the ULTIMATE Secret Base", "Exploring The DEEPEST Cave in Minecraft", "The Rarest Item I've Ever Found!", "My First Time Beating The Ender Dragon". The creativity level is ${creativity} (0-100, where 0 is factual and 100 is highly creative). Each title should have a 'type' (creative, descriptive, emotional, or trending). Return only a JSON array of objects in the format: [{title: "Title text", type: "creative | descriptive | emotional | trending"}]. Do not include any other text or formatting outside the JSON.`;
 
     const temperatureValue = Math.max(0.1, Math.min(1, creativity / 100));
     const generationConfig = {
       temperature: temperatureValue,
       topP: temperatureValue,
-      maxOutputTokens: 200, // Keep this relatively low to encourage faster responses
+      maxOutputTokens: 200,
     };
 
     const result = await withTimeout(
       model.generateContent(prompt, generationConfig)
-      // No need to pass 30000 if the default is changed above
     );
 
-    const response = result.response;
-    if (!response) {
-        throw new Error("AI response object is null or undefined");
+    let response;
+    try {
+      response = result.response;
+      if (!response || !response.text) {
+        throw new Error('Invalid AI response format');
+      }
+    } catch (err) {
+      console.error('Error accessing AI response:', err);
+      throw new Error('Failed to get valid response from AI service');
     }
-    const text = response.text();
 
-    if (!text) {
-        throw new Error("AI response text is empty");
+    const text = response.text();
+    if (!text || typeof text !== 'string') {
+      console.error('Empty or invalid response text:', text);
+      throw new Error('AI returned empty or invalid response');
     }
 
     let generatedTitles;
     try {
-      // Robust cleaning for various markdown formats the model might use
       const cleanedText = text
-        .replace(/```json\s*\n/g, '') // Remove ```json and following newline
-        .replace(/```/g, '')       // Remove any remaining ```
-        .trim();                  // Trim whitespace
+        .replace(/```json\s*\n/g, '')
+        .replace(/```/g, '')
+        .trim();
 
       generatedTitles = JSON.parse(cleanedText);
 
@@ -98,14 +102,12 @@ export default async function handler(req, res) {
     console.error('Generation error:', error);
 
     if (error.message === 'Request timed out') {
-      // This specific error message is caught and returns 504
       return res.status(504).json({
         message: 'The request took too long to complete. Please try again.',
         error: error.message
       });
     }
 
-    // Other errors return 500
     const errorMessage = error.message || 'Failed to generate titles due to an internal error';
     return res.status(500).json({
       message: errorMessage,
