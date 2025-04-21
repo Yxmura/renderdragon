@@ -1,9 +1,9 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { KBarProvider } from 'kbar';
 import VercelAnalytics from "@/components/VercelAnalytics";
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import CountdownOverlay from "@/components/CountdownOverlay";
@@ -20,9 +20,9 @@ import DiscordServers from "./pages/DiscordServers";
 import FAQ from "./pages/FAQ";
 import TOS from "./pages/TOS";
 import Privacy from "./pages/Privacy";
-import Construction from "./pages/Construction"
+import Construction from "./pages/Construction";
 import NotFound from "./pages/NotFound";
-import { KBarProvider } from 'kbar';
+import UsefulSoftware from "./pages/UsefulSoftware";
 import AiTitleHelper from "./pages/AiTitleHelper";
 
 const queryClient = new QueryClient();
@@ -50,6 +50,7 @@ const App = () => (
             <Route path="/music-copyright" element={<MusicCopyright />} />
             <Route path="/ai-title-helper" element={<AiTitleHelper />} />
             <Route path="/background-generator" element={<BackgroundGenerator />} />
+            <Route path="/useful-software" element={<UsefulSoftware />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/tos" element={<TOS />} />
             <Route path="/privacy" element={<Privacy />} />
