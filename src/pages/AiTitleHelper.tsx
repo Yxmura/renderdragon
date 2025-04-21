@@ -72,7 +72,7 @@ const AiTitleHelper = () => {
         document.title = 'AI Title Helper - Renderdragon';
     }, []);
 
-    const handleGenerateTitles = async () => {
+    const handleGenerateTitles = async (retryCount = 0) => {
         if (!videoDescription.trim()) {
           toast.error('Please enter a video description');
           return;
@@ -97,15 +97,23 @@ const AiTitleHelper = () => {
           
             try {
               const errorData = JSON.parse(text);
-              throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.message || 'Unknown error'}`);
+              
+              // Handle timeout specifically
+              if (response.status === 504 && retryCount < 2) {
+                toast.error('Request timed out. Retrying...');
+                setIsLoading(false);
+                return handleGenerateTitles(retryCount + 1);
+              }
+
+              throw new Error(errorData.message || `Error: ${response.status}`);
             } catch {
-              throw new Error(`HTTP error! status: ${response.status}, text: ${text}`);
+              throw new Error(`Error: ${response.status}`);
             }
           }          
       
           const data = await response.json();
           setTitleSuggestions(data.titles);
-      
+
           if (data.titles.length === 0) {
             toast.warning('No titles were generated. Try adjusting your input.');
           } else {
@@ -113,15 +121,13 @@ const AiTitleHelper = () => {
               description: 'Click on a title to select it',
             });
           }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           console.error('Error generating titles:', error);
-          toast.error(`Error: ${error.message || 'Failed to generate titles'}`);
+          toast.error(error.message || 'Failed to generate titles');
         } finally {
           setIsLoading(false);
         }
-      };
-      
+    };
 
     const handleTitleSelect = (title: TitleSuggestion) => {
         setSelectedTitle(title);
