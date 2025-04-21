@@ -29,7 +29,6 @@ const FeaturedResources = () => {
             })),
         );
         
-        // Sort resources by download count (descending) and get top 4
         const sortedResources = [...allResources].slice(0, 4);
         
         setFeaturedResources(sortedResources);
@@ -60,7 +59,7 @@ const FeaturedResources = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5,
+        duration: 0.25,
         ease: "easeOut"
       }
     }
