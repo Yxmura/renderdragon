@@ -1,5 +1,5 @@
 
-import { createServerHandler } from '../utils/api';
+import { createServerHandler } from '../src/utils/api';
 
 export default createServerHandler(async (req, res) => {
   // In a real implementation, this would check if the API keys exist
