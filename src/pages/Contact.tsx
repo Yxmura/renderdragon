@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import DonateButton from '@/components/DonateButton';
+import { Helmet } from 'react-helmet';
 
 interface TeamMember {
   name: string;
@@ -79,6 +80,17 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Contact - Renderdragon</title>
+        <meta name="description" content="Get in touch with the Renderdragon team for support, feedback, or business inquiries. We're here to help Minecraft content creators succeed." />
+        <meta property="og:title" content="Contact - Renderdragon" />
+        <meta property="og:description" content="Get in touch with the Renderdragon team for support, feedback, or business inquiries. We're here to help Minecraft content creators succeed." />
+        <meta property="og:image" content="https://renderdragon.org/ogimg/contact.png" />
+        <meta property="og:url" content="https://renderdragon.org/contact" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Contact - Renderdragon" />
+        <meta name="twitter:image" content="https://renderdragon.org/ogimg/contact.png" />
+      </Helmet>
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16 cow-grid-bg">

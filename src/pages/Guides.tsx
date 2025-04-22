@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import { BookOpen } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import DonateButton from '@/components/DonateButton';
+import { Helmet } from 'react-helmet';
 
 interface Guide {
   id: number;
@@ -65,6 +66,18 @@ const Guides = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Guides - Renderdragon</title>
+        <meta name="description" content="Access comprehensive guides and tutorials for Minecraft content creation, including scriptwriting, editing, and AI tools." />
+        <meta property="og:title" content="Guides - Renderdragon" />
+        <meta property="og:description" content="Access comprehensive guides and tutorials for Minecraft content creation, including scriptwriting, editing, and AI tools." />
+        <meta property="og:image" content="https://renderdragon.org/ogimg/guides.png" />
+        <meta property="og:url" content="https://renderdragon.org/guides" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Guides - Renderdragon" />
+        <meta name="twitter:image" content="https://renderdragon.org/ogimg/guides.png" />
+      </Helmet>
+
       <Navbar />
 
       <main className="flex-grow pt-24 pb-16 cow-grid-bg">

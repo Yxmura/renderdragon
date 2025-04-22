@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
+import { Helmet } from 'react-helmet';
 
 interface VideoCategory {
   id: number;
@@ -187,6 +188,18 @@ const YouTubeVideos = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>YouTube Videos - Renderdragon</title>
+        <meta name="description" content="Watch helpful tutorials and guides for Minecraft content creation. Learn from experienced creators in our curated video collection." />
+        <meta property="og:title" content="YouTube Videos - Renderdragon" />
+        <meta property="og:description" content="Watch helpful tutorials and guides for Minecraft content creation. Learn from experienced creators in our curated video collection." />
+        <meta property="og:image" content="https://renderdragon.org/ogimg/videos.png" />
+        <meta property="og:url" content="https://renderdragon.org/youtube-videos" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="YouTube Videos - Renderdragon" />
+        <meta name="twitter:image" content="https://renderdragon.org/ogimg/videos.png" />
+      </Helmet>
+      
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16 cow-grid-bg">

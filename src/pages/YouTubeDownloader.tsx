@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import { Helmet } from 'react-helmet';
 
 interface DownloadOption {
     id: string;
@@ -148,6 +149,17 @@ const YouTubeDownloader = () => {
 
     return (
         <div className="min-h-screen flex flex-col">
+            <Helmet>
+                <title>YouTube Downloader - Renderdragon</title>
+                <meta name="description" content="Download YouTube videos for fair use and educational purposes. Our tool helps Minecraft content creators learn from and reference other creators' work." />
+                <meta property="og:title" content="YouTube Downloader - Renderdragon" />
+                <meta property="og:description" content="Download YouTube videos for fair use and educational purposes. Our tool helps Minecraft content creators learn from and reference other creators' work." />
+                {/* <meta property="og:image" content="https://renderdragon.org/ogimg/background.png" /> */}
+                <meta property="og:url" content="https://renderdragon.org/youtube-downloader" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="YouTube Downloader - Renderdragon" />
+                {/* <meta name="twitter:image" content="https://renderdragon.org/ogimg/background.png" /> */}
+            </Helmet>
             <Navbar />
 
             <main className="flex-grow pt-24 pb-16 cow-grid-bg">

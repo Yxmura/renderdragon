@@ -12,6 +12,7 @@ import ResourcesList from '@/components/resources/ResourcesList';
 import ResourceDetailDialog from '@/components/resources/ResourceDetailDialog';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
+import { Helmet } from "react-helmet";
 import DonateButton from '@/components/DonateButton';
 
 const ResourcesHub = () => {
@@ -98,6 +99,17 @@ const ResourcesHub = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative">
+      <Helmet>
+        <title>Resources Hub - Renderdragon</title>
+        <meta name="description" content="Browse and download free Minecraft content creation resources including thumbnails, overlays, sound effects, and more." />
+        <meta property="og:title" content="Resources Hub - Renderdragon" />
+        <meta property="og:description" content="Browse and download free Minecraft content creation resources including thumbnails, overlays, sound effects, and more." />
+        <meta property="og:image" content="https://renderdragon.org/ogimg/resources.png" />
+        <meta property="og:url" content="https://renderdragon.org/resources" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Resources Hub - Renderdragon" />
+        <meta name="twitter:image" content="https://renderdragon.org/ogimg/resources.png" />
+      </Helmet>
       <Navbar />
 
       <main className="flex-grow pt-24 pb-16 cow-grid-bg custom-scrollbar">

@@ -21,6 +21,7 @@ import { Slider } from '@/components/ui/slider';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
+import { Helmet } from "react-helmet";
 
 interface TitleSuggestion {
     id: string;
@@ -121,9 +122,9 @@ const AiTitleHelper = () => {
               description: 'Click on a title to select it',
             });
           }
-        } catch (error: any) {
+        } catch (error: Error | unknown) {
           console.error('Error generating titles:', error);
-          toast.error(error.message || 'Failed to generate titles');
+          toast.error(error instanceof Error ? error.message : 'Failed to generate titles');
         } finally {
           setIsLoading(false);
         }
@@ -157,8 +158,23 @@ const AiTitleHelper = () => {
         });
     };
 
+    const handleClick = () => {
+        void handleGenerateTitles();
+    };
+
     return (
         <div className="min-h-screen flex flex-col">
+            <Helmet>
+                <title>AI Title Helper - Renderdragon</title>
+                <meta name="description" content="Generate engaging YouTube titles for your Minecraft content using our AI-powered title generator tool." />
+                <meta property="og:title" content="AI Title Helper - Renderdragon" />
+                <meta property="og:description" content="Generate engaging YouTube titles for your Minecraft content using our AI-powered title generator tool." />
+                <meta property="og:image" content="https://renderdragon.org/ogimg/aititlehelper.png" />
+                <meta property="og:url" content="https://renderdragon.org/ai-title-helper" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content="AI Title Helper - Renderdragon" />
+                <meta name="twitter:image" content="https://renderdragon.org/ogimg/aititlehelper.png" />
+            </Helmet>
             <Navbar />
 
             <main className="flex-grow pt-24 pb-16 cow-grid-bg">
@@ -215,7 +231,7 @@ const AiTitleHelper = () => {
                                     </div>
 
                                     <Button
-                                        onClick={handleGenerateTitles}
+                                        onClick={handleClick}
                                         disabled={isLoading || !videoDescription.trim()}
                                         className="w-full pixel-btn-primary"
                                     >

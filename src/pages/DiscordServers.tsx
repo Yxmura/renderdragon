@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { JoinServerIcon } from '@/components/JoinServerIcon';
 import { Badge } from '@/components/ui/badge';
 import DonateButton from '@/components/DonateButton';
+import { Helmet } from 'react-helmet';
 
 type Category = 'editing' | 'design';
 
@@ -86,7 +87,7 @@ const DiscordServers = () => {
       setServers(SERVERS_DATA);
       setIsLoading(false);
     }, 500);
-  }, []); // Empty dependency array since we're using static data
+  }, []); 
 
   const handleJoinServer = (server: DiscordServer) => {
     window.open(server.inviteUrl, '_blank');
@@ -95,10 +96,21 @@ const DiscordServers = () => {
     });
   };
 
-  const filteredServers = servers;  // No more category filtering
+  const filteredServers = servers; 
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Discord Servers - Renderdragon</title>
+        <meta name="description" content="Join our Discord servers to connect with other Minecraft content creators, get feedback on your videos, and find collaboration opportunities." />
+        <meta property="og:title" content="Discord Servers - Renderdragon" />
+        <meta property="og:description" content="Join our Discord servers to connect with other Minecraft content creators, get feedback on your videos, and find collaboration opportunities." />
+        <meta property="og:image" content="https://renderdragon.org/ogimg/discords.png" />
+        <meta property="og:url" content="https://renderdragon.org/discord-servers" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Discord Servers - Renderdragon" />
+        <meta name="twitter:image" content="https://renderdragon.org/ogimg/discords.png" />
+      </Helmet>
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16 cow-grid-bg">

@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Helmet } from 'react-helmet';
 
 interface Software {
   name: string;
@@ -116,10 +117,21 @@ const UsefulSoftware = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Useful Software - Renderdragon</title>
+        <meta name="description" content="Discover essential software tools for Minecraft content creators. Find video editing, recording, and streaming software recommendations." />
+        <meta property="og:title" content="Useful Software - Renderdragon" />
+        <meta property="og:description" content="Discover essential software tools for Minecraft content creators. Find video editing, recording, and streaming software recommendations." />
+        <meta property="og:image" content="https://renderdragon.org/ogimg/software.png" />
+        <meta property="og:url" content="https://renderdragon.org/useful-software" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Useful Software - Renderdragon" />
+        <meta name="twitter:image" content="https://renderdragon.org/ogimg/software.png" />
+      </Helmet>
       <Navbar />
       
-      <main className="container mx-auto px-4 py-16">
+      <main className="container mx-auto px-4 py-16 pt-24">
         <motion.div 
           className="text-center mb-12"
           initial={{ opacity: 0, y: -20 }}

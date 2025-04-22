@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import FeaturedResources from '@/components/FeaturedResources';
@@ -48,6 +49,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Renderdragon - Tools & Resources for Minecraft Content Creators</title>
+        <meta name="description" content="Free tools and resources for Minecraft content creators. Generate titles, check music copyright, download videos, and more to enhance your content creation workflow." />
+        <meta property="og:title" content="Renderdragon - Tools & Resources for Minecraft Content Creators" />
+        <meta property="og:description" content="Free tools and resources for Minecraft content creators. Generate titles, check music copyright, download videos, and more to enhance your content creation workflow." />
+        <meta property="og:image" content="https://renderdragon.org/ogimg/index.png" />
+        <meta property="og:url" content="https://renderdragon.org" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Renderdragon - Tools & Resources for Minecraft Content Creators" />
+        <meta name="twitter:image" content="https://renderdragon.org/ogimg/index.png" />
+      </Helmet>
       <Navbar />
       <main className="flex-grow">
         <motion.div
