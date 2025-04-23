@@ -87,6 +87,9 @@ l195 0 0 203 c0 145 3 206 12 215 18 18 1251 17 1267 -1z m-3801 -2730 l2
   background: (
     <svg fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M18 0h2v4h4v2h-2v2h-2v2h-2V6h-4V4h2V2h2V0zM4 3h8v2H4v14h16v-7h2v9H2V3h2zm10 6h-2v2h-2v2H8v2H6v2h2v-2h2v-2h2v-2h2v2h2v2h2v-2h-2v-2h-2V9zM8 7H6v2h2V7z"/></svg>
   ),
+  software: (
+    <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"> <path d="M13 2v4h5v5h4v2h-4v5h-5v4h-2v-4H6v-5H2v-2h4V6h5V2h2zM8 8v8h8V8H8zm2 2h4v4h-4v-4z" fill="currentColor"/> </svg>
+  ),
   bot: (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
       <path d="M4 4h16v2H4V4zm0 2h2v10H4V6zm14 0h2v10h-2V6zM8 8h2v2H8V8zm6 0h2v2h-2V8zM6 18h12v2H6v-2zm8-6h2v2h-2v-2zm-6 0h2v2H8v-2z"/>
