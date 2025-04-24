@@ -48,6 +48,24 @@ const teamMembers: TeamMember[] = [
     }
   },
   {
+    name: 'TomatoKing',
+    role: 'King of Yapping',
+    avatar: 'https://yt3.googleusercontent.com/V1CBkrL3GOkjdvtH8ZJ5zFas73xJRuWth3hYRYYgPfQYQSO0Z-bZqxLbrgqipIvftFo97lv5duk=s160-c-k-c0x00ffffff-no-rj',
+    socials: {
+      discord: 'https://discordapp.com/users/1279190506126966847',
+      website: 'https://tomatosportfolio.netlify.app'
+    }
+  },
+  {
+    name: 'Denji',
+    role: 'Guides writer',
+    avatar: 'https://yournotluis.xyz/img/avatars/profilepicture.jpg',
+    socials: {
+      discord: 'https://discordapp.com/users/1114195537093201992',
+      website: 'https://yournotluis.xyz/'
+    }
+  },
+  {
     name: 'IDoTheHax',
     role: 'Gappa - Copyright checker integrator',
     avatar: 'https://cdn.discordapp.com/avatars/987323487343493191/3187a33efcddab3592c93ceac0a6016b.webp?size=48',
