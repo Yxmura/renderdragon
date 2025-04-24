@@ -12,17 +12,17 @@ interface Guide {
   description: string;
   category: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
-  pdfUrl?: string; // Optional property for PDF file URL
+  pdfUrl?: string;
 }
 
-const mockGuides: Guide[] = [
+const Guides: Guide[] = [
   {
     id: 1,
     title: 'Advanced Scriptwriting Guide',
     description: 'Learn how to write ideal scripts including hooks, retains, informs, satisfies, and finally persuades the audience towards an action.',
     category: 'scriptwriting',
     difficulty: 'advanced',
-    pdfUrl: '/guides/scriptwriting.pdf' // Add the PDF URL here
+    pdfUrl: '/guides/scriptwriting.pdf'
   },
   {
     id: 2,
@@ -32,6 +32,22 @@ const mockGuides: Guide[] = [
     difficulty: 'intermediate',
     pdfUrl: '/guides/AI.pdf'
   },
+  {
+    id: 3,
+    title: 'Good question, bad question',
+    description: 'Learn how to properly ask for help and get people to notice you.',
+    category: 'communication',
+    difficulty: 'easy',
+    pdfUrl: '/guides/questions.pdf'
+  },
+  {
+    id: 4,
+    title: "Copyright, what's that?",
+    description: 'Learn how copyright works and how it affects your content creation process.',
+    category: 'copyright',
+    difficulty: 'intermediate',
+    pdfUrl: '/guides/copyright.pdf'
+  },
 ];
 
 const Guides = () => {
@@ -39,10 +55,8 @@ const Guides = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    document.title = 'Minecraft Guides - Renderdragon';
-
     setTimeout(() => {
-      setGuides(mockGuides);
+      setGuides(Guides);
       setIsLoading(false);
     }, 500);
   }, []);
