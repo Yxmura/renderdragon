@@ -37,7 +37,7 @@ const Guides: Guide[] = [
     title: 'Good question, bad question',
     description: 'Learn how to properly ask for help and get people to notice you.',
     category: 'communication',
-    difficulty: 'easy',
+    difficulty: 'beginner',
     pdfUrl: '/guides/questions.pdf'
   },
   {
@@ -48,9 +48,17 @@ const Guides: Guide[] = [
     difficulty: 'intermediate',
     pdfUrl: '/guides/copyright.pdf'
   },
+  {
+    id: 4,
+    title: "Things you should ask yourself when Creating Content",
+    description: 'Learn how to ask yourself the right questions to improve your content creation process.',
+    category: 'content creation',
+    difficulty: 'beginner',
+    pdfUrl: '/guides/thingstoask.pdf'
+  },
 ];
 
-const Guides = () => {
+const GuidesPage = () => {
   const [guides, setGuides] = useState<Guide[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -154,4 +162,4 @@ const Guides = () => {
   );
 };
 
-export default Guides;
+export default GuidesPage;

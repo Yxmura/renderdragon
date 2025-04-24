@@ -67,7 +67,7 @@ const teamMembers: TeamMember[] = [
   },
   {
     name: 'IDoTheHax',
-    role: 'Gappa - Copyright checker integrator',
+    role: 'Idle - original Gappa co-creator',
     avatar: 'https://cdn.discordapp.com/avatars/987323487343493191/3187a33efcddab3592c93ceac0a6016b.webp?size=48',
     socials: {
       github: 'https://github.com/idothehax',
