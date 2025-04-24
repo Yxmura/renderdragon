@@ -3,7 +3,7 @@ export interface Resource {
   id: number;
   title: string;
   category: 'music' | 'sfx' | 'image' | 'animations' | 'fonts' | 'presets';
-  subcategory?: 'davinci' | 'premiere' | null;
+  subcategory?: 'davinci' | 'adobe' | null;
   credit?: string;
   filetype?: string;
   downloads?: number;
