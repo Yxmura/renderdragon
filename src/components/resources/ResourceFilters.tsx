@@ -191,7 +191,7 @@ const MobileFilters = ({
                   <SelectContent>
                     <SelectItem value="all">All Presets</SelectItem>
                     <SelectItem value="davinci">Davinci Resolve</SelectItem>
-                    <SelectItem value="adobe">Adobe Premiere Pro</SelectItem>
+                    <SelectItem value="adobe">Premiere Pro & AE</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
