@@ -22,7 +22,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Coder-soft',
     role: 'Founder',
-    avatar: 'https://cdn.discordapp.com/avatars/1094475489734819840/37da8f0271f018153b22e27bf6d05f88.webp',
+    avatar: '/assets/codersoft.png',
     socials: {
       github: 'https://github.com/coder-soft',
       discord: 'https://discordapp.com/users/1094475489734819840',
@@ -32,7 +32,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Clover',
     role: 'Project Lead',
-    avatar: 'https://cdn.discordapp.com/avatars/789997917661560862/affc7d403052f36ae9d5b80e4ee048da.webp',
+    avatar: '/assets/clover.jpeg',
     socials: {
       github: 'https://github.com/CloverTheBunny',
       discord: 'https://discordapp.com/users/789997917661560862'
@@ -41,7 +41,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Yamura',
     role: 'Lead Programmer',
-    avatar: 'https://yt3.googleusercontent.com/qtcPrp5zfc_nACl9Ck-8UjbRQs_uNHs4j3W4FKbMg4JhTYiGXu4B3EPaXmG7H9Hu2UuAAymN=s160-c-k-c0x00ffffff-no-rj',
+    avatar: '/assets/yamura.png',
     socials: {
       github: 'https://github.com/Yxmura',
       discord: 'https://discordapp.com/users/877933841170432071'
@@ -50,7 +50,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'TomatoKing',
     role: 'King of Yapping',
-    avatar: 'https://yt3.googleusercontent.com/V1CBkrL3GOkjdvtH8ZJ5zFas73xJRuWth3hYRYYgPfQYQSO0Z-bZqxLbrgqipIvftFo97lv5duk=s160-c-k-c0x00ffffff-no-rj',
+    avatar: '/assets/tomatoking.png',
     socials: {
       discord: 'https://discordapp.com/users/1279190506126966847',
       website: 'https://tomatosportfolio.netlify.app'
@@ -59,7 +59,7 @@ const teamMembers: TeamMember[] = [
   {
     name: 'Denji',
     role: 'Guides writer',
-    avatar: 'https://yournotluis.xyz/img/avatars/profilepicture.jpg',
+    avatar: '/assets/denji.png',
     socials: {
       discord: 'https://discordapp.com/users/1114195537093201992',
       website: 'https://yournotluis.xyz/'
