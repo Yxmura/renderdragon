@@ -22,7 +22,7 @@ import TOS from "./pages/TOS";
 import Privacy from "./pages/Privacy";
 import Construction from "./pages/Construction";
 import NotFound from "./pages/NotFound";
-import UsefulSoftware from "./pages/UsefulSoftware";
+import Software from "./pages/Software";
 import AiTitleHelper from "./pages/AiTitleHelper";
 import PlayerRenderer from "./pages/PlayerRenderer";
 
@@ -51,7 +51,7 @@ const App = () => (
             <Route path="/music-copyright" element={<MusicCopyright />} />
             <Route path="/ai-title-helper" element={<AiTitleHelper />} />
             <Route path="/background-generator" element={<BackgroundGenerator />} />
-            <Route path="/useful-software" element={<UsefulSoftware />} />
+            <Route path="/software" element={<Software />} />
             <Route path="/player-renderer" element={<PlayerRenderer />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/tos" element={<TOS />} />
