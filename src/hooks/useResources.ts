@@ -134,17 +134,16 @@ export const useResources = () => {
       const titleNorm = normalizeText(resource.title || '');
       const categoryNorm = normalizeText(resource.category || '');
       const subcategoryNorm = normalizeText(resource.subcategory || '');
-      // Apply search query filter (case-insensitive, number-word aware)
       const matchesSearch = !isSearching || 
         titleNorm.includes(normalizedQuery) ||
         categoryNorm.includes(normalizedQuery) ||
         subcategoryNorm.includes(normalizedQuery);
       
-      // Apply category filter
       const matchesCategory = !selectedCategory || resource.category === selectedCategory;
       
-      // Apply subcategory filter
-      const matchesSubcategory = !selectedSubcategory || resource.subcategory === selectedSubcategory;
+      const matchesSubcategory = 
+        !selectedSubcategory || 
+        (selectedCategory !== 'presets' ? true : resource.subcategory === selectedSubcategory);
       
       return matchesSearch && matchesCategory && matchesSubcategory;
     });
@@ -156,6 +155,10 @@ export const useResources = () => {
     const titleLowered = resource.title
       .toLowerCase()
       .replace(/ /g, '%20');
+    
+    if (resource.category === 'presets' && resource.subcategory) {
+      return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${resource.subcategory}/${titleLowered}${resource.credit ? `__${resource.credit}` : ''}.${resource.filetype}`;
+    }
     
     if (resource.credit) {
       return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${resource.credit}.${resource.filetype}`;
