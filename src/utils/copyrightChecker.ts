@@ -41,6 +41,42 @@ class CopyrightCache {
 
 const copyrightCache = new CopyrightCache();
 
+// Fallback method using oEmbed
+async function getYouTubeInfoFallback(url: string): Promise<VideoInfo | null> {
+  try {
+    const videoId = extractYouTubeID(url);
+    if (!videoId) return null;
+
+    const oembedResponse = await fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`);
+    
+    if (!oembedResponse.ok) {
+      throw new Error('Failed to fetch video info');
+    }
+
+    const oembedData = await oembedResponse.json();
+
+    // Since oEmbed doesn't provide license info, we'll make conservative assumptions
+    const videoInfo: VideoInfo = {
+      title: oembedData.title,
+      channel: oembedData.author_name,
+      license: 'Standard YouTube License', // Conservative assumption
+      is_copyrighted: true, // Conservative assumption
+      description: 'Description not available in fallback mode',
+      thumbnail: oembedData.thumbnail_url,
+      duration: 'N/A', // Not available in oEmbed
+      view_count: 0, // Not available in oEmbed
+      upload_date: new Date().toISOString(), // Not available in oEmbed
+      url: `https://www.youtube.com/watch?v=${videoId}`
+    };
+
+    copyrightCache.set(url, videoInfo);
+    return videoInfo;
+  } catch (error) {
+    console.error('Error in YouTube fallback:', error);
+    return null;
+  }
+}
+
 // Enhanced YouTube information extraction
 export async function getYouTubeInfo(url: string): Promise<VideoInfo | null> {
   const cachedInfo = copyrightCache.get(url);
@@ -55,57 +91,67 @@ export async function getYouTubeInfo(url: string): Promise<VideoInfo | null> {
     const videoId = extractYouTubeID(url);
     if (!videoId) return null;
 
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails,statistics&key=${import.meta.env.VITE_YOUTUBE_API_KEY}`);
+    try {
+      const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails,statistics&key=${import.meta.env.VITE_YOUTUBE_API_KEY}`);
 
-    if (!response.ok) {
-      throw new Error(`YouTube API error: ${response.status}`);
+      if (!response.ok) {
+        // If API fails, try fallback method
+        console.log('YouTube API failed, trying fallback method...');
+        return await getYouTubeInfoFallback(url);
+      }
+
+      const data = await response.json();
+
+      if (!data.items || data.items.length === 0) {
+        // If no items found, try fallback method
+        return await getYouTubeInfoFallback(url);
+      }
+
+      // Rest of the existing API processing code
+      const videoData = data.items[0];
+      const snippet = videoData.snippet;
+      const contentDetails = videoData.contentDetails;
+      const statistics = videoData.statistics;
+
+      const licenseString = snippet.licensedContent ? 'Standard YouTube License' : 'Creative Commons';
+
+      const noCopyrightTerms = [
+        'no copyright',
+        'copyright-free',
+        'royalty-free',
+        'free to use',
+        'public domain',
+        'creative commons'
+      ];
+
+      const containsNoCopyright = noCopyrightTerms.some(term =>
+        snippet.title.toLowerCase().includes(term) ||
+        snippet.description.toLowerCase().includes(term)
+      );
+
+      const isCopyrighted = !(licenseString.toLowerCase() === 'creative commons' || containsNoCopyright);
+
+      const videoInfo: VideoInfo = {
+        title: snippet.title,
+        channel: snippet.channelTitle,
+        license: licenseString,
+        is_copyrighted: isCopyrighted,
+        description: snippet.description,
+        thumbnail: snippet.thumbnails.high.url,
+        duration: contentDetails.duration,
+        view_count: parseInt(statistics.viewCount || '0'),
+        upload_date: snippet.publishedAt,
+        url: `https://www.youtube.com/watch?v=${videoId}`
+      };
+
+      copyrightCache.set(url, videoInfo);
+      return videoInfo;
+
+    } catch (error) {
+      // If any error occurs with the API, try fallback method
+      console.error('Error with YouTube API:', error);
+      return await getYouTubeInfoFallback(url);
     }
-
-    const data = await response.json();
-
-    if (!data.items || data.items.length === 0) {
-      return null;
-    }
-
-    const videoData = data.items[0];
-    const snippet = videoData.snippet;
-    const contentDetails = videoData.contentDetails;
-    const statistics = videoData.statistics;
-
-    const licenseString = snippet.licensedContent ? 'Standard YouTube License' : 'Creative Commons';
-
-    const noCopyrightTerms = [
-      'no copyright',
-      'copyright-free',
-      'royalty-free',
-      'free to use',
-      'public domain',
-      'creative commons'
-    ];
-
-    const containsNoCopyright = noCopyrightTerms.some(term =>
-      snippet.title.toLowerCase().includes(term) ||
-      snippet.description.toLowerCase().includes(term)
-    );
-
-    const isCopyrighted = !(licenseString.toLowerCase() === 'creative commons' || containsNoCopyright);
-
-    const videoInfo: VideoInfo = {
-      title: snippet.title,
-      channel: snippet.channelTitle,
-      license: licenseString,
-      is_copyrighted: isCopyrighted,
-      description: snippet.description,
-      thumbnail: snippet.thumbnails.high.url,
-      duration: contentDetails.duration,
-      view_count: parseInt(statistics.viewCount || '0'),
-      upload_date: snippet.publishedAt,
-      url: `https://www.youtube.com/watch?v=${videoId}`
-    };
-
-    copyrightCache.set(url, videoInfo);
-
-    return videoInfo;
   } catch (error) {
     console.error('Error getting YouTube info:', error);
     return null;

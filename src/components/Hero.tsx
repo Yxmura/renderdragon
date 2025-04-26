@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { ArrowRight, BookOpen } from "lucide-react"
+import { ArrowRight, Music } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import * as motion from "motion/react-client"
 
@@ -248,16 +248,16 @@ const Hero = () => {
             whileTap={{ scale: 0.95 }}
           >
             <Link
-              to="/guides"
+              to="/music-copyright"
               className="pixel-btn-secondary inline-flex items-center gap-2 px-6 py-3 text-sm transition-transform"
             >
               <motion.span
                 animate={{ rotate: [0, 10, 0] }}
                 transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
               >
-                <BookOpen className="w-4 h-4" />
+                <Music className="w-4 h-4" />
               </motion.span>
-              View Guides
+              Check Music Copyright
             </Link>
           </motion.div>
         </motion.div>
