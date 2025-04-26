@@ -24,6 +24,7 @@ import Construction from "./pages/Construction";
 import NotFound from "./pages/NotFound";
 import UsefulSoftware from "./pages/UsefulSoftware";
 import AiTitleHelper from "./pages/AiTitleHelper";
+import PlayerRenderer from "./pages/PlayerRenderer";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/ai-title-helper" element={<AiTitleHelper />} />
             <Route path="/background-generator" element={<BackgroundGenerator />} />
             <Route path="/useful-software" element={<UsefulSoftware />} />
+            <Route path="/player-renderer" element={<PlayerRenderer />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/tos" element={<TOS />} />
             <Route path="/privacy" element={<Privacy />} />

@@ -22,7 +22,7 @@ const DonateButton = () => {
       >
         <div className="absolute inset-0 rounded-full bg-cow-purple-dark/30 group-hover:bg-cow-purple-dark/50 animate-ping opacity-75"></div>
         <div className="relative flex items-center justify-center">
-          <img className='w-7 h-7' src='/assets/donate.png' alt='donate'></img>
+          <img src="/assets/heart.png" alt="donate" className="w-11 h-11 object-contain scale-150" />
         </div>
         <span className="sr-only">Donate</span>
       </Button>

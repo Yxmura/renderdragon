@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   ChevronDown, 
@@ -63,6 +63,7 @@ const mainLinks: (NavLink | NavDropdown)[] = [
       { name: 'Music Copyright Checker', path: '/music-copyright', icon: 'music' },
       { name: 'AI Title Helper', path: '/ai-title-helper', icon: 'bot' },
       { name: 'Background Generator', path: '/background-generator', icon: 'background' },
+      { name: 'Player Renderer', path: '/player-renderer', icon: 'player' }
     ]
   }
 ];
