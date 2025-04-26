@@ -31,7 +31,7 @@ const testimonials: Testimonial[] = [
     id: 4,
     name: "flowey",
     role: "Minecraft Youtuber",
-    content: "I am glad that i can legally download youtube tools without getting 308 viruses!!"
+    content: "I am glad that i can legally download youtube videos without getting 308 viruses!!"
   }
 ];
 
