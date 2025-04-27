@@ -55,13 +55,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ error: 'Invalid YouTube URL' });
     }
 
-    const info = await ytdl.getInfo(url, {
-      requestOptions: {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-        }
+    // Add more realistic headers and log cookies if available
+    const headers: Record<string, string> = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+    };
+    if (req.headers.cookie) {
+      headers['Cookie'] = req.headers.cookie;
+    }
+
+    let info;
+    try {
+      info = await ytdl.getInfo(url, {
+        requestOptions: { headers }
+      });
+    } catch (err: any) {
+      console.error('ytdl.getInfo error:', err);
+      // Return the actual error message and status if available
+      if (err.statusCode) {
+        return res.status(err.statusCode).json({ error: err.message || 'Failed to fetch video info', details: err });
       }
-    });
+      return res.status(500).json({ error: err.message || 'Failed to fetch video info', details: err });
+    }
 
     const response: VideoInfo = {
       title: info.videoDetails.title,
@@ -79,25 +93,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json(response);
   } catch (error) {
     console.error('Error fetching video info:', error);
-    
     if (error instanceof Error) {
-      if (error.message.includes('410')) {
-        return res.status(410).json({ 
-          error: 'Video no longer available',
-          details: 'The requested video has been removed or is no longer accessible'
-        });
-      }
-      
-      return res.status(500).json({ 
-        error: 'Failed to fetch video information',
-        details: error.message 
-      });
+      return res.status(500).json({ error: error.message, details: error });
     }
-
-    return res.status(500).json({ 
-      error: 'Failed to fetch video information',
-      details: 'Unknown error occurred'
-    });
+    return res.status(500).json({ error: 'Failed to fetch video information', details: error });
   }
 };
 
