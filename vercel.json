@@ -1,6 +1,11 @@
 {
+  "functions": {
+    "api/**/*.cjs": {
+      "runtime": "nodejs20.x"
+    }
+  },
     "rewrites": [
       { "source": "/(.*)", "destination": "/" }
     ]
-  }
+}
   
