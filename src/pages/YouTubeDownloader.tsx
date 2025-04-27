@@ -89,17 +89,18 @@ const YouTubeDownloader = () => {
         setUrlError(false);
 
         try {
-            const response = await fetch(`/api/info?url=${youtubeUrl}`); // Replace with your actual API endpoint
+            const encodedUrl = encodeURIComponent(youtubeUrl);
+            const response = await fetch(`/api/info?url=${encodedUrl}`);
+            const data = await response.json();
+
             if (!response.ok) {
-                const errorData = await response.json();
-                toast.error(`Failed to fetch info: ${errorData.error || response.statusText}`);
-                console.error("Error fetching video info:", errorData);
-                return;
+                throw new Error(data.error || response.statusText);
             }
-            const data: VideoInfo = await response.json();
+
             setVideoInfo(data);
         } catch (error) {
-            toast.error("An unexpected error occurred while fetching info.");
+            const message = error instanceof Error ? error.message : "An unexpected error occurred";
+            toast.error(`Failed to fetch video info: ${message}`);
             console.error("Error fetching video info:", error);
         } finally {
             setIsLoadingInfo(false);

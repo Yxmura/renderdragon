@@ -15,6 +15,17 @@ function formatDuration(seconds) {
 }
 
 module.exports = async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle OPTIONS request for CORS
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   const videoUrl = req.query.url;
 
   if (!videoUrl) {
@@ -49,6 +60,10 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('Error fetching video info:', error);
-    res.status(500).json({ error: error.message || 'Error fetching video info' });
+    // Return a more detailed error message
+    res.status(500).json({ 
+      error: error.message || 'Error fetching video info',
+      details: error.stack
+    });
   }
 };

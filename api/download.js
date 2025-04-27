@@ -2,13 +2,24 @@ const ytdl = require('ytdl-core');
 const contentDisposition = require('content-disposition');
 
 module.exports = async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle OPTIONS request for CORS
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   const videoUrl = req.query.url;
   const format = req.query.format;
   const quality = req.query.quality;
 
   if (!videoUrl || !format || !quality) {
     return res.status(400).json({ error: 'Missing parameters (url, format, or quality)' });
-    }
+  }
 
   if (!ytdl.validateURL(videoUrl)) {
     return res.status(400).json({ error: 'Invalid YouTube URL' });
@@ -32,11 +43,27 @@ module.exports = async function handler(req, res) {
     res.setHeader('Content-Disposition', contentDisposition(filename));
     res.setHeader('Content-Type', selectedFormat.mimeType || 'application/octet-stream');
 
-    ytdl(videoUrl, { format: selectedFormat })
-      .pipe(res);
+    const downloadStream = ytdl(videoUrl, { format: selectedFormat });
+
+    // Handle download stream errors
+    downloadStream.on('error', (error) => {
+      console.error('Download stream error:', error);
+      // Only send error if headers haven't been sent yet
+      if (!res.headersSent) {
+        res.status(500).json({ 
+          error: error.message || 'Error during download',
+          details: error.stack
+        });
+      }
+    });
+
+    downloadStream.pipe(res);
 
   } catch (error) {
     console.error('Download error:', error);
-    res.status(500).json({ error: error.message || 'Error during download' });
+    res.status(500).json({ 
+      error: error.message || 'Error during download',
+      details: error.stack
+    });
   }
 };
