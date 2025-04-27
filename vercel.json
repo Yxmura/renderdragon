@@ -1,10 +1,10 @@
 {
   "functions" : {
     "api/download.py": {
-      "runtime": "@vercel/python"
+      "runtime": "python3.12"
     },
     "api/info.py": {
-      "runtime": "@vercel/python"
+      "runtime": "python3.12"
     }
   },
   "rewrites": [
