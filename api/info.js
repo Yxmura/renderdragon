@@ -1,10 +1,11 @@
 import ytdl from 'ytdl-core';
+import { createServerHandler } from '../src/utils/api';
 
 export const config = {
-  runtime: 'edge'
+  runtime: 'nodejs18.x'
 };
 
-// Helper to format duration (optional, but good for display)
+// Helper to format duration
 function formatDuration(seconds) {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -18,69 +19,48 @@ function formatDuration(seconds) {
   return parts.join(' ');
 }
 
-export default async function handler(req) {
+const handler = async (req, res) => {
   // Set CORS headers
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
-  };
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   // Handle OPTIONS request for CORS
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers, status: 200 });
+    res.status(200).end();
+    return;
   }
 
-  const url = new URL(req.url);
-  const videoUrl = url.searchParams.get('url');
+  const { url } = req.query;
 
-  if (!videoUrl) {
-    return new Response(
-      JSON.stringify({ error: 'Missing video URL' }), 
-      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 400 }
-    );
+  if (!url) {
+    return res.status(400).json({ error: 'Missing video URL' });
   }
 
-  if (!ytdl.validateURL(videoUrl)) {
-    return new Response(
-      JSON.stringify({ error: 'Invalid YouTube URL' }), 
-      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 400 }
-    );
+  if (!ytdl.validateURL(url)) {
+    return res.status(400).json({ error: 'Invalid YouTube URL' });
   }
 
-  try {
-    const info = await ytdl.getInfo(videoUrl);
+  const info = await ytdl.getInfo(url);
 
-    const videoInfo = {
-      title: info.videoDetails.title,
-      thumbnail: info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
-      duration: formatDuration(parseInt(info.videoDetails.lengthSeconds, 10)),
-      author: info.videoDetails.author.name,
-      options: info.formats
-        .filter(format => format.container && format.mimeType)
-        .map(format => ({
-          id: format.itag.toString(),
-          label: `${format.container || 'unknown'} - ${format.qualityLabel || format.audioQuality || 'unknown'}`,
-          format: format.container || 'unknown',
-          quality: format.qualityLabel || format.audioQuality || 'unknown',
-          size: format.contentLength ? `${(parseInt(format.contentLength, 10) / (1024 * 1024)).toFixed(2)} MB` : undefined,
-          mimeType: format.mimeType,
-        })),
-    };
+  const videoInfo = {
+    title: info.videoDetails.title,
+    thumbnail: info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
+    duration: formatDuration(parseInt(info.videoDetails.lengthSeconds, 10)),
+    author: info.videoDetails.author.name,
+    options: info.formats
+      .filter(format => format.container && format.mimeType)
+      .map(format => ({
+        id: format.itag.toString(),
+        label: `${format.container || 'unknown'} - ${format.qualityLabel || format.audioQuality || 'unknown'}`,
+        format: format.container || 'unknown',
+        quality: format.qualityLabel || format.audioQuality || 'unknown',
+        size: format.contentLength ? `${(parseInt(format.contentLength, 10) / (1024 * 1024)).toFixed(2)} MB` : undefined,
+        mimeType: format.mimeType,
+      })),
+  };
 
-    return new Response(
-      JSON.stringify(videoInfo),
-      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 200 }
-    );
+  return res.status(200).json(videoInfo);
+};
 
-  } catch (error) {
-    console.error('Error fetching video info:', error);
-    return new Response(
-      JSON.stringify({ 
-        error: error.message || 'Error fetching video info',
-        details: error.stack
-      }),
-      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 500 }
-    );
-  }
-}
+export default createServerHandler(handler);
