@@ -4,8 +4,8 @@
     { "source": "/(.*)", "destination": "/" }
   ],
   "functions": {
-    "api": {
-      "runtime": "nodejs18.x"
+    "api/**": {
+      "runtime": "nodejs22.x"
     }
   }
 }
