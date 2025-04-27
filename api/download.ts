@@ -1,11 +1,13 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import ytdl from 'ytdl-core';
-import { createServerHandler } from '../src/utils/api';
 
-export const config = {
-  runtime: 'nodejs18.x'
-};
+interface DownloadQuery {
+  url: string;
+  format: string;
+  quality: string;
+}
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -17,7 +19,10 @@ const handler = async (req, res) => {
     return;
   }
 
-  const { url, format, quality } = req.query;
+  // Safely extract query params
+  const url = Array.isArray(req.query.url) ? req.query.url[0] : req.query.url;
+  const format = Array.isArray(req.query.format) ? req.query.format[0] : req.query.format;
+  const quality = Array.isArray(req.query.quality) ? req.query.quality[0] : req.query.quality;
 
   if (!url || !format || !quality) {
     return res.status(400).json({ error: 'Missing parameters (url, format, or quality)' });
@@ -61,7 +66,7 @@ const handler = async (req, res) => {
     });
 
     // Handle download stream errors
-    downloadStream.on('error', (error) => {
+    downloadStream.on('error', (error: Error) => {
       console.error('Download stream error:', error);
       if (!res.headersSent) {
         if (error.message.includes('410')) {
@@ -87,26 +92,28 @@ const handler = async (req, res) => {
   } catch (error) {
     console.error('YouTube API error:', error);
     
-    if (error.message.includes('410')) {
-      return res.status(410).json({ 
-        error: 'Video no longer available',
-        details: 'The requested video has been removed or is no longer accessible'
-      });
-    }
-    
-    if (error.message.includes('Status code:')) {
-      const statusCode = parseInt(error.message.match(/Status code: (\d+)/)?.[1] || '500', 10);
-      return res.status(statusCode).json({ 
-        error: 'YouTube API error',
-        details: error.message 
-      });
+    if (error instanceof Error) {
+      if (error.message.includes('410')) {
+        return res.status(410).json({ 
+          error: 'Video no longer available',
+          details: 'The requested video has been removed or is no longer accessible'
+        });
+      }
+      
+      if (error.message.includes('Status code:')) {
+        const statusCode = parseInt(error.message.match(/Status code: (\d+)/)?.[1] || '500', 10);
+        return res.status(statusCode).json({ 
+          error: 'YouTube API error',
+          details: error.message 
+        });
+      }
     }
 
     return res.status(500).json({ 
       error: 'Failed to process video download',
-      details: error.message
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 };
 
-export default createServerHandler(handler);
+export default handler;
