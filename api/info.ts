@@ -29,71 +29,86 @@ interface VideoInfo {
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  // Safely extract query params
-  const url = Array.isArray(req.query.url) ? req.query.url[0] : req.query.url;
-
-  if (!url || typeof url !== 'string') {
-    return res.status(400).json({ error: 'Missing or invalid URL parameter' });
-  }
-
   try {
-    if (!ytdl.validateURL(url)) {
-      return res.status(400).json({ error: 'Invalid YouTube URL' });
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
     }
 
-    // Add more robust headers
-    const headers: Record<string, string> = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-      'Accept-Language': 'en-US,en;q=0.9',
-      'Referer': 'https://www.youtube.com/',
-    };
-    if (req.headers.cookie) {
-      headers['Cookie'] = req.headers.cookie;
+    // Safely extract query params
+    const url = Array.isArray(req.query.url) ? req.query.url[0] : req.query.url;
+
+    if (!url || typeof url !== 'string') {
+      return res.status(400).json({ error: 'Missing or invalid URL parameter' });
     }
-    let info;
+
     try {
-      info = await ytdl.getInfo(url, {
-        requestOptions: { headers }
-      });
-    } catch (err: any) {
-      console.error('ytdl.getInfo error:', err);
-      if (err.statusCode) {
-        return res.status(err.statusCode).json({ error: err.message || 'Failed to fetch video info', details: err });
+      if (!ytdl.validateURL(url)) {
+        return res.status(400).json({ error: 'Invalid YouTube URL' });
       }
-      return res.status(500).json({ error: err.message || 'Failed to fetch video info', details: err });
+
+      // Add more robust headers
+      const headers: Record<string, string> = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer': 'https://www.youtube.com/',
+      };
+      if (req.headers.cookie) {
+        headers['Cookie'] = req.headers.cookie;
+      }
+      let info;
+      try {
+        info = await ytdl.getInfo(url, {
+          requestOptions: { headers }
+        });
+      } catch (err: any) {
+        console.error('ytdl.getInfo error:', err);
+        if (err.statusCode) {
+          return res.status(err.statusCode).json({ error: err.message || 'Failed to fetch video info', details: err });
+        }
+        return res.status(500).json({ error: err.message || 'Failed to fetch video info', details: err });
+      }
+
+      const response: VideoInfo = {
+        title: info.videoDetails.title,
+        duration: formatDuration(parseInt(info.videoDetails.lengthSeconds)),
+        thumbnail: info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
+        formats: info.formats.map(format => ({
+          itag: format.itag,
+          container: format.container,
+          qualityLabel: format.qualityLabel,
+          audioQuality: format.audioQuality,
+          mimeType: format.mimeType
+        }))
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+      console.error('Error fetching video info:', error);
+      if (error instanceof Error) {
+        try {
+          res.status(500).json({ error: error.message, details: error.stack });
+        } catch (jsonErr) {
+          // If res.json fails, send plain text
+          res.status(500).send(`API error: ${error.message}`);
+        }
+      } else {
+        try {
+          res.status(500).json({ error: 'Failed to fetch video information', details: error });
+        } catch (jsonErr) {
+          res.status(500).send('API error: Unknown error');
+        }
+      }
     }
-
-    const response: VideoInfo = {
-      title: info.videoDetails.title,
-      duration: formatDuration(parseInt(info.videoDetails.lengthSeconds)),
-      thumbnail: info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
-      formats: info.formats.map(format => ({
-        itag: format.itag,
-        container: format.container,
-        qualityLabel: format.qualityLabel,
-        audioQuality: format.audioQuality,
-        mimeType: format.mimeType
-      }))
-    };
-
-    res.status(200).json(response);
   } catch (error) {
-    console.error('Error fetching video info:', error);
-    if (error instanceof Error) {
-      return res.status(500).json({ error: error.message, details: error });
-    }
-    return res.status(500).json({ error: 'Failed to fetch video information', details: error });
+    console.error('Unexpected error:', error);
+    res.status(500).send('API error: Unexpected error');
   }
 };
 
