@@ -33,12 +33,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ error: 'Invalid YouTube URL' });
     }
 
+    const headers: Record<string, string> = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Referer': 'https://www.youtube.com/',
+    };
+    if (req.headers.cookie) {
+      headers['Cookie'] = req.headers.cookie;
+    }
     const info = await ytdl.getInfo(url, {
-      requestOptions: {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-        }
-      }
+      requestOptions: { headers }
     });
 
     const selectedFormat = info.formats.find(f =>
@@ -56,13 +61,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.setHeader('Content-Type', selectedFormat.mimeType || 'application/octet-stream');
     res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
 
-    const downloadStream = ytdl(url, { 
+    const downloadStream = ytdl(url, {
       format: selectedFormat,
-      requestOptions: {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
-        }
-      }
+      requestOptions: { headers }
     });
 
     // Handle download stream errors

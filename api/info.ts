@@ -55,14 +55,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ error: 'Invalid YouTube URL' });
     }
 
-    // Add more realistic headers and log cookies if available
+    // Add more robust headers
     const headers: Record<string, string> = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Referer': 'https://www.youtube.com/',
     };
     if (req.headers.cookie) {
       headers['Cookie'] = req.headers.cookie;
     }
-
     let info;
     try {
       info = await ytdl.getInfo(url, {
@@ -70,7 +72,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     } catch (err: any) {
       console.error('ytdl.getInfo error:', err);
-      // Return the actual error message and status if available
       if (err.statusCode) {
         return res.status(err.statusCode).json({ error: err.message || 'Failed to fetch video info', details: err });
       }
