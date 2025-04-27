@@ -1,7 +1,7 @@
-const ytdl = require('ytdl-core');
-const contentDisposition = require('content-disposition');
+import ytdl from 'ytdl-core';
+import contentDisposition from 'content-disposition';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
