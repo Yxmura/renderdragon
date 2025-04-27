@@ -112,30 +112,45 @@ const YouTubeDownloader = () => {
             toast.error("Please select a format first");
             return;
         }
-
+    
         const selectedOption = videoInfo.options.find(opt => opt.id === selectedOptionId);
         if (!selectedOption) {
             toast.error("Selected format not found.");
             return;
         }
-
+    
         setIsDownloading(true);
         toast.info("Preparing download...", { duration: 2000 });
-
+    
         try {
-            const response = await fetch(`/api/download?url=${youtubeUrl}&format=${selectedOption.format}&quality=${selectedOption.quality}`); // Replace with your actual API endpoint
+            // Update the fetch call to send the formatId
+            const response = await fetch(`/api/download?url=${encodeURIComponent(youtubeUrl)}&formatId=${encodeURIComponent(selectedOption.id)}`);
+    
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response.json(); // Backend returns JSON errors
                 toast.error(`Download failed: ${errorData.error || response.statusText}`);
                 console.error("Download error:", errorData);
                 return;
             }
-
-            const blob = await response.blob();
+    
+            // The Python backend returns a base64 encoded blob
+            const blob = await response.blob(); // Still get as blob
             const url = window.URL.createObjectURL(blob);
+    
+            // Get the filename from the Content-Disposition header if available
+            const contentDisposition = response.headers.get('Content-Disposition');
+            let filename = `${videoInfo.title}.${selectedOption.format}`; // Fallback filename
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                if (filenameMatch && filenameMatch[1]) {
+                    filename = filenameMatch[1];
+                }
+            }
+    
+    
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${videoInfo.title}.${selectedOption.format}`; // Suggest a filename
+            a.download = filename; // Use the determined filename
             document.body.appendChild(a);
             a.click();
             window.URL.revokeObjectURL(url);

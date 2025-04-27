@@ -1,6 +1,13 @@
 {
+  "functions" : {
+    "api/download.py": {
+      "runtime": "python3.12"
+    },
+    "api/info.py": {
+      "runtime": "python3.12"
+    }
+  },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }
