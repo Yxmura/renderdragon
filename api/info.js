@@ -1,5 +1,9 @@
 import ytdl from 'ytdl-core';
 
+export const config = {
+  runtime: 'edge'
+};
+
 // Helper to format duration (optional, but good for display)
 function formatDuration(seconds) {
   const hours = Math.floor(seconds / 3600);
@@ -14,26 +18,34 @@ function formatDuration(seconds) {
   return parts.join(' ');
 }
 
-export default async function handler(req, res) {
+export default async function handler(req) {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  };
 
   // Handle OPTIONS request for CORS
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return new Response(null, { headers, status: 200 });
   }
 
-  const videoUrl = req.query.url;
+  const url = new URL(req.url);
+  const videoUrl = url.searchParams.get('url');
 
   if (!videoUrl) {
-    return res.status(400).json({ error: 'Missing video URL' });
+    return new Response(
+      JSON.stringify({ error: 'Missing video URL' }), 
+      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 400 }
+    );
   }
 
   if (!ytdl.validateURL(videoUrl)) {
-    return res.status(400).json({ error: 'Invalid YouTube URL' });
+    return new Response(
+      JSON.stringify({ error: 'Invalid YouTube URL' }), 
+      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 400 }
+    );
   }
 
   try {
@@ -56,14 +68,19 @@ export default async function handler(req, res) {
         })),
     };
 
-    res.status(200).json(videoInfo);
+    return new Response(
+      JSON.stringify(videoInfo),
+      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 200 }
+    );
 
   } catch (error) {
     console.error('Error fetching video info:', error);
-    // Return a more detailed error message
-    res.status(500).json({ 
-      error: error.message || 'Error fetching video info',
-      details: error.stack
-    });
+    return new Response(
+      JSON.stringify({ 
+        error: error.message || 'Error fetching video info',
+        details: error.stack
+      }),
+      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 500 }
+    );
   }
-};
+}

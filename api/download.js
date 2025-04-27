@@ -1,28 +1,39 @@
 import ytdl from 'ytdl-core';
-import contentDisposition from 'content-disposition';
 
-export default async function handler(req, res) {
+export const config = {
+  runtime: 'edge'
+};
+
+export default async function handler(req) {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  };
 
   // Handle OPTIONS request for CORS
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return new Response(null, { headers, status: 200 });
   }
 
-  const videoUrl = req.query.url;
-  const format = req.query.format;
-  const quality = req.query.quality;
+  const url = new URL(req.url);
+  const videoUrl = url.searchParams.get('url');
+  const format = url.searchParams.get('format');
+  const quality = url.searchParams.get('quality');
 
   if (!videoUrl || !format || !quality) {
-    return res.status(400).json({ error: 'Missing parameters (url, format, or quality)' });
+    return new Response(
+      JSON.stringify({ error: 'Missing parameters (url, format, or quality)' }),
+      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 400 }
+    );
   }
 
   if (!ytdl.validateURL(videoUrl)) {
-    return res.status(400).json({ error: 'Invalid YouTube URL' });
+    return new Response(
+      JSON.stringify({ error: 'Invalid YouTube URL' }),
+      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 400 }
+    );
   }
 
   try {
@@ -34,36 +45,42 @@ export default async function handler(req, res) {
     );
 
     if (!selectedFormat) {
-      return res.status(404).json({ error: 'Requested format and quality not found.' });
+      return new Response(
+        JSON.stringify({ error: 'Requested format and quality not found.' }),
+        { headers: { ...headers, 'Content-Type': 'application/json' }, status: 404 }
+      );
     }
 
     const videoDetails = info.videoDetails;
     const filename = `${videoDetails.title}.${selectedFormat.container || 'mp4'}`;
 
-    res.setHeader('Content-Disposition', contentDisposition(filename));
-    res.setHeader('Content-Type', selectedFormat.mimeType || 'application/octet-stream');
+    const responseHeaders = {
+      ...headers,
+      'Content-Type': selectedFormat.mimeType || 'application/octet-stream',
+      'Content-Disposition': `attachment; filename="${encodeURIComponent(filename)}"`
+    };
 
-    const downloadStream = ytdl(videoUrl, { format: selectedFormat });
-
-    // Handle download stream errors
-    downloadStream.on('error', (error) => {
-      console.error('Download stream error:', error);
-      // Only send error if headers haven't been sent yet
-      if (!res.headersSent) {
-        res.status(500).json({ 
-          error: error.message || 'Error during download',
-          details: error.stack
-        });
+    const stream = ytdl(videoUrl, { format: selectedFormat });
+    
+    // Convert stream to ReadableStream for Edge runtime
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        stream.on('data', (chunk) => controller.enqueue(chunk));
+        stream.on('end', () => controller.close());
+        stream.on('error', (error) => controller.error(error));
       }
     });
 
-    downloadStream.pipe(res);
+    return new Response(readableStream, { headers: responseHeaders });
 
   } catch (error) {
     console.error('Download error:', error);
-    res.status(500).json({ 
-      error: error.message || 'Error during download',
-      details: error.stack
-    });
+    return new Response(
+      JSON.stringify({ 
+        error: error.message || 'Error during download',
+        details: error.stack
+      }),
+      { headers: { ...headers, 'Content-Type': 'application/json' }, status: 500 }
+    );
   }
-};
+}
