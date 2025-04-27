@@ -1,10 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import ytdl from 'ytdl-core';
 
-export const config = {
-  runtime: 'nodejs18.x'
-};
-
 // Helper to format duration
 function formatDuration(seconds: number): string {
   const hours = Math.floor(seconds / 3600);
