@@ -28,8 +28,7 @@ import PlayerRenderer from "./pages/PlayerRenderer";
 
 const queryClient = new QueryClient();
 
-// Set the launch date to May 1, 2025
-const launchDate = new Date('2025-05-01T00:00:00');
+const launchDate = new Date('2025-04-30T12:00:00');
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
