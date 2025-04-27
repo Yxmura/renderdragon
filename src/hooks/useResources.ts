@@ -58,7 +58,7 @@ export const useResources = () => {
           resources.map((resource) => ({ 
             ...resource, 
             id: resource.id || `${category}-${globalIndex++}`, // Generate unique ID using category and global index
-            category: category as 'music' | 'sfx' | 'image' | 'animations' | 'fonts' | 'presets',
+            category: category as 'music' | 'sfx' | 'images' | 'animations' | 'fonts' | 'presets',
             downloads: 0 // Set all resources to have 0 downloads by default
           })),
       );

@@ -25,7 +25,7 @@ const FeaturedResources = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (resources as any[]).map((resource) => ({ 
               ...resource, 
-              category: category as 'music' | 'sfx' | 'image' | 'animations' | 'fonts' | 'presets',
+              category: category as 'music' | 'sfx' | 'images' | 'animations' | 'fonts' | 'presets',
             })),
         );
         

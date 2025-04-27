@@ -22,7 +22,7 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
         return <Music className="h-5 w-5" />;
       case 'sfx':
         return <FileAudio className="h-5 w-5" />;
-      case 'image':
+      case 'images':
         return <Image className="h-5 w-5" />;
       case 'animations':
         return <Video className="h-5 w-5" />;
@@ -41,7 +41,7 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
         return 'bg-blue-500/10 text-blue-500';
       case 'sfx':
         return 'bg-yellow-500/10 text-yellow-500';
-      case 'image':
+      case 'images':
         return 'bg-purple-500/10 text-purple-500';
       case 'animations':
         return 'bg-red-500/10 text-red-500';

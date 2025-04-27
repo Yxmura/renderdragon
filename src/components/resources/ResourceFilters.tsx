@@ -148,8 +148,8 @@ const MobileFilters = ({
               SFX
             </Button>
             <Button
-              variant={selectedCategory === 'image' ? 'default' : 'outline'}
-              onClick={() => onCategoryChange('image')}
+              variant={selectedCategory === 'images' ? 'default' : 'outline'}
+              onClick={() => onCategoryChange('images')}
               className="justify-start pixel-corners"
             >
               <Image className="h-4 w-4 mr-2" />
@@ -241,9 +241,9 @@ const DesktopFilters = ({
         SFX
       </Button>
       <Button
-        variant={selectedCategory === 'image' ? 'default' : 'outline'}
+        variant={selectedCategory === 'images' ? 'default' : 'outline'}
         size="sm"
-        onClick={() => onCategoryChange('image')}
+        onClick={() => onCategoryChange('images')}
         className="h-10 pixel-corners"
       >
         Images

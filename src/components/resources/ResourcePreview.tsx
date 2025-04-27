@@ -1,4 +1,3 @@
-
 import { Resource } from '@/types/resources';
 import AudioPlayer from '@/components/AudioPlayer';
 
@@ -43,13 +42,16 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
     );
   }
 
-  if (resource.category === 'image') {
+  if (resource.category === 'images') {
     return (
-      <img
-        src={downloadURL}
-        alt={resource.title}
-        className="w-full rounded-md aspect-square object-cover"
-      />
+      <div className="rounded-md overflow-hidden bg-muted/20 border border-border">
+        <img
+          src={downloadURL}
+          alt={resource.title}
+          className="w-full h-full object-contain max-h-[400px]"
+          loading="lazy"
+        />
+      </div>
     );
   }
 
