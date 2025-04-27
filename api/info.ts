@@ -1,57 +1,55 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import ytdl from 'ytdl-core';
 
-export default async (req: VercelRequest, res: VercelResponse) => {
-  const { url } = req.query;
+// Helper to format duration (optional, but good for display)
+function formatDuration(seconds: number) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
 
-  if (!url || typeof url !== 'string') {
-    return res.status(400).json({ error: 'YouTube URL is required' });
+  const parts: string[] = [];
+  if (hours > 0) parts.push(`${hours}h`);
+  if (minutes > 0) parts.push(`${minutes}m`);
+  if (remainingSeconds > 0 || parts.length === 0) parts.push(`${remainingSeconds}s`);
+
+  return parts.join(' ');
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const videoUrl = req.query.url as string;
+
+  if (!videoUrl) {
+    return res.status(400).json({ error: 'Missing video URL' });
+  }
+
+  if (!ytdl.validateURL(videoUrl)) {
+    return res.status(400).json({ error: 'Invalid YouTube URL' });
   }
 
   try {
-    const info = await ytdl.getInfo(url);
-    const formats = ytdl.filterFormats(info.formats, 'audioandvideo');
-    const audioFormats = ytdl.filterFormats(info.formats, 'audioonly');
+    const info = await ytdl.getInfo(videoUrl);
 
-    const options = [
-        ...formats.map(format => ({
-          id: format.itag.toString(),
-          label: `${format.qualityLabel || 'Unknown Quality'} - ${format.mimeType?.split(';')[0] || 'Unknown Format'}`,
-          format: format.mimeType?.split(';')[0] || 'unknown',
-          quality: format.qualityLabel || 'unknown',
-          size: format.contentLength ? `${(parseInt(format.contentLength) / (1024 * 1024)).toFixed(2)} MB` : undefined,
-        })),
-        ...audioFormats.map(format => ({
-          id: format.itag.toString() + '-audio',
-          label: `${format.audioBitrate}kbps - ${format.mimeType?.split(';')[0] || 'Unknown Format'} (Audio Only)`,
-          format: format.mimeType?.split(';')[0] || 'unknown',
-          quality: `${format.audioBitrate}kbps`,
-          size: format.contentLength ? `${(parseInt(format.contentLength) / (1024 * 1024)).toFixed(2)} MB` : undefined,
-        })),
-      ];
-
-    res.status(200).json({
+    const videoInfo = {
       title: info.videoDetails.title,
-      thumbnail: info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url,
-      duration: formatTime(info.videoDetails.lengthSeconds),
+      thumbnail: info.videoDetails.thumbnails[info.videoDetails.thumbnails.length - 1].url, // Get the largest thumbnail
+      duration: formatDuration(parseInt(info.videoDetails.lengthSeconds, 10)),
       author: info.videoDetails.author.name,
-      options: options,
-    });
-  } catch (error) {
-    console.error('Error fetching info:', error);
-    res.status(500).json({ error: 'Failed to fetch video information' });
-  }
-};
+      options: info.formats
+        .filter(format => format.container && format.mimeType) // Filter out formats without container/mimeType
+        .map(format => ({
+          id: format.itag.toString(), // Use itag as a unique ID
+          label: `${format.container || 'unknown'} - ${format.qualityLabel || format.audioQuality || 'unknown'}`,
+          format: format.container || 'unknown',
+          quality: format.qualityLabel || format.audioQuality || 'unknown',
+          size: format.contentLength ? `${(parseInt(format.contentLength, 10) / (1024 * 1024)).toFixed(2)} MB` : undefined,
+          mimeType: format.mimeType, // Keep mimeType for filtering on the frontend if needed
+        })),
+    };
 
-function formatTime(seconds: string | number): string {
-    const secs = typeof seconds === 'string' ? parseInt(seconds, 10) : seconds;
-    const hrs = Math.floor(secs / 3600);
-    const mins = Math.floor((secs % 3600) / 60);
-    const sec = secs % 60;
-  
-    const formattedHrs = hrs > 0 ? `${hrs}:` : '';
-    const formattedMins = `${mins < 10 ? '0' : ''}${mins}:`;
-    const formattedSecs = `${sec < 10 ? '0' : ''}${sec}`;
-  
-    return `${formattedHrs}${formattedMins}${formattedSecs}`;
+    res.status(200).json(videoInfo);
+
+  } catch (error: unknown) {
+    console.error('Error fetching video info:', error);
+    res.status(500).json({ error: (error as Error).message || 'Error fetching video info' });
   }
+}
