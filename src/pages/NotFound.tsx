@@ -100,7 +100,7 @@ const NotFound = () => {
         >
           <motion.div className="text-cow-purple mb-4 relative" variants={itemVariants}>
             <motion.div
-              className="text-9xl drop-shadow-lg"
+              className="text-9xl drop-shadow-lg font-vt323"
               animate={{
                 textShadow: [
                   "0 0 8px rgba(147, 51, 234, 0.7)",
@@ -169,9 +169,8 @@ const NotFound = () => {
             </motion.div>
           </motion.div>
 
-          {/* Optional extra message box with block animation */}
           <motion.div
-            className="mt-12 pixel-card border-dashed border-cow-purple/30 bg-background/50 px-6 py-4 relative"
+            className="mt-6 pixel-card border-dashed border-cow-purple/30 bg-background/50 px-6 py-4 relative"
             variants={itemVariants}
             whileHover={{
               boxShadow: "0 0 15px rgba(147, 51, 234, 0.3)",
