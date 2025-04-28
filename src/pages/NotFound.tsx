@@ -1,73 +1,216 @@
-import { useLocation, Link } from "react-router-dom";
-import { useEffect } from "react";
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import { Home, Compass } from 'lucide-react';
-import DonateButton from '@/components/DonateButton';
+"use client"
+
+import { useEffect } from "react"
+import Link from "next/link"
+import { motion } from "framer-motion"
+import { Home, Compass, Pickaxe } from "lucide-react"
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
+import DonateButton from "@/components/DonateButton"
 
 const NotFound = () => {
-  const location = useLocation();
-
   useEffect(() => {
     console.error(
       "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
+      typeof window !== "undefined" ? window.location.pathname : "",
+    )
+  }, [])
 
-    document.title = '404 - Page Not Found | Renderdragon';
-  }, [location.pathname]);
+  // Staggered animation for children elements
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 100 },
+    },
+  }
+
+  // Minecraft block hover effect
+  const blockHover = {
+    scale: 1.05,
+    rotate: [0, -1, 1, -1, 0],
+    transition: { type: "spring", stiffness: 400 },
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      <main className="flex-grow pt-32 pb-20 cow-grid-bg flex items-center justify-center">
-        <div className="container mx-auto px-6 text-center max-w-2xl">
-          {/* 404 headline */}
-          <div className="text-cow-purple animate-float mb-4">
-            <div className="text-9xl font-pixel animate-glow drop-shadow-lg">404</div>
-          </div>
+      <main className="flex-grow pt-32 pb-20 cow-grid-bg flex items-center justify-center relative overflow-hidden">
+        <motion.div
+          className="absolute w-8 h-8 bg-cow-purple/20 rounded-sm"
+          animate={{
+            x: ["-10vw", "110vw"],
+            y: ["-10vh", "110vh"],
+            rotate: [0, 360],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "linear",
+          }}
+          style={{ top: "15%", left: "10%" }}
+        />
+        <motion.div
+          className="absolute w-12 h-12 bg-green-500/10 rounded-sm"
+          animate={{
+            x: ["110vw", "-10vw"],
+            y: ["20vh", "80vh"],
+            rotate: [0, -360],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "linear",
+          }}
+          style={{ top: "30%", right: "20%" }}
+        />
+        <motion.div
+          className="absolute w-10 h-10 bg-yellow-500/10 rounded-sm"
+          animate={{
+            x: ["50vw", "30vw"],
+            y: ["-10vh", "110vh"],
+            rotate: [0, 180],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Number.POSITIVE_INFINITY,
+            ease: "linear",
+          }}
+          style={{ top: "5%", right: "40%" }}
+        />
 
-          <h1 className="text-3xl md:text-5xl font-vt323 mb-4 text-foreground dark:text-white">
+        <motion.div
+          className="container mx-auto px-6 text-center max-w-2xl"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div className="text-cow-purple mb-4 relative" variants={itemVariants}>
+            <motion.div
+              className="text-9xl drop-shadow-lg"
+              animate={{
+                textShadow: [
+                  "0 0 8px rgba(147, 51, 234, 0.7)",
+                  "0 0 16px rgba(147, 51, 234, 0.9)",
+                  "0 0 8px rgba(147, 51, 234, 0.7)",
+                ],
+                y: [0, -10, 0],
+              }}
+              transition={{
+                textShadow: { duration: 2, repeat: Number.POSITIVE_INFINITY },
+                y: { duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
+              }}
+            >
+              404
+            </motion.div>
+
+            <motion.div
+              className="absolute -right-16 top-1/2 -translate-y-1/2 hidden md:block"
+              animate={{
+                rotate: [0, -20, 0],
+                x: [0, -5, 0],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatType: "reverse",
+                ease: "easeInOut",
+                delay: 1,
+              }}
+            >
+              <Pickaxe className="h-12 w-12 text-gray-600" />
+            </motion.div>
+          </motion.div>
+
+          <motion.h1
+            className="text-3xl md:text-5xl mb-4 text-foreground dark:text-white"
+            variants={itemVariants}
+          >
             Uh oh! This chunk failed to load.
-          </h1>
+          </motion.h1>
 
-          <p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto">
-            The page you're trying to reach doesn't exist — or it may have been lost in the Nether. 
-            Try heading back or explore something new.
-          </p>
+          <motion.p className="text-lg text-muted-foreground mb-8 max-w-xl mx-auto" variants={itemVariants}>
+            The page you're trying to reach doesn't exist — or it may have been lost in the Nether. Try heading back or
+            explore something new.
+          </motion.p>
 
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <Link
-              to="/"
-              className="pixel-btn-primary inline-flex items-center gap-2 px-6 py-3 text-sm hover:scale-105 transition-transform"
-            >
-              <Home className="h-5 w-5" />
-              <span>Return to Home</span>
-            </Link>
+          <motion.div className="flex flex-col sm:flex-row justify-center items-center gap-4" variants={itemVariants}>
+            <motion.div whileHover={blockHover} whileTap={{ scale: 0.95 }}>
+              <Link
+                href="/"
+                className="pixel-btn-primary inline-flex items-center gap-2 px-6 py-3 text-sm transition-all"
+              >
+                <Home className="h-5 w-5" />
+                <span>Return to Home</span>
+              </Link>
+            </motion.div>
 
-            <Link
-              to="/resources"
-              className="pixel-btn-secondary inline-flex items-center gap-2 px-6 py-3 text-sm hover:scale-105 transition-transform"
-            >
-              <Compass className="h-5 w-5" />
-              <span>Explore Resources</span>
-            </Link>
-          </div>
+            <motion.div whileHover={blockHover} whileTap={{ scale: 0.95 }}>
+              <Link
+                href="/resources"
+                className="pixel-btn-secondary inline-flex items-center gap-2 px-6 py-3 text-sm transition-all"
+              >
+                <Compass className="h-5 w-5" />
+                <span>Explore Resources</span>
+              </Link>
+            </motion.div>
+          </motion.div>
 
-          {/* Optional extra message box */}
-          <div className="mt-12 pixel-card border-dashed border-cow-purple/30 bg-background/50 px-6 py-4">
+          {/* Optional extra message box with block animation */}
+          <motion.div
+            className="mt-12 pixel-card border-dashed border-cow-purple/30 bg-background/50 px-6 py-4 relative"
+            variants={itemVariants}
+            whileHover={{
+              boxShadow: "0 0 15px rgba(147, 51, 234, 0.3)",
+              borderColor: "rgba(147, 51, 234, 0.5)",
+            }}
+          >
+            <motion.div
+              className="absolute -top-3 -left-3 w-6 h-6 bg-cow-purple/20 rounded-sm"
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+            />
+            <motion.div
+              className="absolute -bottom-3 -right-3 w-6 h-6 bg-cow-purple/20 rounded-sm"
+              animate={{ rotate: [360, 0] }}
+              transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+            />
+
             <p className="text-sm text-muted-foreground">
-              If you followed a broken link, feel free to <Link to="/contact" className="underline underline-offset-2">contact us</Link> so we can fix it.
+              If you followed a broken link, feel free to{" "}
+              <motion.span
+                whileHover={{
+                  color: "#9333ea",
+                  scale: 1.05,
+                }}
+              >
+                <Link href="/contact" className="underline underline-offset-2">
+                  contact us
+                </Link>
+              </motion.span>{" "}
+              so we can fix it.
             </p>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </main>
 
       <Footer />
       <DonateButton />
     </div>
-  );
-};
+  )
+}
 
-export default NotFound;
+export default NotFound
