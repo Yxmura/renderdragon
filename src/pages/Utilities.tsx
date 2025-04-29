@@ -119,14 +119,14 @@ const Utils = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Utilities - Renderdragon</title>
-        <meta name="description" content="Discover essential software tools for Minecraft content creators. Find video editing, recording, and streaming software recommendations." />
-        <meta property="og:title" content="Useful utilities - Renderdragon" />
-        <meta property="og:description" content="Discover essential software tools for Minecraft content creators. Find video editing, recording, and streaming software recommendations." />
+        <title>Useful Utilities - Renderdragon</title>
+        <meta name="description" content="Discover essential utilities for Minecraft content creators. Find video editing, recording, and streaming software recommendations." />
+        <meta property="og:title" content="Useful Utilities - Renderdragon" />
+        <meta property="og:description" content="Discover essential utilities for Minecraft content creators. Find video editing, recording, and streaming software recommendations." />
         <meta property="og:image" content="https://renderdragon.org/ogimg/software.png" />
-        <meta property="og:url" content="https://renderdragon.org/useful-software" />
+        <meta property="og:url" content="https://renderdragon.org/utilities" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Useful Software - Renderdragon" />
+        <meta name="twitter:title" content="Useful Utilities - Renderdragon" />
         <meta name="twitter:image" content="https://renderdragon.org/ogimg/software.png" />
       </Helmet>
       <Navbar />

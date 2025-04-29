@@ -50,7 +50,7 @@ const mainLinks: (NavLink | NavDropdown)[] = [
     links: [
       { name: 'Resources Hub', path: '/resources', icon: 'resources-hub' },
       { name: 'Guides', path: '/guides', icon: 'guides' },
-      { name: 'Software', path: '/software', icon: 'software' },
+      { name: 'Utilities', path: '/utilities', icon: 'software' },
       { name: 'YouTube Videos', path: '/youtube-videos', icon: 'yt-videos' },
       { name: 'Discord Servers', path: '/discord-servers', icon: 'discord' },
     ]
