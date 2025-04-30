@@ -25,51 +25,58 @@ const utilities: Utility[] = [
     isFree: true
   },
   {
-    name: 'Inkscape',
-    description: 'Professional vector graphics editor',
-    url: 'https://inkscape.org/',
+    name: 'Adobe Photoshop',
+    description: 'Industry-standard image editing software',
+    url: 'https://www.adobe.com/products/photoshop.html',
+    category: 'graphic-design',
+    isFree: false
+  },
+  {
+    name: 'Photopea',
+    description: 'Free online image editor with Photoshop-like features',
+    url: 'https://www.photopea.com/',
     category: 'graphic-design',
     isFree: true
   },
   {
     name: 'DaVinci Resolve',
-    description: 'Professional video editing software with a free version',
+    description: 'Professional video editing software with a generous free version',
     url: 'https://www.blackmagicdesign.com/products/davinciresolve/',
     category: 'editing',
     isFree: true
   },
   {
-    name: 'OpenShot',
-    description: 'Easy to use, open-source video editor',
-    url: 'https://www.openshot.org/',
+    name: 'Premiere Pro',
+    description: 'Industry-standard video editing software',
+    url: 'https://www.adobe.com/products/premiere.html',
+    category: 'editing',
+    isFree: false
+  },
+  {
+    name: 'CapCut',
+    description: 'Easy-to-use basic video editing software with a free version',
+    url: 'https://www.capcut.com/',
     category: 'editing',
     isFree: true
   },
   {
-    name: 'BSL Shaders',
-    description: 'Beautiful, realistic Minecraft shaders',
-    url: 'https://bitslablab.com/',
+    name: 'Complementary Shaders',
+    description: 'Complementary shaders but optimized settings for thumbnails by Proger',
+    url: 'https://www.mediafire.com/file/kahvc3lduezt9v0/extract_me_and_put_all_files_in_shaderpacks_folder.zip/file',
     category: 'minecraft-shaders',
     isFree: true
   },
   {
-    name: 'Sildurs Vibrant Shaders',
-    description: 'Popular shaders with great performance',
-    url: 'https://sildurs-shaders.github.io/',
-    category: 'minecraft-shaders',
-    isFree: true
-  },
-  {
-    name: 'OptiFine',
-    description: 'Essential mod for Minecraft performance and shader support',
-    url: 'https://optifine.net/',
+    name: "Seltop's NewNPC mod",
+    description: 'Adds new NPCs to Minecraft with customizable skins and behaviors - great for thumbnails',
+    url: 'https://modrinth.com/mod/seltops-newnpcs-mod/',
     category: 'minecraft-mods',
     isFree: true
   },
   {
-    name: 'Fabric',
-    description: 'Lightweight, modern mod loader for Minecraft',
-    url: 'https://fabricmc.net/',
+    name: '3D Skin Layers',
+    description: 'Adds 3D skin layers to Minecraft',
+    url: 'https://modrinth.com/mod/3dskinlayers/version/GeQIXZBw',
     category: 'minecraft-mods',
     isFree: true
   }
@@ -108,9 +115,9 @@ const Utils = () => {
       case 'editing':
         return <Film className="h-5 w-5" />;
       case 'minecraft-shaders':
-        return <Code className="h-5 w-5" />;
+        return <img className='h-5 w-5 grayscale' src="/assets/minecraft_icon.png" alt="Minecraft" />;
       case 'minecraft-mods':
-        return <Gamepad className="h-5 w-5" />;
+        return <img className='h-5 w-5 grayscale' src="/assets/modrinth_icon.png" alt="Minecraft" />;
       default:
         return null;
     }

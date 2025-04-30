@@ -82,6 +82,14 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			keyframes: {
+				'border-pulse': {
+					from: {
+						boxshadow: '0 0 0px rgba(255, 215, 0, 0.3)'
+					},
+					to: {
+						boxshadow: '0 0 20px -1px rgba(255, 215, 0, 0.4)'
+					}
+				},
 				'accordion-down': {
 					from: {
 						height: '0'
