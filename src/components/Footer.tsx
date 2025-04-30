@@ -173,6 +173,11 @@ const Footer = () => {
                   Player Renderer
                 </Link>
               </li>
+              <li>
+                <Link to="/renderbot" className="text-white/70 hover:text-white transition-colors">
+                  Renderbot
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

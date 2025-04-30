@@ -25,6 +25,7 @@ import NotFound from "./pages/NotFound";
 import Utils from "./pages/Utilities";
 import AiTitleHelper from "./pages/AiTitleHelper";
 import PlayerRenderer from "./pages/PlayerRenderer";
+import Renderbot from "./pages/Renderbot";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/background-generator" element={<BackgroundGenerator />} />
             <Route path="/utilities" element={<Utils />} />
             <Route path="/player-renderer" element={<PlayerRenderer />} />
+            <Route path="/renderbot" element={<Renderbot />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/tos" element={<TOS />} />
             <Route path="/privacy" element={<Privacy />} />

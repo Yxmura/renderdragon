@@ -32,9 +32,7 @@ const Partnership = () => (
                 const description = true;
                 return description && (
                 <p className="text-cow-purple/70 text-sm md:text-base max-w-md">
-                    🏰 ↣ Where Creators Unite
-                    👑 ↣ Making unique, diverse, and imaginative content
-                    📩 ↣ Private/Invite Only
+                    Whether you're a seasoned creator or an emerging talent, Creators Kingdom offers a space where imagination thrives and collaboration turns bold ideas into reality. Here, creativity isn't just encouraged—it's amplified by the collective passion of the community.
                 </p>
                 );
             })()}
