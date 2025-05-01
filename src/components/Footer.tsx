@@ -113,11 +113,7 @@ const Footer = () => {
               </a>
             </div>
             <a href="https://bsky.app/profile/creatorskingdom.bsky.social" className="hover:bg-yellow-600 transition-transform duration-200">
-              <div className="mt-3 bg-gradient-to-br rounded-sm from-amber-600 to-yellow-400 shadow-md px-4 py-2 inline-block text-md font-semibold tracking-wide text-gray-900">
-              <span className="text-white font-bold text-2xs flex items-center justify-center">
-              <Sparkles className='w-5 h-5 mr-2'/>Proudly Partnered with <span className="ml-1"><b>Creators Kingdom</b></span>
-              </span>
-              </div>
+              <img className='mt-3' src="/assets/partnership.png" alt="partnership" />
             </a>
           </div>
           
