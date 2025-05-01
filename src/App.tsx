@@ -12,7 +12,6 @@ import Index from "./pages/Index";
 import ResourcesHub from "./pages/ResourcesHub";
 import Contact from "./pages/Contact";
 import BackgroundGenerator from "./pages/BackgroundGenerator";
-import YouTubeDownloader from "./pages/YouTubeDownloader";
 import MusicCopyright from "./pages/MusicCopyright";
 import Guides from "./pages/Guides";
 import YouTubeVideos from "./pages/YouTubeVideos";
@@ -47,7 +46,6 @@ const App = () => (
             <Route path="/guides" element={<Guides />} />
             <Route path="/youtube-videos" element={<YouTubeVideos />} />
             <Route path="/discord-servers" element={<DiscordServers />} />
-            <Route path="/youtube-downloader" element={<YouTubeDownloader />} />
             <Route path="/music-copyright" element={<MusicCopyright />} />
             <Route path="/ai-title-helper" element={<AiTitleHelper />} />
             <Route path="/background-generator" element={<BackgroundGenerator />} />

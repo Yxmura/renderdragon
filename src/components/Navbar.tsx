@@ -59,7 +59,6 @@ const mainLinks: (NavLink | NavDropdown)[] = [
     name: 'Tools',
     icon: 'tools',
     links: [
-      { name: 'YouTube Downloader', path: '/youtube-downloader', icon: 'yt-downloader' },
       { name: 'Music Copyright Checker', path: '/music-copyright', icon: 'music' },
       { name: 'AI Title Helper', path: '/ai-title-helper', icon: 'bot' },
       { name: 'Background Generator', path: '/background-generator', icon: 'background' },

@@ -16,14 +16,6 @@ interface Tool {
 const tools: Tool[] = [
   {
     id: 1,
-    title: 'YouTube Downloader',
-    description: 'Download videos from YouTube to use in your content',
-    icon: Download,
-    path: '/construction',
-    color: 'from-red-500/80 to-red-600/80'
-  },
-  {
-    id: 2,
     title: 'Music Copyright Checker',
     description: 'Check if music tracks are safe to use in your videos',
     icon: Music,
@@ -31,7 +23,7 @@ const tools: Tool[] = [
     color: 'from-blue-500/80 to-blue-600/80'
   },
   {
-    id: 3,
+    id: 2,
     title: 'AI Title Helper',
     description: 'Generate catchy titles for your YouTube videos',
     icon: Bot,
@@ -39,7 +31,7 @@ const tools: Tool[] = [
     color: 'from-purple-500/80 to-purple-600/80'
   },
   {
-    id: 4,
+    id: 3,
     title: 'Background Generator',
     description: 'Create unique backgrounds for your videos and streams',
     icon: Image,

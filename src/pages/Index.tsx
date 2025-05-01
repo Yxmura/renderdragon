@@ -52,8 +52,8 @@ const Index = () => {
     <div className="min-h-screen flex flex-col">
       <Helmet>
         <title>Renderdragon - Tools & Resources for Minecraft Content Creators</title>
-        <meta name="description" content="Free tools and resources for Minecraft content creators. Generate titles, check music copyright, download videos, and more to enhance your content creation workflow." />
-        <meta property="og:title" content="Renderdragon - Tools & Resources for Minecraft Content Creators" />
+        <meta name="description" content="Free tools and resources for Minecraft content creators. Generate titles with AI, Copyright-free Resources Hub, Check Music Copyright, Background Generator, Player Renderer, and more tools and assets to enhance your content creation workflow." />
+        <meta property="og:title" content="Renderdragon - Ad-free Tools & Resources for Minecraft Content Creators" />
         <meta property="og:description" content="Free tools and resources for Minecraft content creators. Generate titles, check music copyright, download videos, and more to enhance your content creation workflow." />
         <meta property="og:image" content="https://renderdragon.org/ogimg/index.png" />
         <meta property="og:url" content="https://renderdragon.org" />
