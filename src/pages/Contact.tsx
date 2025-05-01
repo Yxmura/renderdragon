@@ -80,7 +80,7 @@ const teamMembers: TeamMember[] = [
 const Contact = () => {
   const [copied, setCopied] = useState(false);
   const [activeCard, setActiveCard] = useState<number | null>(null);
-  const email = 'renderdragon@proton.me';
+  const email = 'contact@renderdragon.org';
 
   useEffect(() => {
     document.title = 'Contact Us - Renderdragon';
