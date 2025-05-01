@@ -70,10 +70,11 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
     const previewUrl = getPreviewUrl(resource);
     
     switch (resource.category) {
+      // case 'animations':
       case 'images':
-      case 'animations':
         return (
           <div className="relative aspect-video bg-muted/20 rounded-md overflow-hidden mb-3">
+            
             <img
               src={previewUrl}
               alt={resource.title}
@@ -89,31 +90,26 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
                 <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               </div>
             )}
-            {resource.category === 'animations' && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Play className="w-8 h-8 text-white" />
-              </div>
-            )}
           </div>
         );
-      case 'music':
-      case 'sfx':
-        return (
-          <div className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3 flex items-center justify-center">
-            <div className="flex items-center space-x-2 text-muted-foreground">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="w-1 bg-current animate-pulse"
-                  style={{
-                    height: `${Math.random() * 20 + 10}px`,
-                    animationDelay: `${i * 0.1}s`
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        );
+      // case 'music':
+      // case 'sfx':
+      //   return (
+      //     <div className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3 flex items-center justify-center">
+      //       <div className="flex items-center space-x-2 text-muted-foreground">
+      //         {Array.from({ length: 4 }).map((_, i) => (
+      //           <div
+      //             key={i}
+      //             className="w-1 bg-current animate-pulse"
+      //             style={{
+      //               height: `${Math.random() * 20 + 10}px`,
+      //               animationDelay: `${i * 0.1}s`
+      //             }}
+      //           />
+      //         ))}
+      //       </div>
+      //     </div>
+      //   );
       case 'fonts':
         return (
           <div className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3">
