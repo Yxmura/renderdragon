@@ -28,7 +28,7 @@ import Renderbot from "./pages/Renderbot";
 
 const queryClient = new QueryClient();
 
-const launchDate = new Date('2025-05-01T11:00:00Z')
+const launchDate = new Date('2025-05-01T10:00:00Z')
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
