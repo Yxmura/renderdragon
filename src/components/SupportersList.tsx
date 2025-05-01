@@ -8,6 +8,7 @@ interface Supporter {
 
 const supporters: Supporter[] = [
   { name: "Bermo", amount: "$1" },
+  { name: "VovoPlay", amount: "$2" },
 ];
 
 const SupportersList = () => {

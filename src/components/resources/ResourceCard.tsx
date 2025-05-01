@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { 
   Music, 
@@ -5,17 +6,28 @@ import {
   Video, 
   FileText, 
   FileAudio,
-  Check
+  Check,
+  Play
 } from 'lucide-react';
 import { Resource } from '@/types/resources';
+import { cn } from '@/lib/utils';
 
 interface ResourceCardProps {
   resource: Resource;
-  downloadCount: number; // Keeping the prop for now to maintain compatibility
+  downloadCount: number;
   onClick: (resource: Resource) => void;
 }
 
 const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  const getPreviewUrl = (resource: Resource) => {
+    const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
+    const basePath = 'https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main';
+    const creditPart = resource.credit ? `__${resource.credit}` : '';
+    return `${basePath}/${resource.category}/${titleLowered}${creditPart}.${resource.filetype}`;
+  };
+
   const getCategoryIcon = (category: string) => {
     switch (category) {
       case 'music':
@@ -54,11 +66,73 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
     }
   };
 
+  const renderPreview = () => {
+    const previewUrl = getPreviewUrl(resource);
+    
+    switch (resource.category) {
+      case 'images':
+      case 'animations':
+        return (
+          <div className="relative aspect-video bg-muted/20 rounded-md overflow-hidden mb-3">
+            <img
+              src={previewUrl}
+              alt={resource.title}
+              className={cn(
+                "w-full h-full object-cover transition-opacity duration-300",
+                isImageLoaded ? "opacity-100" : "opacity-0"
+              )}
+              onLoad={() => setIsImageLoaded(true)}
+              loading="lazy"
+            />
+            {!isImageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted/10">
+                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+            {resource.category === 'animations' && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Play className="w-8 h-8 text-white" />
+              </div>
+            )}
+          </div>
+        );
+      case 'music':
+      case 'sfx':
+        return (
+          <div className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3 flex items-center justify-center">
+            <div className="flex items-center space-x-2 text-muted-foreground">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-1 bg-current animate-pulse"
+                  style={{
+                    height: `${Math.random() * 20 + 10}px`,
+                    animationDelay: `${i * 0.1}s`
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      case 'fonts':
+        return (
+          <div className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3">
+            <div className="absolute inset-0 flex items-center justify-center text-lg font-medium" style={{ fontFamily: resource.title }}>
+              Aa Bb Cc
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div
       onClick={() => onClick(resource)}
       className="pixel-card group cursor-pointer hover:border-primary transition-all duration-300 h-full"
     >
+      {renderPreview()}
       <div className="flex justify-between items-start mb-3">
         <div
           className={`inline-flex items-center px-2 py-1 rounded-md text-xs ${getCategoryColor(
