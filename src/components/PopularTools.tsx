@@ -37,6 +37,14 @@ const tools: Tool[] = [
     icon: Image,
     path: '/background-generator',
     color: 'from-green-500/80 to-green-600/80'
+  },
+  {
+    id: 4,
+    title: 'Player Renderer',
+    description: 'Get your Minecraft skin rendered in 3D',
+    icon: Image,
+    path: '/player-renderer',
+    color: 'from-red-500/80 to-red-600/80'
   }
 ];
 
