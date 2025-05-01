@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Resource } from '@/types/resources';
 import {
   Dialog,
@@ -19,9 +19,12 @@ import {
   Image, 
   Video, 
   FileText, 
-  FileAudio 
+  FileAudio,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ResourceDetailDialogProps {
   resource: Resource | null;
@@ -30,6 +33,8 @@ interface ResourceDetailDialogProps {
   downloadCount: number;
   loadedFonts: string[];
   setLoadedFonts: (fonts: string[]) => void;
+  filteredResources: Resource[]; // Add this prop
+  onSelectResource: (resource: Resource) => void; // Add this prop
 }
 
 const ResourceDetailDialog = ({ 
@@ -38,10 +43,44 @@ const ResourceDetailDialog = ({
   onDownload, 
   downloadCount,
   loadedFonts,
-  setLoadedFonts
+  setLoadedFonts,
+  filteredResources,
+  onSelectResource
 }: ResourceDetailDialogProps) => {
   const [copied, setCopied] = useState(false);
-  
+  const isMobile = useIsMobile();
+
+  const currentIndex = resource ? filteredResources.findIndex(r => r.id === resource.id) : -1;
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex < filteredResources.length - 1;
+
+  const handlePrevious = useCallback(() => {
+    if (hasPrevious && resource) {
+      onSelectResource(filteredResources[currentIndex - 1]);
+    }
+  }, [hasPrevious, resource, filteredResources, currentIndex, onSelectResource]);
+
+  const handleNext = useCallback(() => {
+    if (hasNext && resource) {
+      onSelectResource(filteredResources[currentIndex + 1]);
+    }
+  }, [hasNext, resource, filteredResources, currentIndex, onSelectResource]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!resource) return;
+      
+      if (e.key === 'ArrowLeft' && hasPrevious) {
+        handlePrevious();
+      } else if (e.key === 'ArrowRight' && hasNext) {
+        handleNext();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [resource, hasPrevious, hasNext, handlePrevious, handleNext]);
+
   // Update the font URL logic to append '__{creditName}' for resources with credit
   useEffect(() => {
     if (resource?.category === 'fonts' && resource.title && !loadedFonts.includes(resource.title)) {
@@ -207,15 +246,38 @@ const ResourceDetailDialog = ({
           
           <ResourcePreview resource={resource} />
           
-          <div className="flex gap-2 text-center align-middle justify-center">
+          <div className="flex items-center gap-2 justify-between">
+            <Button
+              variant="outline"
+              className={`${!hasPrevious ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'} transition-opacity`}
+              onClick={handlePrevious}
+              disabled={!hasPrevious}
+            >
+              <ChevronLeft className="h-4 w-4 md:mr-2" />
+              <span className="hidden md:inline">Previous</span>
+              <span className="sr-only">Previous resource</span>
+            </Button>
+
             <Button
               onClick={() => onDownload(resource)}
-              className="w-half pixel-btn-primary flex items-center justify-center gap-2"
+              className="pixel-btn-primary flex items-center justify-center gap-2"
             >
               <Download className="h-5 w-5" />
               <span>Download Resource</span>
             </Button>
+
+            <Button
+              variant="outline"
+              className={`${!hasNext ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'} transition-opacity`}
+              onClick={handleNext}
+              disabled={!hasNext}
+            >
+              <span className="hidden md:inline">Next</span>
+              <ChevronRight className="h-4 w-4 md:ml-2" />
+              <span className="sr-only">Next resource</span>
+            </Button>
           </div>
+
           <p className="text-xs text-center text-muted-foreground">
             By downloading, you agree to our terms of use. Crediting
             "Renderdragon" is optional but appreciated!

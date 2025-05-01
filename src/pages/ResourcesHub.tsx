@@ -156,9 +156,11 @@ const ResourcesHub = () => {
         resource={selectedResource}
         onClose={() => setSelectedResource(null)}
         onDownload={onDownload}
-        downloadCount={downloadCounts[selectedResource?.id ?? -1] || 0}
+        downloadCount={selectedResource ? downloadCounts[selectedResource.id] || 0 : 0}
         loadedFonts={loadedFonts}
         setLoadedFonts={setLoadedFonts}
+        filteredResources={filteredResources}
+        onSelectResource={setSelectedResource}
       />
 
       {showScrollTop && (
