@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Download, Music, Bot, Image } from 'lucide-react';
+import { Download, Music, Bot, Image, PersonStanding } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Tool {
@@ -42,7 +42,7 @@ const tools: Tool[] = [
     id: 4,
     title: 'Player Renderer',
     description: 'Get your Minecraft skin rendered in 3D',
-    icon: Image,
+    icon: PersonStanding,
     path: '/player-renderer',
     color: 'from-red-500/80 to-red-600/80'
   }
