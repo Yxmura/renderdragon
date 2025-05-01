@@ -66,10 +66,17 @@ const ResourcesList = ({
           </Button>
           <Button 
             className="pixel-corners bg-cow-purple hover:bg-cow-purple/80"
-            onClick={() => window.open("https://github.com/Yxmura/resources_renderdragon", "_blank")}
+            onClick={() => window.open("https://discord.renderdragon.org", "_blank")}
           >
-            <Github className="mr-2 h-4 w-4" />
+            <img src="/assets/discord_icon.png" alt="Discord" className="h-4 w-4 mr-2" />
             Contribute Resources
+          </Button>
+          <Button 
+            className="pixel-corners bg-cow-purple hover:bg-cow-purple/80"
+            onClick={() => window.open("https://creatoronwheels.netlify.app/resources", "_blank")}
+          >
+            <img src="/assets/domain_icon.png" alt="Old site" className="h-4 w-4 mr-2" />
+            Check our Old Site
           </Button>
         </div>
       </div>
