@@ -41,7 +41,7 @@ const tools: Tool[] = [
   {
     id: 4,
     title: 'Player Renderer',
-    description: 'Get your Minecraft skin rendered in 3D',
+    description: 'Get your Minecraft skin rendered in 3D for thumbnails or videos',
     icon: PersonStanding,
     path: '/player-renderer',
     color: 'from-red-500/80 to-red-600/80'
