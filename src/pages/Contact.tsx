@@ -161,8 +161,8 @@ const Contact = () => {
                   rel="noopener noreferrer"
                   className="pixel-btn-primary inline-flex items-center space-x-2"
                 >
-                  <span>Join Discord</span>
-                  <ExternalLink className="h-4 w-4" />
+                  <span>join discord</span>
+                  <img className="w-4 h-4" src="/assets/discord_icon.png" alt="Discord" />
                 </a>
               </div>
               

@@ -32,7 +32,7 @@ const Partnership = () => (
                 const description = true;
                 return description && (
                 <p className="text-cow-purple/70 text-sm md:text-base max-w-md">
-                    Whether you're a seasoned creator or an emerging talent, Creators Kingdom offers a space where imagination thrives and collaboration turns bold ideas into reality. Here, creativity isn't just encouraged—it's amplified by the collective passion of the community.
+                    Creators Kingdom is a place where your ideas can grow and come to life. It’s a community built on creativity and teamwork, where everyone’s passion helps bring bold visions into reality.
                 </p>
                 );
             })()}

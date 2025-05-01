@@ -82,7 +82,7 @@ const Renderbot = () => {
       </Helmet>
       <Navbar />
 
-      <main className="flex-grow pt-24 pb-16">
+      <main className="flex-grow pt-24 pb-16 cow-grid-bg">
         <div className="container mx-auto px-4">
           <motion.div
             className="max-w-4xl mx-auto"
@@ -90,7 +90,6 @@ const Renderbot = () => {
             initial="hidden"
             animate="visible"
           >
-            {/* Hero Section */}
             <motion.div 
               className="text-center mb-12"
               variants={itemVariants}
@@ -117,7 +116,17 @@ const Renderbot = () => {
               <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
                 Your powerful Discord companion for content creation. Check copyright status, fetch video information, and manage YouTube content with simple commands.
               </p>
+              <a 
+                  href="https://discord.renderdragon.org" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="pixel-btn-primary inline-flex items-center space-x-2 pt-0 mt-0"
+                >
+                  <span>join discord</span>
+                  <img className="w-4 h-4" src="/assets/discord_icon.png" alt="Discord" />
+                </a>
             </motion.div>
+            
 
             {/* Commands Section */}
             <motion.div variants={itemVariants}>
