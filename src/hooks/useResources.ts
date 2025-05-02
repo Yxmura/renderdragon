@@ -149,39 +149,46 @@ export const useResources = () => {
     });
   }, [resources, selectedCategory, selectedSubcategory, searchQuery, isSearching]);
 
-  const getDownloadURL = (resource: Resource) => {
-    if (!resource || !resource.filetype) return '';
-    
-    const titleLowered = resource.title
-      .toLowerCase()
-      .replace(/ /g, '%20');
-    
-    if (resource.category === 'presets' && resource.subcategory) {
-      return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${resource.subcategory}/${titleLowered}${resource.credit ? `__${resource.credit}` : ''}.${resource.filetype}`;
-    }
-    
-    if (resource.credit) {
-      return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${resource.credit}.${resource.filetype}`;
-    }
-    return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${resource.filetype}`;
-  };
 
-  const handleDownload = (resource: Resource) => {
+  const handleDownload = async (resource: Resource) => {
     if (!resource) return;
-
-    const downloadURL = getDownloadURL(resource);
-
-    if (downloadURL) {
-      window.open(downloadURL, '_blank'); 
-      
-      // update download count
-      incrementDownload(resource.id)
-      
-      return true;
+  
+    const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
+    const creditName = resource.credit?.replace(/ /g, '_');
+    const filetype = resource.filetype;
+  
+    let fileUrl = '';
+    if (resource.category === 'presets' && resource.subcategory) {
+      fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${resource.subcategory}/${titleLowered}${resource.credit ? `__${creditName}` : ''}.${filetype}`;
+    } else if (resource.credit) {
+      fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${creditName}.${filetype}`;
+    } else {
+      fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${filetype}`;
     }
-    
-    return false;
+  
+    const filename = `${resource.title}.${filetype}`;
+  
+    try {
+      const res = await fetch(fileUrl);
+      if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
+      const blob = await res.blob();
+  
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+  
+      // Count download
+      incrementDownload(resource.id);
+    } catch (err) {
+      console.error('Download failed', err);
+    }
   };
+  
+  
 
   return {
     resources,
@@ -204,6 +211,5 @@ export const useResources = () => {
     handleSubcategoryChange,
     handleSearch,
     handleDownload,
-    getDownloadURL
   };
 };
