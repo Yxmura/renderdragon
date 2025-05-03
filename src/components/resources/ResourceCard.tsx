@@ -1,13 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Music, 
-  Image, 
-  Video, 
-  FileText, 
+import {
+  Music,
+  Image,
+  Video,
+  FileText,
   FileAudio,
   Check,
-  Play
 } from 'lucide-react';
 import { Resource } from '@/types/resources';
 import { cn } from '@/lib/utils';
@@ -24,9 +23,26 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
   const getPreviewUrl = (resource: Resource) => {
     const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
     const basePath = 'https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main';
-    const creditPart = resource.credit ? `__${resource.credit}` : '';
+    const creditPart = resource.credit ? `__${resource.credit.replace(/ /g, '_')}` : '';
     return `${basePath}/${resource.category}/${titleLowered}${creditPart}.${resource.filetype}`;
   };
+
+  useEffect(() => {
+    if (resource.category !== 'fonts') return;
+
+    const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
+    const creditPart = resource.credit ? `__${encodeURIComponent(resource.credit)}` : '';
+    const fontUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}${creditPart}.${resource.filetype}`;
+
+    const font = new FontFace(resource.title, `url(${fontUrl})`);
+    font.load()
+      .then((loadedFont) => {
+        document.fonts.add(loadedFont);
+      })
+      .catch((err) => {
+        console.error(`Failed to load font "${resource.title}":`, err);
+      });
+  }, [resource]);
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -39,7 +55,6 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
       case 'animations':
         return <Video className="h-5 w-5" />;
       case 'fonts':
-        return <FileText className="h-5 w-5" />;
       case 'presets':
         return <FileText className="h-5 w-5" />;
       default:
@@ -68,13 +83,11 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
 
   const renderPreview = () => {
     const previewUrl = getPreviewUrl(resource);
-    
+
     switch (resource.category) {
-      // case 'animations':
       case 'images':
         return (
           <div className="relative aspect-video bg-muted/20 rounded-md overflow-hidden mb-3">
-            
             <img
               src={previewUrl}
               alt={resource.title}
@@ -92,28 +105,13 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             )}
           </div>
         );
-      // case 'music':
-      // case 'sfx':
-      //   return (
-      //     <div className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3 flex items-center justify-center">
-      //       <div className="flex items-center space-x-2 text-muted-foreground">
-      //         {Array.from({ length: 4 }).map((_, i) => (
-      //           <div
-      //             key={i}
-      //             className="w-1 bg-current animate-pulse"
-      //             style={{
-      //               height: `${Math.random() * 20 + 10}px`,
-      //               animationDelay: `${i * 0.1}s`
-      //             }}
-      //           />
-      //         ))}
-      //       </div>
-      //     </div>
-      //   );
       case 'fonts':
         return (
           <div className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3">
-            <div className="absolute inset-0 flex items-center justify-center text-lg font-medium" style={{ fontFamily: resource.title }}>
+            <div
+              className="absolute inset-0 flex items-center justify-center text-lg font-medium"
+              style={{ fontFamily: resource.title }}
+            >
               Aa Bb Cc
             </div>
           </div>
@@ -129,11 +127,10 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
       className="pixel-card group cursor-pointer hover:border-primary transition-all duration-300 h-full"
     >
       {renderPreview()}
+
       <div className="flex justify-between items-start mb-3">
         <div
-          className={`inline-flex items-center px-2 py-1 rounded-md text-xs ${getCategoryColor(
-            resource.category,
-          )}`}
+          className={`inline-flex items-center px-2 py-1 rounded-md text-xs ${getCategoryColor(resource.category)}`}
         >
           {getCategoryIcon(resource.category)}
           <span className="ml-1 capitalize">{resource.category}</span>
