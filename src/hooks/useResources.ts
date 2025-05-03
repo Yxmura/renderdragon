@@ -154,7 +154,7 @@ export const useResources = () => {
     if (!resource) return;
   
     const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
-    const creditName = resource.credit?.replace(/ /g, '_');
+    const creditName = resource.credit?.replace(/ /g, '__');
     const filetype = resource.filetype;
   
     let fileUrl = '';
