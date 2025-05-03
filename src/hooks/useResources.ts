@@ -151,28 +151,32 @@ export const useResources = () => {
 
 
   const handleDownload = async (resource: Resource) => {
-    if (!resource) return;
-  
-    const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
-    const creditName = resource.credit?.replace(/ /g, '__');
-    const filetype = resource.filetype;
-  
-    let fileUrl = '';
-    if (resource.category === 'presets' && resource.subcategory) {
-      fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${resource.subcategory}/${titleLowered}${resource.credit ? `__${creditName}` : ''}.${filetype}`;
-    } else if (resource.credit) {
-      fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${creditName}.${filetype}`;
-    } else {
-      fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${filetype}`;
-    }
-  
-    const filename = `${resource.title}.${filetype}`;
-  
-    try {
+  if (!resource) return;
+
+  const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
+  const creditName = resource.credit?.replace(/ /g, '_');
+  const filetype = resource.filetype;
+
+  let fileUrl = '';
+  if (resource.category === 'presets' && resource.subcategory) {
+    fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${resource.subcategory}/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
+  } else if (resource.credit) {
+    fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${creditName}.${filetype}`;
+  } else {
+    fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${filetype}`;
+  }
+
+  const filename = `${resource.title}.${filetype}`;
+
+  const shouldForceDownload = ['presets', 'images'].includes(resource.category);
+
+  try {
+    if (shouldForceDownload) {
+      // Force download using fetch + blob
       const res = await fetch(fileUrl);
       if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
       const blob = await res.blob();
-  
+
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = filename;
@@ -180,13 +184,21 @@ export const useResources = () => {
       a.click();
       a.remove();
       URL.revokeObjectURL(a.href);
-  
-      // Count download
-      incrementDownload(resource.id);
-    } catch (err) {
-      console.error('Download failed', err);
+    } else {
+      // Let browser handle it normally (works well for audio, fonts, etc.)
+      const a = document.createElement('a');
+      a.href = fileUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     }
-  };
+
+    incrementDownload(resource.id);
+  } catch (err) {
+    console.error('Download failed', err);
+  }
+};
   
   
 
