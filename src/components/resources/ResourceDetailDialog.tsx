@@ -1,287 +1,115 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Resource } from '@/types/resources';
+
+import React from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import ResourcePreview from './ResourcePreview';
-import { 
-  Download, 
-  Copy, 
-  Check, 
-  Github, 
-  Music, 
-  Image, 
-  Video, 
-  FileText, 
-  FileAudio,
-  ChevronLeft,
-  ChevronRight
-} from 'lucide-react';
-import { toast } from 'sonner';
-import { useIsMobile } from '@/hooks/use-mobile';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Resource } from "@/types/resources";
+import { Download, Youtube } from "lucide-react";
+import { toast } from "sonner";
+import { useDownloadCounts } from "@/hooks/useDownloadCounts";
 
 interface ResourceDetailDialogProps {
   resource: Resource | null;
+  isOpen: boolean;
   onClose: () => void;
-  onDownload: (resource: Resource) => void;
-  downloadCount: number;
-  loadedFonts: string[];
-  setLoadedFonts: (fonts: string[]) => void;
-  filteredResources: Resource[]; // Add this prop
-  onSelectResource: (resource: Resource) => void; // Add this prop
 }
 
-const ResourceDetailDialog = ({ 
-  resource, 
-  onClose, 
-  onDownload, 
-  downloadCount,
-  loadedFonts,
-  setLoadedFonts,
-  filteredResources,
-  onSelectResource
-}: ResourceDetailDialogProps) => {
-  const [copied, setCopied] = useState(false);
-  const isMobile = useIsMobile();
-
-  const currentIndex = resource ? filteredResources.findIndex(r => r.id === resource.id) : -1;
-  const hasPrevious = currentIndex > 0;
-  const hasNext = currentIndex < filteredResources.length - 1;
-
-  const handlePrevious = useCallback(() => {
-    if (hasPrevious && resource) {
-      onSelectResource(filteredResources[currentIndex - 1]);
-    }
-  }, [hasPrevious, resource, filteredResources, currentIndex, onSelectResource]);
-
-  const handleNext = useCallback(() => {
-    if (hasNext && resource) {
-      onSelectResource(filteredResources[currentIndex + 1]);
-    }
-  }, [hasNext, resource, filteredResources, currentIndex, onSelectResource]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!resource) return;
-      
-      if (e.key === 'ArrowLeft' && hasPrevious) {
-        handlePrevious();
-      } else if (e.key === 'ArrowRight' && hasNext) {
-        handleNext();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [resource, hasPrevious, hasNext, handlePrevious, handleNext]);
-
-  // Update the font URL logic to append '__{creditName}' for resources with credit
-  useEffect(() => {
-    if (resource?.category === 'fonts' && resource.title && !loadedFonts.includes(resource.title)) {
-      const titleLowered = resource.title
-        .toLowerCase()
-        .replace(/ /g, '%20');
-
-      let fontUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}`;
-
-      if (resource.credit) {
-        const creditName = resource.credit.replace(/ /g, '_');
-        fontUrl = `${fontUrl}__${creditName}`;
-      }
-
-      fontUrl = `${fontUrl}.${resource.filetype}`;
-
-      const fontFace = new FontFace(resource.title, `url(${fontUrl})`);
-
-      fontFace.load().then((loadedFont) => {
-        document.fonts.add(loadedFont);
-        setLoadedFonts([...loadedFonts, resource.title]);
-      }).catch(err => {
-        console.error('Error loading font:', err);
-      });
-    }
-  }, [resource, loadedFonts, setLoadedFonts]);
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'music':
-        return <Music className="h-5 w-5" />;
-      case 'sfx':
-        return <FileAudio className="h-5 w-5" />;
-      case 'images':
-        return <Image className="h-5 w-5" />;
-      case 'animations':
-        return <Video className="h-5 w-5" />;
-      case 'fonts':
-        return <FileText className="h-5 w-5" />;
-      case 'presets':
-        return <FileText className="h-5 w-5" />;
-      default:
-        return <FileText className="h-5 w-5" />;
-    }
-  };
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'music':
-        return 'bg-blue-500/10 text-blue-500';
-      case 'sfx':
-        return 'bg-yellow-500/10 text-yellow-500';
-      case 'images':
-        return 'bg-purple-500/10 text-purple-500';
-      case 'animations':
-        return 'bg-red-500/10 text-red-500';
-      case 'fonts':
-        return 'bg-green-500/10 text-green-500';
-      case 'presets':
-        return 'bg-gray-500/10 text-gray-500';
-      default:
-        return 'bg-gray-500/10 text-gray-500';
-    }
-  };
-
-  const copyCredit = () => {
-    if (!resource?.credit) return;
-
-    const creditText = `Music by ${resource.credit}`;
-    navigator.clipboard.writeText(creditText);
-    setCopied(true);
-    toast.success('Credit copied to clipboard!');
-
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
-  };
-
-  const getGithubURL = (resource: Resource) => {
-    if (!resource || !resource.filetype) return '';
-    
-    const titleLowered = resource.title
-      .toLowerCase()
-      .replace(/ /g, '%20');
-    
-    return `https://github.com/Yxmura/resources_renderdragon/blob/main/${resource.category}/${titleLowered}__${resource.credit}.${resource.filetype}`;
-  };
+const ResourceDetailDialog: React.FC<ResourceDetailDialogProps> = ({
+  resource,
+  isOpen,
+  onClose,
+}) => {
+  const { incrementDownloadCount } = useDownloadCounts();
 
   if (!resource) return null;
 
+  const handleDownload = () => {
+    // Increment download count
+    incrementDownloadCount(resource.id);
+
+    // Open download in new tab
+    window.open(resource.downloadUrl, "_blank");
+
+    // Show success message
+    toast.success("Download started!", {
+      description: "Thanks for using Renderdragon!",
+    });
+
+    // Don't close the dialog after download
+  };
+
   return (
-    <Dialog open={!!resource} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-2xl pixel-corners border-2 border-cow-purple max-h-[90vh] overflow-y-auto custom-scrollbar">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl bg-neutral-900 text-white border border-neutral-700 shadow-lg shadow-emerald-500/20">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-vt323">
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
             {resource.title}
+            {resource.youtubeChannelUrl && (
+              <a 
+                href={resource.youtubeChannelUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-red-500 hover:text-red-400 transition-colors inline-flex items-center"
+                title="Visit creator's YouTube channel"
+              >
+                <Youtube size={18} className="ml-2" />
+              </a>
+            )}
           </DialogTitle>
-          <DialogDescription className="flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className={getCategoryColor(resource.category || '')}
-            >
-              {getCategoryIcon(resource.category || '')}
-              <span className="ml-1 capitalize">{resource.category}</span>
-              {resource.subcategory && (
-                <span className="ml-1">({resource.subcategory})</span>
-              )}
-            </Badge>
-            
-            <Badge variant="outline" className="bg-blue-500/10 text-blue-500">
-              <Download className="h-3 w-3 mr-1" />
-              {downloadCount || 0} downloads
-            </Badge>
+          <DialogDescription className="text-neutral-400">
+            {resource.description}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-5 py-2">
-          <div className="border border-border rounded-md p-4">
-            <h4 className="font-vt323 text-lg mb-1">Attribution</h4>
+        <div className="mt-2">
+          {resource.imageUrl && (
+            <div className="mb-4 rounded-md overflow-hidden">
+              <img
+                src={resource.imageUrl}
+                alt={resource.title}
+                className="w-full object-cover h-64"
+              />
+            </div>
+          )}
 
-            {resource.credit ? (
-              <div className="space-y-2">
-                <p className="text-sm text-orange-500 flex items-center">
-                  <span className="mr-2">⚠️</span>
-                  Please credit this author in your description:
-                </p>
-
-                <div className="flex items-center">
-                  <code className="bg-muted px-2 py-1 rounded text-sm flex-grow">
-                    Credit: {resource.credit}
-                  </code>
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={copyCredit}
-                    className="ml-2 h-8 flex items-center gap-1 pixel-corners"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="h-3.5 w-3.5" />
-                        <span>Copied</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-3.5 w-3.5" />
-                        <span>Copy</span>
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center text-green-500">
-                <Check className="h-5 w-5 mr-2" />
-                <span>
-                  No attribution required! You're free to use this resource
-                  without crediting.
-                </span>
-              </div>
-            )}
-          </div>
-          
-          <ResourcePreview resource={resource} />
-          
-          <div className="flex items-center gap-2 justify-between">
-            <Button
-              variant="outline"
-              className={`${!hasPrevious ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'} transition-opacity`}
-              onClick={handlePrevious}
-              disabled={!hasPrevious}
-            >
-              <ChevronLeft className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Previous</span>
-              <span className="sr-only">Previous resource</span>
-            </Button>
-
-            <Button
-              onClick={() => onDownload(resource)}
-              className="pixel-btn-primary flex items-center justify-center gap-2"
-            >
-              <Download className="h-5 w-5" />
-              <span>Download Resource</span>
-            </Button>
-
-            <Button
-              variant="outline"
-              className={`${!hasNext ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'} transition-opacity`}
-              onClick={handleNext}
-              disabled={!hasNext}
-            >
-              <span className="hidden md:inline">Next</span>
-              <ChevronRight className="h-4 w-4 md:ml-2" />
-              <span className="sr-only">Next resource</span>
-            </Button>
+          <div className="flex flex-wrap gap-2 mb-4">
+            {resource.tags.map((tag) => (
+              <span
+                key={tag}
+                className="px-2 py-1 bg-neutral-800 text-emerald-400 text-xs rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
 
-          <p className="text-xs text-center text-muted-foreground">
-            By downloading, you agree to our terms of use. Crediting
-            "Renderdragon" is optional but appreciated!
-          </p>
+          {resource.youtubeChannelUrl && (
+            <div className="mb-4">
+              <a
+                href={resource.youtubeChannelUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-red-500 hover:text-red-400 transition-colors"
+              >
+                <Youtube size={16} className="mr-1" />
+                <span>Visit Creator's YouTube Channel</span>
+              </a>
+            </div>
+          )}
+
+          <div className="flex justify-between items-center">
+            <div className="text-sm text-neutral-400">
+              Downloads: {resource.downloadCount.toLocaleString()}
+            </div>
+            <Button onClick={handleDownload} className="bg-emerald-600 hover:bg-emerald-700">
+              <Download className="mr-2 h-4 w-4" /> Download
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,137 +1,100 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Resource } from '@/types/resources';
-import ResourceCard from '@/components/resources/ResourceCard';
+
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useResources } from "@/hooks/useResources";
+import ResourceDetailDialog from "./resources/ResourceDetailDialog";
+import { Resource } from "@/types/resources";
+import { Download, Youtube } from "lucide-react";
 
 const FeaturedResources = () => {
-  const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [featuredResources, setFeaturedResources] = useState<Resource[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+  const { resources, isLoading } = useResources();
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
 
-  useEffect(() => {
-    const fetchResources = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch('/resources.json');
-        if (!response.ok) {
-          throw new Error(`Failed to fetch resources: ${response.status} ${response.statusText}`);
-        }
-        const resourcesData = await response.json();
+  const featuredResources = resources?.filter((r) => r.featured) || [];
+  const displayed = featuredResources.slice(0, 3);
 
-        const allResources: Resource[] = Object.entries(resourcesData).flatMap(
-          ([category, resources]) =>
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (resources as any[]).map((resource) => ({ 
-              ...resource, 
-              category: category as 'music' | 'sfx' | 'images' | 'animations' | 'fonts' | 'presets',
-            })),
-        );
-        
-        const sortedResources = [...allResources].slice(0, 4);
-        
-        setFeaturedResources(sortedResources);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching resources:', error);
-        setIsLoading(false);
-      }
-    };
-
-    fetchResources();
-  }, []);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.25,
-        ease: "easeOut"
-      }
-    }
-  };
+  if (isLoading || displayed.length === 0) {
+    return null;
+  }
 
   return (
-    <section className="py-20 bg-background cow-grid-bg">
+    <section className="py-12 bg-gradient-to-br from-neutral-900 to-neutral-950">
       <div className="container mx-auto px-4">
-        <motion.div 
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
-          <h2 className="text-3xl md:text-4xl font-vt323 mb-4">
-            Featured <span className="text-cow-purple">Resources</span>
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Discover our most popular free resources to enhance your content creation
-          </p>
-        </motion.div>
+        <h2 className="text-3xl font-bold mb-8 text-white">
+          Featured Resources
+        </h2>
 
-        {isLoading ? (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">Loading featured resources...</p>
-          </div>
-        ) : (
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {featuredResources.map((resource) => (
-              <motion.div
-                key={resource.id}
-                variants={itemVariants}
-              >
-                <Link
-                  to="/resources"
-                  onMouseEnter={() => setHoveredId(resource.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  className="block group"
-                >
-                  <ResourceCard
-                    resource={resource}
-                    downloadCount={0}
-                    onClick={() => {}} 
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayed.map((resource) => (
+            <Card
+              key={resource.id}
+              className="bg-neutral-800 border-neutral-700 text-white hover:border-emerald-500 transition-all cursor-pointer"
+              onClick={() => setSelectedResource(resource)}
+            >
+              {resource.imageUrl && (
+                <div className="h-48 overflow-hidden">
+                  <img
+                    src={resource.imageUrl}
+                    alt={resource.title}
+                    className="w-full h-full object-cover"
                   />
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
+                </div>
+              )}
+              <CardContent className="pt-4">
+                <h3 className="text-xl font-bold mb-2 flex items-center justify-between">
+                  {resource.title}
+                  {resource.youtubeChannelUrl && (
+                    <a 
+                      href={resource.youtubeChannelUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-red-500 hover:text-red-400 transition-colors"
+                      onClick={(e) => e.stopPropagation()}
+                      title="Visit creator's YouTube channel"
+                    >
+                      <Youtube size={18} />
+                    </a>
+                  )}
+                </h3>
+                <p className="text-neutral-400 mb-4">
+                  {resource.description.length > 100
+                    ? `${resource.description.substring(0, 100)}...`
+                    : resource.description}
+                </p>
+                <div className="flex justify-between items-center">
+                  <div className="text-sm text-neutral-400">
+                    <Download size={14} className="inline mr-1" />
+                    {resource.downloadCount.toLocaleString()}
+                  </div>
+                  <div>
+                    <span className="px-2 py-1 bg-neutral-700 text-emerald-400 text-xs rounded-full">
+                      {resource.type.replace("_", " ")}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-        <motion.div 
-          className="text-center mt-10"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
-        >
-          <Link 
-            to="/resources" 
-            className="pixel-btn-secondary inline-flex items-center space-x-2 group"
+        <div className="mt-8 text-center">
+          <Button
+            onClick={() => navigate("/resources")}
+            variant="outline"
+            className="border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-black"
           >
-            <span>View All Resources</span>
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-          </Link>
-        </motion.div>
+            View All Resources
+          </Button>
+        </div>
+
+        <ResourceDetailDialog
+          resource={selectedResource}
+          isOpen={!!selectedResource}
+          onClose={() => setSelectedResource(null)}
+        />
       </div>
     </section>
   );
