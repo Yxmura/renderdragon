@@ -1,29 +1,19 @@
 
-import { z } from "zod";
+export interface Resource {
+  id: number;
+  title: string;
+  category: 'music' | 'sfx' | 'images' | 'animations' | 'fonts' | 'presets';
+  subcategory?: 'davinci' | 'adobe' | null;
+  credit?: string;
+  filetype?: string;
+  downloads?: number;
+}
 
-export const ResourceTypeSchema = z.enum([
-  "music",
-  "sfx",
-  "animation",
-  "font",
-  "image",
-  "premiere_preset",
-  "davinci_preset",
-  "other",
-]);
-
-export const ResourceSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string(),
-  type: ResourceTypeSchema,
-  downloadUrl: z.string(),
-  imageUrl: z.string().optional(),
-  tags: z.array(z.string()),
-  featured: z.boolean().default(false),
-  downloadCount: z.number().default(0),
-  youtubeChannelUrl: z.string().optional(),
-});
-
-export type ResourceType = z.infer<typeof ResourceTypeSchema>;
-export type Resource = z.infer<typeof ResourceSchema>;
+export interface ResourcesData {
+  animations: Resource[];
+  fonts: Resource[];
+  music: Resource[];
+  sfx: Resource[];
+  images: Resource[];
+  presets: Resource[];
+}

@@ -1,97 +1,162 @@
-
-import React from "react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Resource } from "@/types/resources";
-import { Download, Youtube } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from 'react';
+import { Badge } from '@/components/ui/badge';
+import {
+  Music,
+  Image,
+  Video,
+  FileText,
+  FileAudio,
+  Check,
+} from 'lucide-react';
+import { Resource } from '@/types/resources';
+import { cn } from '@/lib/utils';
 
 interface ResourceCardProps {
   resource: Resource;
+  downloadCount: number;
   onClick: (resource: Resource) => void;
 }
 
-const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onClick }) => {
-  const typeBadgeClass = {
-    music: "bg-blue-600",
-    sfx: "bg-purple-600",
-    animation: "bg-yellow-600",
-    font: "bg-green-600",
-    image: "bg-red-600",
-    premiere_preset: "bg-orange-600",
-    davinci_preset: "bg-pink-600",
-    other: "bg-gray-600",
+const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) => {
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+  const getPreviewUrl = (resource: Resource) => {
+    const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
+    const basePath = 'https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main';
+    const creditPart = resource.credit ? `__${resource.credit.replace(/ /g, '_')}` : '';
+    return `${basePath}/${resource.category}/${titleLowered}${creditPart}.${resource.filetype}`;
   };
 
-  // Type assertions to make TypeScript happy with dynamic object access
-  const typeColor = typeBadgeClass[resource.type as keyof typeof typeBadgeClass] || "bg-gray-600";
+  useEffect(() => {
+    if (resource.category !== 'fonts') return;
+
+    const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
+    const creditPart = resource.credit ? `__${encodeURIComponent(resource.credit)}` : '';
+    const fontUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}${creditPart}.${resource.filetype}`;
+
+    const font = new FontFace(resource.title, `url(${fontUrl})`);
+    font.load()
+      .then((loadedFont) => {
+        document.fonts.add(loadedFont);
+      })
+      .catch((err) => {
+        console.error(`Failed to load font "${resource.title}":`, err);
+      });
+  }, [resource]);
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'music':
+        return <Music className="h-5 w-5" />;
+      case 'sfx':
+        return <FileAudio className="h-5 w-5" />;
+      case 'images':
+        return <Image className="h-5 w-5" />;
+      case 'animations':
+        return <Video className="h-5 w-5" />;
+      case 'fonts':
+      case 'presets':
+        return <FileText className="h-5 w-5" />;
+      default:
+        return <FileText className="h-5 w-5" />;
+    }
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'music':
+        return 'bg-blue-500/10 text-blue-500';
+      case 'sfx':
+        return 'bg-yellow-500/10 text-yellow-500';
+      case 'images':
+        return 'bg-purple-500/10 text-purple-500';
+      case 'animations':
+        return 'bg-red-500/10 text-red-500';
+      case 'fonts':
+        return 'bg-green-500/10 text-green-500';
+      case 'presets':
+        return 'bg-gray-500/10 text-gray-500';
+      default:
+        return 'bg-gray-500/10 text-gray-500';
+    }
+  };
+
+  const renderPreview = () => {
+    const previewUrl = getPreviewUrl(resource);
+
+    switch (resource.category) {
+      case 'images':
+        return (
+          <div className="relative aspect-video bg-muted/20 rounded-md overflow-hidden mb-3">
+            <img
+              src={previewUrl}
+              alt={resource.title}
+              className={cn(
+                "w-full h-full object-cover transition-opacity duration-300",
+                isImageLoaded ? "opacity-100" : "opacity-0"
+              )}
+              onLoad={() => setIsImageLoaded(true)}
+              loading="lazy"
+            />
+            {!isImageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center bg-muted/10">
+                <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              </div>
+            )}
+          </div>
+        );
+      case 'fonts':
+        return (
+          <div className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3">
+            <div
+              className="absolute inset-0 flex items-center justify-center text-lg font-medium"
+              style={{ fontFamily: resource.title }}
+            >
+              Aa Bb Cc
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <Card
-      className="h-full overflow-hidden bg-neutral-800 border-neutral-700 text-white hover:border-emerald-500 transition-all duration-300 cursor-pointer group"
+    <div
       onClick={() => onClick(resource)}
+      className="pixel-card group cursor-pointer hover:border-primary transition-all duration-300 h-full"
     >
-      <div className="relative h-48 overflow-hidden">
-        {resource.imageUrl ? (
-          <img
-            src={resource.imageUrl}
-            alt={resource.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full bg-neutral-700 flex items-center justify-center">
-            <span className="text-neutral-400">No preview</span>
-          </div>
-        )}
-        <div className="absolute top-2 left-2 flex gap-2">
-          <span
-            className={cn(
-              "text-xs px-2 py-1 rounded-full text-white",
-              typeColor
-            )}
-          >
-            {resource.type.replace("_", " ")}
-          </span>
-          {resource.featured && (
-            <span className="bg-amber-600 text-xs px-2 py-1 rounded-full text-white">
-              Featured
-            </span>
+      {renderPreview()}
+
+      <div className="flex justify-between items-start mb-3">
+        <div
+          className={`inline-flex items-center px-2 py-1 rounded-md text-xs ${getCategoryColor(resource.category)}`}
+        >
+          {getCategoryIcon(resource.category)}
+          <span className="ml-1 capitalize">{resource.category}</span>
+          {resource.subcategory && (
+            <span className="ml-1">({resource.subcategory})</span>
           )}
         </div>
-        {resource.youtubeChannelUrl && (
-          <div className="absolute top-2 right-2">
-            <span className="bg-red-600 text-xs p-1 rounded-full text-white">
-              <Youtube size={12} />
-            </span>
+      </div>
+
+      <h3 className="text-xl font-vt323 mb-2 group-hover:text-primary transition-colors">
+        {resource.title}
+      </h3>
+
+      <div className="flex items-center justify-between">
+        {resource.credit ? (
+          <div className="text-xs bg-orange-500/10 text-orange-500 px-2 py-1 rounded-md inline-flex items-center">
+            <span>Credit required</span>
+          </div>
+        ) : (
+          <div className="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded-md inline-flex items-center">
+            <Check className="h-3 w-3 mr-1" />
+            <span>No credit needed</span>
           </div>
         )}
       </div>
-      <CardContent className="pt-3">
-        <h3 className="text-lg font-bold mb-1 group-hover:text-emerald-400 transition-colors flex items-center justify-between">
-          {resource.title}
-          {resource.youtubeChannelUrl && (
-            <a 
-              href={resource.youtubeChannelUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-red-500 hover:text-red-400 transition-colors"
-              onClick={(e) => e.stopPropagation()}
-              title="Visit creator's YouTube channel"
-            >
-              <Youtube size={16} />
-            </a>
-          )}
-        </h3>
-        <p className="text-sm text-neutral-400 line-clamp-2">
-          {resource.description}
-        </p>
-      </CardContent>
-      <CardFooter className="flex justify-between items-center text-xs text-neutral-400 pt-0">
-        <div>Downloads: {resource.downloadCount.toLocaleString()}</div>
-        <div className="flex items-center">
-          <Download size={14} className="mr-1" /> Download
-        </div>
-      </CardFooter>
-    </Card>
+    </div>
   );
 };
 
