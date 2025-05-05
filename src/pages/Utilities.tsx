@@ -12,11 +12,18 @@ interface Utility {
   name: string;
   description: string;
   url: string;
-  category: 'graphic-design' | 'editing' | 'minecraft-shaders' | 'minecraft-mods';
+  category: 'graphic-design' | 'editing' | 'minecraft-shaders' | 'minecraft-mods' | 'websites';
   isFree: boolean;
 }
 
 const utilities: Utility[] = [
+  {
+    name: 'SkinMC',
+    description: 'Website with great tools for Minecraft skins, totems, achievement maker, and more',
+    url: 'https://skinmc.net/',
+    category: 'websites',
+    isFree: true
+  },
   {
     name: 'GIMP',
     description: 'Free and open source image editor, great Photoshop alternative',
@@ -79,6 +86,13 @@ const utilities: Utility[] = [
     url: 'https://modrinth.com/mod/3dskinlayers/version/GeQIXZBw',
     category: 'minecraft-mods',
     isFree: true
+  },
+  {
+    name: 'Easy NPC',
+    description: 'Adds NPCs to Minecraft with customizable skins and behaviors - alternative to NewNPC mod',
+    url: 'https://modrinth.com/mod/easy-npc',
+    category: 'minecraft-mods',
+    isFree: true
   }
 ];
 
@@ -115,9 +129,11 @@ const Utils = () => {
       case 'editing':
         return <Film className="h-5 w-5" />;
       case 'minecraft-shaders':
-        return <img className='h-5 w-5 grayscale' src="/assets/minecraft_icon.png" alt="Minecraft" />;
+        return <img className='h-5 w-5 grayscale' src="/assets/minecraft_icon.png" alt="shader" />;
       case 'minecraft-mods':
-        return <img className='h-5 w-5 grayscale' src="/assets/modrinth_icon.png" alt="Minecraft" />;
+        return <img className='h-5 w-5 grayscale' src="/assets/modrinth_icon.png" alt="mods" />;
+      case 'websites':
+        return <img className='h-5 w-5 grayscale' src="/assets/domain_icon.png" alt="websites" />;
       default:
         return null;
     }
@@ -154,8 +170,8 @@ const Utils = () => {
         </motion.div>
 
         <Tabs defaultValue="graphic-design" className="w-full" onValueChange={setSelectedCategory}>
-          <TabsList className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-transparent h-auto p-0">
-            {['graphic-design', 'editing', 'minecraft-shaders', 'minecraft-mods'].map((category) => (
+          <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-4 bg-transparent h-auto p-0">
+            {['graphic-design', 'editing', 'minecraft-shaders', 'minecraft-mods', 'websites'].map((category) => (
               <TabsTrigger
                 key={category}
                 value={category}
@@ -167,7 +183,7 @@ const Utils = () => {
             ))}
           </TabsList>
 
-          {['graphic-design', 'editing', 'minecraft-shaders', 'minecraft-mods'].map((category) => (
+          {['graphic-design', 'editing', 'minecraft-shaders', 'minecraft-mods', 'websites'].map((category) => (
             <TabsContent key={category} value={category}>
               <motion.div
                 variants={containerVariants}

@@ -67,6 +67,12 @@ const defaultVideoCategories: VideoCategory[] = [
         '49:50'
       ),
       generateVideoData(
+        'XPTlycqda2o',
+        'How To Make Perfect Highlights | 3 Different Methods',
+        'Seltop',
+        '3:46'
+      ),
+      generateVideoData(
         'GNEAhE8c5sM',
         'How To Make FREE Minecraft PVP Texture Pack Thumbnail (Photopea)',
         'TriplePVP',
