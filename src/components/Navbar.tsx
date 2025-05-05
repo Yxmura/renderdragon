@@ -146,16 +146,6 @@ const Navbar = () => {
     return dropdown.links.some(link => isLinkActive(link.path));
   };
 
-  const navbarStyle = {
-    backgroundColor: theme === 'dark' 
-      ? `rgba(10, 10, 20, ${scrolled ? scrollProgress * 0.95 : 0.25})` 
-      : `rgba(255, 255, 255, ${scrolled ? scrollProgress * 0.95 : 0.25})`,
-    borderBottom: `1px solid rgba(155, 135, 245, ${scrolled ? scrollProgress * 0.2 : 0.1})`,
-    backdropFilter: 'blur(12px)',
-    WebkitBackdropFilter: 'blur(12px)',
-    width: 'calc(100vw - 12px)' 
-  };
-
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -164,10 +154,6 @@ const Navbar = () => {
     >
       <div 
         className="absolute inset-0"
-        style={{
-          zIndex: -1,
-          ...navbarStyle,
-        }}
       />
       <div className="container mx-auto px-4 flex justify-between items-center relative z-10">
         <Link 
