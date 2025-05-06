@@ -15,8 +15,13 @@ const DonateButton = () => {
   const [showIframe, setShowIframe] = useState(false);
 
   const handleDonateClick = () => {
+    // Set showIframe to true FIRST
     setShowIframe(true);
-    setIsOpen(false);
+
+    setTimeout(() => {
+      setIsOpen(false);
+    }, 0);
+
   };
 
   return (
@@ -70,7 +75,7 @@ const DonateButton = () => {
                 </ul>
               </div>
 
-              {/* donate btn opens iframe */}
+              {/* Donate btn opens iframe */}
               <Button
                 onClick={handleDonateClick}
                 className="bg-cow-purple hover:bg-cow-purple-dark text-white font-bold py-3 px-4 rounded-md w-full flex items-center justify-center space-x-2 transition-colors group relative overflow-hidden"
@@ -82,7 +87,7 @@ const DonateButton = () => {
                 <span>Donate - every penny matters</span>
               </Button>
 
-              {/* Ko-fi iframe */}
+              {/* iframe */}
               {showIframe && (
                 <div className="w-full mt-4">
                   <iframe
