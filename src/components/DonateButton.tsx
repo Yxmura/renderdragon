@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -9,10 +9,12 @@ import {
 } from '@/components/ui/dialog';
 import { Coffee, Sparkles } from 'lucide-react';
 import SupportersList from './SupportersList';
+import { useTheme } from 'next-themes'; // Assuming you're using next-themes
 
 const DonateButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [showIframe, setShowIframe] = useState(false);
+  const { theme } = useTheme(); // Access the current theme
 
   const handleDonateClick = () => {
     // Close the dialog
@@ -25,6 +27,31 @@ const DonateButton = () => {
   const handleCloseIframe = () => {
     setShowIframe(false);
   };
+
+  // ESC key listener
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === 'Escape') {
+        handleCloseIframe();
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [showIframe]);
+
+  // Dynamically determine background and text colors based on the theme
+  const iframeBackgroundColor =
+    theme === 'dark' ? 'hsl(var(--secondary))' : 'hsl(var(--muted))';
+  const closeButtonColor =
+    theme === 'dark' ? 'hsl(var(--foreground))' : 'hsl(var(--secondary-foreground))';
+  const closeButtonHoverColor =
+    theme === 'dark' ? 'hsl(var(--muted-foreground))' : 'hsl(var(--foreground))';
+  const textColor =
+    theme === 'dark' ? 'hsl(var(--foreground))' : 'hsl(var(--background))';
 
   return (
     <>
@@ -97,10 +124,18 @@ const DonateButton = () => {
       {/* Iframe Container (Rendered SEPARATELY) */}
       {showIframe && (
         <div className="fixed top-0 left-0 w-full h-full bg-black/50 z-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg relative">
+          <div
+            className="rounded-lg shadow-lg relative"
+            style={{ width: '80vw', maxWidth: '900px' }}
+          >
+            {/* Close Button */}
             <Button
               onClick={handleCloseIframe}
-              className="absolute top-2 right-2 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center"
+              className="absolute top-2 right-2 rounded-full w-10 h-10 flex items-center justify-center"
+              style={{
+                backgroundColor: closeButtonColor,
+                color: textColor,
+              }}
             >
               X
             </Button>
@@ -110,9 +145,8 @@ const DonateButton = () => {
               style={{
                 border: 'none',
                 width: '100%',
-                maxWidth: '600px', // Adjust as needed
                 padding: '4px',
-                background: '#f9f9f9',
+                background: iframeBackgroundColor,
               }}
               height="712"
               title="renderdragon"
