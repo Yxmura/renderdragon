@@ -12,17 +12,27 @@ import SupportersList from './SupportersList';
 
 const DonateButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showIframe, setShowIframe] = useState(false);
+
+  const handleDonateClick = () => {
+    setShowIframe(true);
+    setIsOpen(false);
+  };
 
   return (
     <>
-      <Button 
+      <Button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 left-6 rounded-full w-14 h-14 shadow-lg z-40 bg-cow-purple hover:bg-cow-purple-dark transition-all duration-300 group motion-scale-in-[0.5] motion-opacity-in-[0%] motion-duration-[250ms] motion-ease-spring-bouncier"
         aria-label="Donate"
       >
         <div className="absolute inset-0 rounded-full bg-cow-purple-dark/30 group-hover:bg-cow-purple-dark/50 animate-ping opacity-75"></div>
         <div className="relative flex items-center justify-center">
-          <img src="/assets/heart.png" alt="donate" className="w-11 h-11 object-contain scale-150" />
+          <img
+            src="/assets/heart.png"
+            alt="donate"
+            className="w-11 h-11 object-contain scale-150"
+          />
         </div>
         <span className="sr-only">Donate</span>
       </Button>
@@ -38,10 +48,9 @@ const DonateButton = () => {
               Donations are our only source of income
             </DialogDescription>
           </DialogHeader>
-          
           <div className="flex flex-col items-center space-y-6 py-4">
             <SupportersList />
-            
+
             <div className="space-y-4 w-full">
               <div className="flex flex-col space-y-2">
                 <h3 className="font-semibold">Why Donate?</h3>
@@ -60,11 +69,10 @@ const DonateButton = () => {
                   </li>
                 </ul>
               </div>
-              
-              <a
-                href="https://www.buymeacoffee.com/renderdragon"
-                target="_blank"
-                rel="noopener noreferrer"
+
+              {/* donate btn opens iframe */}
+              <Button
+                onClick={handleDonateClick}
                 className="bg-cow-purple hover:bg-cow-purple-dark text-white font-bold py-3 px-4 rounded-md w-full flex items-center justify-center space-x-2 transition-colors group relative overflow-hidden"
               >
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -72,7 +80,25 @@ const DonateButton = () => {
                 </div>
                 <Coffee className="h-5 w-5" />
                 <span>Donate - every penny matters</span>
-              </a>
+              </Button>
+
+              {/* Ko-fi iframe */}
+              {showIframe && (
+                <div className="w-full mt-4">
+                  <iframe
+                    id="kofiframe"
+                    src="https://ko-fi.com/renderdragon/?hidefeed=true&widget=true&embed=true&preview=true"
+                    style={{
+                      border: 'none',
+                      width: '100%',
+                      padding: '4px',
+                      background: '#f9f9f9',
+                    }}
+                    height="712"
+                    title="renderdragon"
+                  ></iframe>
+                </div>
+              )}
             </div>
           </div>
         </DialogContent>
