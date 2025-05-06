@@ -15,13 +15,15 @@ const DonateButton = () => {
   const [showIframe, setShowIframe] = useState(false);
 
   const handleDonateClick = () => {
-    // Set showIframe to true FIRST
+    // Close the dialog
+    setIsOpen(false);
+
+    // Show the iframe
     setShowIframe(true);
+  };
 
-    setTimeout(() => {
-      setIsOpen(false);
-    }, 0);
-
+  const handleCloseIframe = () => {
+    setShowIframe(false);
   };
 
   return (
@@ -42,6 +44,7 @@ const DonateButton = () => {
         <span className="sr-only">Donate</span>
       </Button>
 
+      {/* Dialog (Donate Modal) */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-md+1 border-2 border-cow-purple bg-gradient-to-b from-background to-background/95 backdrop-blur-sm">
           <DialogHeader>
@@ -75,7 +78,7 @@ const DonateButton = () => {
                 </ul>
               </div>
 
-              {/* Donate btn opens iframe */}
+              {/* Donate Button (that opens the iframe SEPARATELY) */}
               <Button
                 onClick={handleDonateClick}
                 className="bg-cow-purple hover:bg-cow-purple-dark text-white font-bold py-3 px-4 rounded-md w-full flex items-center justify-center space-x-2 transition-colors group relative overflow-hidden"
@@ -86,28 +89,37 @@ const DonateButton = () => {
                 <Coffee className="h-5 w-5" />
                 <span>Donate - every penny matters</span>
               </Button>
-
-              {/* iframe */}
-              {showIframe && (
-                <div className="w-full mt-4">
-                  <iframe
-                    id="kofiframe"
-                    src="https://ko-fi.com/renderdragon/?hidefeed=true&widget=true&embed=true&preview=true"
-                    style={{
-                      border: 'none',
-                      width: '100%',
-                      padding: '4px',
-                      background: '#f9f9f9',
-                    }}
-                    height="712"
-                    title="renderdragon"
-                  ></iframe>
-                </div>
-              )}
             </div>
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Iframe Container (Rendered SEPARATELY) */}
+      {showIframe && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black/50 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg relative">
+            <Button
+              onClick={handleCloseIframe}
+              className="absolute top-2 right-2 bg-gray-200 hover:bg-gray-300 rounded-full w-8 h-8 flex items-center justify-center"
+            >
+              X
+            </Button>
+            <iframe
+              id="kofiframe"
+              src="https://ko-fi.com/renderdragon/?hidefeed=true&widget=true&embed=true&preview=true"
+              style={{
+                border: 'none',
+                width: '100%',
+                maxWidth: '600px', // Adjust as needed
+                padding: '4px',
+                background: '#f9f9f9',
+              }}
+              height="712"
+              title="renderdragon"
+            ></iframe>
+          </div>
+        </div>
+      )}
     </>
   );
 };
