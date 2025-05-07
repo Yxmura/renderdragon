@@ -7,11 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Coffee, Sparkles, X } from 'lucide-react';
+import { Coffee, Sparkles } from 'lucide-react';
 import SupportersList from './SupportersList';
 
 const DonateButton = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [iframeLoading, setIframeLoading] = useState(true);
 
   return (
     <>
@@ -28,18 +29,7 @@ const DonateButton = () => {
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent
-          className="sm:max-w-2xl border-2 border-cow-purple bg-gradient-to-b from-background to-background/95 backdrop-blur-sm max-h-[90vh] overflow-y-auto"
-        >
-          {/* Close Button */}
-          <button
-            onClick={() => setIsOpen(false)}
-            className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition"
-            aria-label="Close"
-          >
-            <X className="h-5 w-5" />
-          </button>
-
+        <DialogContent className="sm:max-w-xl border-2 border-cow-purple bg-gradient-to-b from-background to-background/95 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex items-center gap-2">
               <Coffee className="h-6 w-6 text-cow-purple" />
@@ -72,18 +62,24 @@ const DonateButton = () => {
                 </ul>
               </div>
 
-              <div className="w-full rounded-md overflow-hidden shadow-md border border-muted bg-[#f9f9f9]">
+              {/* Ko-fi iframe with loading animation */}
+              <div className="relative w-full rounded-md overflow-hidden shadow-md border border-muted bg-[#f9f9f9] min-h-[500px]">
+                {iframeLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-10">
+                    <div className="h-6 w-6 border-4 border-cow-purple border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
                 <iframe
                   id="kofiframe"
                   src="https://ko-fi.com/renderdragon/?hidefeed=true&widget=true&embed=true&preview=true"
                   style={{
                     border: 'none',
                     width: '100%',
-                    padding: '4px',
                     background: '#f9f9f9',
                   }}
-                  height="712"
+                  height="500"
                   title="renderdragon"
+                  onLoad={() => setIframeLoading(false)}
                 />
               </div>
             </div>
