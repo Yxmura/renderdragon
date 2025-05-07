@@ -31,7 +31,7 @@ const testimonials: Testimonial[] = [
     id: 4,
     name: "ItsProger",
     role: "Minecraft YouTuber and Thumbnail Designer",
-    content: "I really like renderdragon, it's one of the only and best websites for Minecraft content creators. I really like the style, assets, tools and the whole team working on this amazing project. I'll use it for every single video that I make in the future)"
+    content: "I really like renderdragon, it's one of the only and best websites for Minecraft content creators. I really like the style, assets, tools and the whole team working on this amazing project. I'll use it for every single video that I make in the future"
   }
 ];
 
