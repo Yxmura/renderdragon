@@ -3,10 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { KBarProvider } from 'kbar';
 import VercelAnalytics from "@/components/VercelAnalytics";
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import CountdownOverlay from "@/components/CountdownOverlay";
 
 import Index from "./pages/Index";
 import ResourcesHub from "./pages/ResourcesHub";
@@ -32,7 +30,6 @@ const launchDate = new Date('2025-05-01T10:00:00Z')
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <KBarProvider>
       <TooltipProvider>
         <VercelAnalytics />
         <SpeedInsights />
@@ -62,7 +59,6 @@ const App = () => (
           {/* <CountdownOverlay targetDate={launchDate} /> */}
         </BrowserRouter>
       </TooltipProvider>
-    </KBarProvider>
   </QueryClientProvider>
 );
 

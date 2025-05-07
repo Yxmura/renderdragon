@@ -17,10 +17,6 @@ const MusicCopyright = () => {
   const [result, setResult] = useState<CopyrightResult | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  useEffect(() => {
-    document.title = 'Music Copyright Checker - Renderdragon';
-  }, []);
-
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       toast.error("Please enter a song title, artist, or YouTube URL");

@@ -5,9 +5,6 @@ import DonateButton from '@/components/DonateButton';
 import { Helmet } from 'react-helmet';
 
 const FAQ = () => {
-  useEffect(() => {
-    document.title = 'FAQ - Renderdragon';
-  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">

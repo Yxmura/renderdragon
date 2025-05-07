@@ -29,7 +29,7 @@ const DonateButton = () => {
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-xl border-2 border-cow-purple bg-gradient-to-b from-background to-background/95 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg border-2 border-cow-purple bg-gradient-to-b from-background to-background/95 backdrop-blur-sm max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex items-center gap-2">
               <Coffee className="h-6 w-6 text-cow-purple" />

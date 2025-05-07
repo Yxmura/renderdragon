@@ -175,13 +175,9 @@ const YouTubeVideos = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    document.title = 'YouTube Tutorials - Renderdragon';
-    
-    setTimeout(() => {
-      setVideoCategories(defaultVideoCategories);
-      setOpenCategories([1]);
-      setIsLoading(false);
-    }, 500);
+    setVideoCategories(defaultVideoCategories);
+    setOpenCategories([1]);
+    setIsLoading(false);
   }, []);
 
   const toggleCategory = (categoryId: number) => {

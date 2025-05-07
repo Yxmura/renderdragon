@@ -5,9 +5,6 @@ import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
 
 const Privacy = () => {
-  useEffect(() => {
-    document.title = 'Privacy Policy - Renderdragon';
-  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">

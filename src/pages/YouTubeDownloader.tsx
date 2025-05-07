@@ -39,10 +39,6 @@ const YouTubeDownloader = () => {
     const [filteredOptions, setFilteredOptions] = useState<DownloadOption[]>([]);
 
     useEffect(() => {
-        document.title = 'YouTube Downloader - Renderdragon';
-    }, []);
-
-    useEffect(() => {
         if (videoInfo) {
             setFilteredOptions(
                 videoInfo.options.filter(option =>

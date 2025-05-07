@@ -31,7 +31,6 @@ interface ResourceFiltersProps {
   onSubcategoryChange: (subcategory: string | null) => void;
   isMobile: boolean;
   inputRef: React.RefObject<HTMLInputElement>;
-  toggleKBar: () => void;
 }
 
 const ResourceFilters = ({
@@ -44,8 +43,7 @@ const ResourceFilters = ({
   onCategoryChange,
   onSubcategoryChange,
   isMobile,
-  inputRef,
-  toggleKBar
+  inputRef
 }: ResourceFiltersProps) => {
   return (
     <div className="mb-8 flex flex-col md:flex-row gap-4">
@@ -53,11 +51,10 @@ const ResourceFilters = ({
         <form onSubmit={(e) => onSearchSubmit(e)} className="relative w-full">
           <Input
             ref={inputRef}
-            placeholder="Search resources (or press Ctrl+K)..."
+            placeholder="Search resources..."
             value={searchQuery}
             onChange={onSearch}
             onClick={(e) => {
-              // Prevent the click from triggering kbar if user is intending to type
               e.stopPropagation();
             }}
             className="pixel-input w-full pr-10"

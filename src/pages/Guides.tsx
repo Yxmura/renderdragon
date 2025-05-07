@@ -63,10 +63,8 @@ const GuidesPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
-      setGuides(Guides);
-      setIsLoading(false);
-    }, 500);
+    setGuides(Guides);
+    setIsLoading(false);
   }, []);
 
   const handleOpenPdf = (pdfUrl: string) => {

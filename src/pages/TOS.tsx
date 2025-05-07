@@ -5,10 +5,6 @@ import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
 
 const TOS = () => {
-  useEffect(() => {
-    document.title = 'Terms of Service - Renderdragon';
-  }, []);
-
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>

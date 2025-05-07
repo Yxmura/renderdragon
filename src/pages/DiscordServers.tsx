@@ -80,13 +80,9 @@ const DiscordServers = () => {
   const [servers, setServers] = useState<DiscordServer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    document.title = 'Discord Servers - Renderdragon';
-    
-    setTimeout(() => {
-      setServers(SERVERS_DATA);
-      setIsLoading(false);
-    }, 500);
+  useEffect(() => {    
+    setServers(SERVERS_DATA);
+    setIsLoading(false);
   }, []); 
 
   const handleJoinServer = (server: DiscordServer) => {

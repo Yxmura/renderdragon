@@ -12,9 +12,7 @@ import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
 
 const Index = () => {
-  useEffect(() => {
-    document.title = 'Renderdragon - Free Resources for Content Creators';
-    
+  useEffect(() => {    
     const fontLinks = [
       {
         rel: 'stylesheet',

@@ -69,10 +69,6 @@ const AiTitleHelper = () => {
         null
     );
 
-    useEffect(() => {
-        document.title = 'AI Title Helper - Renderdragon';
-    }, []);
-
     const handleGenerateTitles = async (retryCount = 0) => {
         if (!videoDescription.trim()) {
           toast.error('Please enter a video description');

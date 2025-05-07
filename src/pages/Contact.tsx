@@ -82,9 +82,6 @@ const Contact = () => {
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const email = 'contact@renderdragon.org';
 
-  useEffect(() => {
-    document.title = 'Contact Us - Renderdragon';
-  }, []);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(email);

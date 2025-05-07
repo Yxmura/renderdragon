@@ -1,7 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { useKBar } from 'kbar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { useResources } from '@/hooks/useResources';
@@ -42,28 +41,7 @@ const ResourcesHub = () => {
   const { downloadCounts } = useDownloadCounts(resourceIds);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const { query } = useKBar();
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    document.title = 'Resources Hub - Renderdragon';
-
-    const handleKeydown = (e: KeyboardEvent) => {
-      // Only trigger kbar search if not already focused in an input
-      const isInputFocused = document.activeElement?.tagName === 'INPUT';
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k' && !isInputFocused) {
-        e.preventDefault();
-        query.toggle();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeydown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeydown);
-      query.inputRefSetter(null);
-    };
-  }, [query]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -130,7 +108,6 @@ const ResourcesHub = () => {
               onSubcategoryChange={handleSubcategoryChange}
               isMobile={isMobile}
               inputRef={inputRef}
-              toggleKBar={() => query.toggle()}
             />
 
             <ResourcesList
