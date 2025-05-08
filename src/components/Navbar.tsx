@@ -147,12 +147,23 @@ const Navbar = () => {
   };
 
   const getBackgroundStyle = () => {
-    if (!scrolled) return {};
-    
-    return {
-      opacity: Math.min(scrollProgress * 1.5, 0.98),
-      backdropFilter: `blur(${scrollProgress * 8}px)`,
-    };
+    let baseStyle: React.CSSProperties = {};
+    if (scrolled) {
+      baseStyle = {
+        opacity: Math.min(scrollProgress * 1.5, 0.98),
+        backdropFilter: `blur(${scrollProgress * 8}px)`,
+      };
+    }
+
+    if (!isMobile) {
+      return {
+        ...baseStyle,
+        width: 'calc(100% - 17px)', // Standard scrollbar width
+        right: '17px', // Offset for scrollbar
+      };
+    }
+
+    return baseStyle;
   };
 
   return (
