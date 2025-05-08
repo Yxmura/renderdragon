@@ -25,6 +25,11 @@ const utilities: Utility[] = [
     isFree: true
   },
   {
+    name= 'Blockbench',
+    description : 'A low-poly 3D model editor, great for creating Minecraft player poses right in your browser',
+    url : 'https://web.blockbench.net'
+  }
+  {
     name: 'GIMP',
     description: 'Free and open source image editor, great Photoshop alternative',
     url: 'https://www.gimp.org/',

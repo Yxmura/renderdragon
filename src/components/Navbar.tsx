@@ -82,33 +82,6 @@ const Navbar = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const handleScroll = () => {
-      const offset = window.scrollY;
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = Math.min(offset / 300, 1);
-      
-      setScrolled(offset > 50);
-      setScrollProgress(progress);
-    };
-
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setMobileMenuOpen(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize);
-    
-    handleScroll();
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
 
@@ -148,9 +121,7 @@ const Navbar = () => {
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'py-2' : 'py-4'
-      }`}
+      className="top-0 left-0 right-0 z-50 transition-all duration-300"
     >
       <div 
         className="absolute inset-0"
