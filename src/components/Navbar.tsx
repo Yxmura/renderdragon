@@ -120,7 +120,9 @@ const Navbar = () => {
   };
 
   return (
-    <header className="left-0 right-0 z-50 transition-all duration-300 py-4">
+    <header 
+      className="top-0 left-0 right-0 z-50 transition-all duration-300"
+    >
       <div 
         className="absolute inset-0"
       />
