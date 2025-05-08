@@ -25,27 +25,6 @@ const utilities: Utility[] = [
     isFree: true
   },
   {
-    name: 'Blockbench',
-    description : 'A low-poly 3D model editor, great for creating Minecraft player poses right in your browser',
-    url : 'https://web.blockbench.net',
-    category : 'websites',
-    isFree: true
-  },
-  {
-    name: 'Procreate',
-    description : 'High quality drawing and photo-editing software for a relatively low price available on mobile devices',
-    url : 'https://procreate.com',
-    category : 'graphic-design',
-    isFree: false
-  },
-  {
-    name: 'Noman Sculpt',
-    description : 'A sculpting and painting mobile application',
-    url : 'https://nomadsculpt.com/',
-    category : 'graphic-design',
-    isFree: false
-  },
-  {
     name: 'GIMP',
     description: 'Free and open source image editor, great Photoshop alternative',
     url: 'https://www.gimp.org/',
