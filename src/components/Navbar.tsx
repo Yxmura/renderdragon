@@ -146,12 +146,24 @@ const Navbar = () => {
     return dropdown.links.some(link => isLinkActive(link.path));
   };
 
+  const getBackgroundStyle = () => {
+    if (!scrolled) return {};
+    
+    return {
+      opacity: Math.min(scrollProgress * 1.5, 0.98),
+      backdropFilter: `blur(${scrollProgress * 8}px)`,
+    };
+  };
+
   return (
     <header 
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4"
+      className={`fixed top-0 w-full z-50 transition-all duration-300 py-4 ${
+        scrolled ? 'shadow-lg' : ''
+      }`}
     >
       <div 
-        className="absolute inset-0"
+        className="absolute inset-0 z-[-1] pointer-events-none bg-gradient-to-r from-background/80 via-background/90 to-background/80 dark:from-background/80 dark:via-background/90 dark:to-background/80 transition-all duration-300"
+        style={getBackgroundStyle()}
       />
       <div className="container mx-auto px-4 flex justify-between items-center relative z-10">
         <Link 
@@ -327,7 +339,7 @@ const Navbar = () => {
       </div>
       
       {scrolled && (
-        <div className="absolute top-0 left-0 w-full h-[2px] bg-background/20 z-20">
+        <div className="absolute bottom-0 left-0 w-full h-[2px] bg-background/20 z-20">
           <div 
             className="h-full bg-cow-purple transition-all duration-300 animate-pulse-neon"
             style={{ width: `${scrollProgress * 100}%` }}
