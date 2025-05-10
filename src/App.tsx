@@ -23,6 +23,7 @@ import Utils from "./pages/Utilities";
 import AiTitleHelper from "./pages/AiTitleHelper";
 import PlayerRenderer from "./pages/PlayerRenderer";
 import Renderbot from "./pages/Renderbot";
+import TextGenerator from '@/pages/TextGenerator';
 
 const queryClient = new QueryClient();
 
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/tos" element={<TOS />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/construction" element={<Construction />} />
+            <Route path="/text-generator" element={<TextGenerator />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

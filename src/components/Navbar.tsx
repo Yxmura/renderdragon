@@ -63,7 +63,8 @@ const mainLinks: (NavLink | NavDropdown)[] = [
       { name: 'AI Title Helper', path: '/ai-title-helper', icon: 'bot' },
       { name: 'Background Generator', path: '/background-generator', icon: 'background' },
       { name: 'Player Renderer', path: '/player-renderer', icon: 'player' },
-      { name: 'Renderbot', path: '/renderbot', icon: 'bot' }
+      { name: 'Renderbot', path: '/renderbot', icon: 'bot' },
+      { name: 'Text Generator', path: '/text-generator', icon: 'text' }
     ]
   }
 ];
@@ -284,7 +285,6 @@ const Navbar = () => {
                         to={link.path} 
                         className={`flex items-center space-x-3 text-lg py-3 border-b border-border ${isLinkActive(link.path) ? 'text-primary' : ''}`}
                       >
-                        <PixelSvgIcon name={link.icon} className="w-5 h-5" />
                         <span>{link.name}</span>
                       </Link>
                     ) : (
@@ -296,7 +296,6 @@ const Navbar = () => {
                       >
                         <CollapsibleTrigger className="w-full flex items-center justify-between text-lg py-3">
                           <div className="flex items-center space-x-3">
-                            <PixelSvgIcon name={link.icon} className="w-5 h-5" />
                             <span>{link.name}</span>
                           </div>
                           <ChevronDown 
@@ -313,7 +312,6 @@ const Navbar = () => {
                                 to={subLink.path}
                                 className={`flex items-center space-x-3 py-2 ${isLinkActive(subLink.path) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
                               >
-                                <PixelSvgIcon name={subLink.icon} className="w-4 h-4" />
                                 <span>{subLink.name}</span>
                               </Link>
                             ))}

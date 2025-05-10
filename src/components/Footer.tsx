@@ -176,6 +176,11 @@ const Footer = () => {
                   Renderbot
                 </Link>
               </li>
+              <li>
+                <Link to="/text-generator" className="text-white/70 hover:text-white transition-colors">
+                  Text Generator
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
