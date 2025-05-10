@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import sitemap from 'vite-plugin-sitemap';
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -15,8 +14,6 @@ export default defineConfig(({ mode }) => ({
       hostname: 'https://renderdragon.org'
     }),
     react(),
-    mode === 'development' &&
-    componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {

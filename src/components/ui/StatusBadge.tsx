@@ -1,4 +1,3 @@
-// src/components/HyperpingBadge.tsx
 import React, { useEffect, useRef } from 'react';
 
 function HyperpingBadge() {
