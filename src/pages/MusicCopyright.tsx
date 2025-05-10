@@ -15,8 +15,7 @@ const MusicCopyright = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<CopyrightResult | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-
+  
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       toast.error("Please enter a song title, artist, or YouTube URL");
@@ -31,7 +30,6 @@ const MusicCopyright = () => {
       const copyrightData = await checkCopyrightStatus(searchQuery, isYouTube);
 
       setResult(copyrightData);
-      setIsPlaying(false);
 
       if (copyrightData.status === 'error') {
         toast.error("Error checking copyright", {
@@ -52,9 +50,6 @@ const MusicCopyright = () => {
     }
   };
 
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying);
-  };
 
   const getCopyrightStatusText = (status: string): string => {
     switch (status) {
