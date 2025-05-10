@@ -5,6 +5,11 @@ function HyperpingBadge() {
   const isInitialized = useRef(false);
 
   useEffect(() => {
+    if (typeof Hyperping !== 'undefined') {
+      isInitialized.current = true;
+      return;
+    }
+    
     const script = document.createElement('script');
     script.src = 'https://hyperping.com/badge.js';
     script.async = true;
