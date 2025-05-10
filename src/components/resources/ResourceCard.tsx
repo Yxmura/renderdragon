@@ -7,9 +7,11 @@ import {
   FileText,
   FileAudio,
   Check,
+  Heart,
 } from 'lucide-react';
 import { Resource } from '@/types/resources';
 import { cn } from '@/lib/utils';
+import { useHeartedResources } from '@/hooks/useHeartedResources';
 
 interface ResourceCardProps {
   resource: Resource;
@@ -19,6 +21,7 @@ interface ResourceCardProps {
 
 const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const { isHearted, toggleHeart } = useHeartedResources();
 
   const getPreviewUrl = (resource: Resource) => {
     const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
@@ -138,6 +141,20 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             <span className="ml-1">({resource.subcategory})</span>
           )}
         </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleHeart(resource.id);
+          }}
+          className={cn(
+            "p-1 rounded-full transition-colors",
+            isHearted(resource.id)
+              ? "text-red-500 hover:text-red-600"
+              : "text-gray-400 hover:text-red-500"
+          )}
+        >
+          <Heart className="h-5 w-5" fill={isHearted(resource.id) ? "currentColor" : "none"} />
+        </button>
       </div>
 
       <h3 className="text-xl font-vt323 mb-2 group-hover:text-primary transition-colors">

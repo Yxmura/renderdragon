@@ -2,6 +2,7 @@ import { Resource } from '@/types/resources';
 import ResourceCard from './ResourceCard';
 import { FolderX, X, Github } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useHeartedResources } from '@/hooks/useHeartedResources';
 
 interface ResourcesListProps {
   resources: Resource[];
@@ -26,8 +27,19 @@ const ResourcesList = ({
   downloadCounts,
   onSelectResource,
   onClearFilters,
-  hasCategoryResources
+  hasCategoryResources,
 }: ResourcesListProps) => {
+  const { heartedResources } = useHeartedResources();
+
+  // Sort resources to show hearted ones first
+  const sortedResources = [...filteredResources].sort((a, b) => {
+    const aHearted = heartedResources.includes(a.id);
+    const bHearted = heartedResources.includes(b.id);
+    if (aHearted && !bHearted) return -1;
+    if (!aHearted && bHearted) return 1;
+    return 0;
+  });
+
   //  no resources match filters or the category has 0 resources
   const shouldShowNoResourcesMessage = filteredResources.length === 0 || (selectedCategory && !hasCategoryResources);
   
@@ -85,7 +97,7 @@ const ResourcesList = ({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {filteredResources.map((resource) => (
+      {sortedResources.map((resource) => (
         <ResourceCard
           key={`resource-${resource.id}`}
           resource={resource}
