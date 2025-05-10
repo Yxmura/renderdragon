@@ -30,7 +30,7 @@ function normalizeText(text: string): string {
 
 export const useResources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
-  const { downloadCounts: externalDownloadCounts, incrementDownload } = useDownloadCounts(resourceIds);
+  const { downloadCounts: externalDownloadCounts, incrementDownload } = useDownloadCounts();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);

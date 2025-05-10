@@ -37,8 +37,7 @@ const ResourcesHub = () => {
     handleDownload,
   } = useResources();
 
-  const resourceIds = resources.map((resource) => resource.id);
-  const { downloadCounts } = useDownloadCounts(resourceIds);
+  const { downloadCounts } = useDownloadCounts();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const isMobile = useIsMobile();
