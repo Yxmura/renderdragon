@@ -43,7 +43,7 @@ const Partnership = () => (
                                         href="https://bsky.app/profile/creatorskingdom.bsky.social"
                                         target="_blank"
                                         rel="noopener"
-                                        className="px-4 py-2 bg-[#0085ff] text-white rounded-lg font-medium hover:bg-[#0070d6] transition-colors flex items-center gap-2"
+                                        className="px-2 py-2 bg-[#0085ff] text-white rounded-lg font-medium hover:bg-[#0070d6] transition-colors flex items-center gap-2"
                                     >
                                         <img className='w-5 h-5' src="/assets/bluesky_icon.png" alt="Bluesky"></img>
                                         Bluesky
@@ -52,7 +52,7 @@ const Partnership = () => (
                                         href="https://instagram.com/creatorskingdom"
                                         target="_blank"
                                         rel="noopener"
-                                        className="px-4 py-2 bg-[#E1306C] text-white rounded-lg font-medium hover:bg-[#c2255b] transition-colors flex items-center gap-2"
+                                        className="px-2 py-2 bg-[#E1306C] text-white rounded-lg font-medium hover:bg-[#c2255b] transition-colors flex items-center gap-2"
                                     >
                                         <img className="w-5 h-5" src="/assets/instagram_icon.png" alt="Instagram"></img>
                                         Instagram
