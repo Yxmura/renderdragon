@@ -64,7 +64,7 @@ const SERVERS_DATA: DiscordServer[] = [
     description: "Our official Discord server where you can suggest assets, contact us for questions or suggestions and more. We live by our community and we'd love to hear your feedback!", 
     members: 100,
     inviteUrl: 'https://discord.gg/d9zxkkdBWV',
-    image: 'https://cdn.discordapp.com/icons/1317605088558190602/7217661b197ef804501ddbe6eb749cd0.webp?size=100&quality=lossless',
+    image: '/renderdragon.png',
     categories: ['editing', 'design']
   }
 ];
