@@ -45,7 +45,7 @@ const SERVERS_DATA: DiscordServer[] = [
     name: 'Thumbnailers',
     description: "Thumbnailers is a thriving community for Minecraft thumbnail designers. Whether you're a beginner or a pro, you'll find resources, feedback, and help to improve your skills and showcase your work. Join us to elevate your designs!",
     members: 2500,
-    inviteUrl: 'https://discord.gg/thumbnail',
+    inviteUrl: 'https://discord.gg/z2sJye3w',
     image: 'https://cdn.discordapp.com/icons/1102968474894082081/1f868f37cb129b50e27497984a7b020d.png?size=4096',
     categories: ['design']
   },
