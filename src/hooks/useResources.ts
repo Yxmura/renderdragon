@@ -123,7 +123,7 @@ export const useResources = () => {
 
   // Check if we have resources in the current selected category
   const hasCategoryResources = useMemo(() => {
-    if (!selectedCategory) return true;
+    if (!selectedCategory || selectedCategory === 'favorites') return true;
     return resources.some(resource => resource.category === selectedCategory);
   }, [resources, selectedCategory]);
 
@@ -139,7 +139,8 @@ export const useResources = () => {
         categoryNorm.includes(normalizedQuery) ||
         subcategoryNorm.includes(normalizedQuery);
       
-      const matchesCategory = !selectedCategory || resource.category === selectedCategory;
+      // Don't apply category filter for favorites
+      const matchesCategory = selectedCategory === 'favorites' || !selectedCategory || resource.category === selectedCategory;
       
       const matchesSubcategory = 
         !selectedSubcategory || 

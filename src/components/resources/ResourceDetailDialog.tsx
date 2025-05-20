@@ -35,6 +35,7 @@ interface ResourceDetailDialogProps {
   setLoadedFonts: (fonts: string[]) => void;
   filteredResources: Resource[]; // Add this prop
   onSelectResource: (resource: Resource) => void; // Add this prop
+  isFavoritesView?: boolean; // Added prop to indicate favorites view
 }
 
 const ResourceDetailDialog = ({ 
@@ -45,14 +46,15 @@ const ResourceDetailDialog = ({
   loadedFonts,
   setLoadedFonts,
   filteredResources,
-  onSelectResource
+  onSelectResource,
+  isFavoritesView = false // Added prop to indicate favorites view
 }: ResourceDetailDialogProps) => {
   const [copied, setCopied] = useState(false);
   const isMobile = useIsMobile();
 
   const currentIndex = resource ? filteredResources.findIndex(r => r.id === resource.id) : -1;
-  const hasPrevious = currentIndex > 0;
-  const hasNext = currentIndex < filteredResources.length - 1;
+  const hasPrevious = !isFavoritesView && currentIndex > 0;
+  const hasNext = !isFavoritesView && currentIndex < filteredResources.length - 1;
 
   const handlePrevious = useCallback(() => {
     if (hasPrevious && resource) {
@@ -68,7 +70,7 @@ const ResourceDetailDialog = ({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!resource) return;
+      if (!resource || isFavoritesView) return;
       
       if (e.key === 'ArrowLeft' && hasPrevious) {
         handlePrevious();
@@ -79,7 +81,7 @@ const ResourceDetailDialog = ({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [resource, hasPrevious, hasNext, handlePrevious, handleNext]);
+  }, [resource, hasPrevious, hasNext, handlePrevious, handleNext, isFavoritesView]);
 
   // Update the font URL logic to append '__{creditName}' for resources with credit
   useEffect(() => {
@@ -179,21 +181,23 @@ const ResourceDetailDialog = ({
             {resource.title}
           </DialogTitle>
           <DialogDescription className="flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className={getCategoryColor(resource.category || '')}
-            >
-              {getCategoryIcon(resource.category || '')}
-              <span className="ml-1 capitalize">{resource.category}</span>
-              {resource.subcategory && (
-                <span className="ml-1">({resource.subcategory})</span>
-              )}
-            </Badge>
-            
-            <Badge variant="outline" className="bg-blue-500/10 text-blue-500">
-              <Download className="h-3 w-3 mr-1" />
-              {downloadCount || 0} downloads
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge
+                variant="outline"
+                className={getCategoryColor(resource.category || '')}
+              >
+                {getCategoryIcon(resource.category || '')}
+                <span className="ml-1 capitalize">{resource.category}</span>
+                {resource.subcategory && (
+                  <span className="ml-1">({resource.subcategory})</span>
+                )}
+              </Badge>
+              
+              <Badge variant="outline" className="bg-blue-500/10 text-blue-500">
+                <Download className="h-3 w-3 mr-1" />
+                {downloadCount || 0} downloads
+              </Badge>
+            </div>
           </DialogDescription>
         </DialogHeader>
 
@@ -246,37 +250,39 @@ const ResourceDetailDialog = ({
           
           <ResourcePreview resource={resource} />
           
-          <div className="flex items-center gap-2 justify-between">
-            <Button
-              variant="outline"
-              className={`${!hasPrevious ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'} transition-opacity`}
-              onClick={handlePrevious}
-              disabled={!hasPrevious}
-            >
-              <ChevronLeft className="h-4 w-4 md:mr-2" />
-              <span className="hidden md:inline">Previous</span>
-              <span className="sr-only">Previous resource</span>
-            </Button>
+          {!isFavoritesView && (
+            <div className="flex items-center gap-2 justify-between">
+              <Button
+                variant="outline"
+                className={`${!hasPrevious ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'} transition-opacity`}
+                onClick={handlePrevious}
+                disabled={!hasPrevious}
+              >
+                <ChevronLeft className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Previous</span>
+                <span className="sr-only">Previous resource</span>
+              </Button>
 
-            <Button
-              onClick={() => onDownload(resource)}
-              className="pixel-btn-primary flex items-center justify-center gap-2"
-            >
-              <Download className="h-5 w-5" />
-              <span>Download Resource</span>
-            </Button>
+              <Button
+                onClick={() => onDownload(resource)}
+                className="pixel-btn-primary flex items-center justify-center gap-2"
+              >
+                <Download className="h-5 w-5" />
+                <span>Download Resource</span>
+              </Button>
 
-            <Button
-              variant="outline"
-              className={`${!hasNext ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'} transition-opacity`}
-              onClick={handleNext}
-              disabled={!hasNext}
-            >
-              <span className="hidden md:inline">Next</span>
-              <ChevronRight className="h-4 w-4 md:ml-2" />
-              <span className="sr-only">Next resource</span>
-            </Button>
-          </div>
+              <Button
+                variant="outline"
+                className={`${!hasNext ? 'opacity-0 pointer-events-none' : 'opacity-70 hover:opacity-100'} transition-opacity`}
+                onClick={handleNext}
+                disabled={!hasNext}
+              >
+                <span className="hidden md:inline">Next</span>
+                <ChevronRight className="h-4 w-4 md:ml-2" />
+                <span className="sr-only">Next resource</span>
+              </Button>
+            </div>
+          )}
 
           <p className="text-xs text-center text-muted-foreground">
             By downloading, you agree to our terms of use. Crediting

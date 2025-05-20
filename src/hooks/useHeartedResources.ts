@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 export const useHeartedResources = () => {
-  const [heartedResources, setHeartedResources] = useState<number[]>([]);
+  const [heartedResources, setHeartedResources] = useState<string[]>([]);
 
   useEffect(() => {
     // Load hearted resources from localStorage on mount
@@ -11,7 +11,7 @@ export const useHeartedResources = () => {
     }
   }, []);
 
-  const toggleHeart = (resourceId: number) => {
+  const toggleHeart = (resourceId: string) => {
     setHeartedResources(prev => {
       const newHearted = prev.includes(resourceId)
         ? prev.filter(id => id !== resourceId)
@@ -23,7 +23,7 @@ export const useHeartedResources = () => {
     });
   };
 
-  const isHearted = (resourceId: number) => {
+  const isHearted = (resourceId: string) => {
     return heartedResources.includes(resourceId);
   };
 
@@ -32,4 +32,4 @@ export const useHeartedResources = () => {
     toggleHeart,
     isHearted
   };
-}; 
+};

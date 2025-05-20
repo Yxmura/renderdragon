@@ -9,7 +9,8 @@ import {
   Video, 
   FileText,
   X,
-  Search
+  Search,
+  Heart
 } from 'lucide-react';
 import {
   Select,
@@ -176,6 +177,14 @@ const MobileFilters = ({
               <FileText className="h-4 w-4 mr-2" />
               Presets
             </Button>
+            <Button
+              variant={selectedCategory === 'favorites' ? 'default' : 'outline'}
+              onClick={() => onCategoryChange('favorites')}
+              className="justify-start pixel-corners"
+            >
+              <Heart className="h-4 w-4 mr-2" />
+              Favorites
+            </Button>
             {selectedCategory === 'presets' && (
               <div className="mt-2 ml-2">
                 <Select
@@ -268,6 +277,15 @@ const DesktopFilters = ({
         className="h-10 pixel-corners"
       >
         Presets
+      </Button>
+      <Button
+        variant={selectedCategory === 'favorites' ? 'default' : 'outline'}
+        size="sm"
+        onClick={() => onCategoryChange('favorites')}
+        className="h-10 pixel-corners bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white hover:opacity-90"
+      >
+        <Heart className="h-4 w-4 mr-2" />
+        Favorites
       </Button>
       {selectedCategory === 'presets' && (
         <Select

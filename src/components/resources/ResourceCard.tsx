@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import {
   Music,
@@ -11,19 +12,24 @@ import {
 } from 'lucide-react';
 import { Resource } from '@/types/resources';
 import { cn } from '@/lib/utils';
-import { useHeartedResources } from '@/hooks/useHeartedResources';
 
 interface ResourceCardProps {
   resource: Resource;
   downloadCount: number;
   onClick: (resource: Resource) => void;
+  onFavoriteToggle?: () => void;
+  isFavorited?: boolean;
 }
 
-const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) => {
+const ResourceCard = ({ resource, downloadCount, onClick, onFavoriteToggle, isFavorited }: ResourceCardProps) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const { isHearted, toggleHeart } = useHeartedResources();
 
   const getPreviewUrl = (resource: Resource) => {
+    if (!resource.title) {
+      console.error('Resource is missing a title:', resource);
+      return '';
+    }
+
     const titleLowered = resource.title.toLowerCase().replace(/ /g, '%20');
     const basePath = 'https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main';
     const creditPart = resource.credit ? `__${resource.credit.replace(/ /g, '_')}` : '';
@@ -127,7 +133,10 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
   return (
     <div
       onClick={() => onClick(resource)}
-      className="pixel-card group cursor-pointer hover:border-primary transition-all duration-300 h-full"
+      className={cn(
+        "pixel-card group cursor-pointer hover:border-primary transition-all duration-300 h-full",
+        isFavorited && "border-red-500/50"
+      )}
     >
       {renderPreview()}
 
@@ -141,20 +150,23 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             <span className="ml-1">({resource.subcategory})</span>
           )}
         </div>
-        <button
+        <motion.button
           onClick={(e) => {
             e.stopPropagation();
-            toggleHeart(resource.id);
+            if (onFavoriteToggle) onFavoriteToggle();
           }}
           className={cn(
             "p-1 rounded-full transition-colors",
-            isHearted(resource.id)
+            isFavorited
               ? "text-red-500 hover:text-red-600"
               : "text-gray-400 hover:text-red-500"
           )}
+          whileTap={{ scale: 0.9 }}
+          animate={isFavorited ? { scale: [1, 1.2, 1] } : undefined}
+          transition={{ duration: 0.2 }}
         >
-          <Heart className="h-5 w-5" fill={isHearted(resource.id) ? "currentColor" : "none"} />
-        </button>
+          <Heart className="h-5 w-5" fill={isFavorited ? "currentColor" : "none"} />
+        </motion.button>
       </div>
 
       <h3 className="text-xl font-vt323 mb-2 group-hover:text-primary transition-colors">
