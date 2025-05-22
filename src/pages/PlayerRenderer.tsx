@@ -8,6 +8,7 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import DonateButton from '@/components/DonateButton';
+import confetti from 'canvas-confetti';
 
 interface PlayerData {
   id: string;
@@ -20,26 +21,67 @@ const PlayerRenderer = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [technobladeMessage, setTechnobladeMessage] = useState<string | null>(null); // New state for Technoblade message
 
   const fetchPlayerData = async (username: string) => {
     setIsFetching(true);
     setError(null);
+    setTechnobladeMessage(null); // Clear Technoblade message on new search
+
+    // Easter egg for "technoblade"
+    if (username.toLowerCase() === 'technoblade') {
+      setTechnobladeMessage('Technoblade never dies!'); // Set Technoblade message
+      setPlayerData({
+        id: 'b876ec32e396476ba1158438d83c67d4', // Placeholder for Technoblade's skin ID
+        username: 'Technoblade',
+      });
+
+      // Trigger custom particle explosion effect
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: ['#FF0000', '#FFC0CB', '#A020F0'], // Red, Pink, Purple colors
+        shapes: ['circle', 'square'],
+        scalar: 0.9,
+        disableForReducedMotion: true
+      });
+
+      // Show toast notification
+      toast.success('Technoblade never dies!');
+
+      setIsFetching(false);
+      return;
+    }
+
+    // Easter egg for "jeb_"
+    if (username.toLowerCase() === 'jeb_') {
+      document.body.style.transform = 'rotate(180deg)';
+      setTimeout(() => {
+        document.body.style.transform = '';
+      }, 5000);
+      setPlayerData({
+        id: '853c80ef3c3749fdaa49938b674adae6', // Placeholder for Jeb's skin ID
+        username: 'jeb_',
+      });
+    }
+
     try {
       const response = await fetch(`https://playerdb.co/api/player/minecraft/${username}`);
       const data = await response.json();
-      
-      if (!data.success || data.code !== "player.found") {
-        setError("Player not found. Please check the username and try again.");
+
+      if (!data.success || data.code !== 'player.found') {
+        setError('Player not found. Please check the username and try again.');
         setPlayerData(null);
         return;
       }
 
       setPlayerData({
         id: data.data.player.raw_id,
-        username: data.data.player.username
+        username: data.data.player.username,
       });
     } catch (error) {
-      setError("Failed to fetch player data. Please try again later.");
+      setError('Failed to fetch player data. Please try again later.');
       setPlayerData(null);
     } finally {
       setIsFetching(false);
@@ -57,7 +99,7 @@ const PlayerRenderer = () => {
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to download image');
-      
+
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -148,7 +190,7 @@ const PlayerRenderer = () => {
                   className="pixel-corners"
                   disabled={isFetching}
                 />
-                <Button 
+                <Button
                   type="submit"
                   variant="default"
                   className="pixel-corners"
@@ -160,7 +202,7 @@ const PlayerRenderer = () => {
                     'Generate'
                   )}
                 </Button>
-                <Button 
+                <Button
                   type="button"
                   variant="outline"
                   className="pixel-corners"
@@ -168,6 +210,7 @@ const PlayerRenderer = () => {
                     setUsername('');
                     setPlayerData(null);
                     setError(null);
+                    setTechnobladeMessage(null); // Clear Technoblade message on reset
                   }}
                   disabled={isFetching}
                 >
@@ -176,7 +219,8 @@ const PlayerRenderer = () => {
               </form>
             </motion.div>
 
-            {error && (
+            {/* Standard Error Message */}
+            {error && !technobladeMessage && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -185,6 +229,19 @@ const PlayerRenderer = () => {
                 {error}
               </motion.div>
             )}
+
+            {/* Technoblade Message */}
+            {technobladeMessage && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
+                className="bg-pink-600 text-white px-4 py-3 rounded-md mb-8 text-center font-bold text-xl pixel-corners" // Added pixel-corners class
+              >
+                {technobladeMessage}
+              </motion.div>
+            )}
+
 
             {playerData && (
               <motion.div
@@ -197,15 +254,15 @@ const PlayerRenderer = () => {
                   <div className="pixel-card flex flex-col">
                     <h1 className='text-center'>Body</h1>
                     <div className="aspect-square relative">
-                      <img 
+                      <img
                         src={renderUrls.mineatar.full(playerData.id)}
                         alt={`${playerData.username}'s full body`}
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="p-4 flex gap-2 mt-auto">
-                      <Button 
-                        variant="default" 
+                      <Button
+                        variant="default"
                         className="flex-1"
                         onClick={() => handleDownload(renderUrls.mineatar.full(playerData.id), 'body')}
                         disabled={isLoading}
@@ -213,7 +270,7 @@ const PlayerRenderer = () => {
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
                         Save
                       </Button>
-                      <Button 
+                      <Button
                         variant="outline"
                         onClick={() => copyUrl(renderUrls.mineatar.full(playerData.id))}
                       >
@@ -225,14 +282,14 @@ const PlayerRenderer = () => {
                   <div className="pixel-card flex flex-col">
                     <h1 className='text-center'>Head</h1>
                     <div className="aspect-square relative">
-                      <img 
+                      <img
                         src={renderUrls.nmsr.face(playerData.id)}
                         alt={`${playerData.username}'s head`}
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="p-4 flex gap-2 mt-auto">
-                      <Button 
+                      <Button
                         variant="default"
                         className="flex-1"
                         onClick={() => handleDownload(renderUrls.nmsr.face(playerData.id), 'head')}
@@ -241,7 +298,7 @@ const PlayerRenderer = () => {
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
                         Save
                       </Button>
-                      <Button 
+                      <Button
                         variant="outline"
                         onClick={() => copyUrl(renderUrls.nmsr.face(playerData.id))}
                       >
@@ -254,14 +311,14 @@ const PlayerRenderer = () => {
                   <div className="pixel-card flex flex-col">
                     <h1 className='text-center'>Bust (isometric)</h1>
                     <div className="aspect-square relative">
-                      <img 
+                      <img
                         src={renderUrls.nmsr.bust(playerData.id)}
                         alt={`${playerData.username}'s full render`}
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="p-4 flex gap-2 mt-auto">
-                      <Button 
+                      <Button
                         variant="default"
                         className="flex-1"
                         onClick={() => handleDownload(renderUrls.nmsr.bust(playerData.id), 'render')}
@@ -270,7 +327,7 @@ const PlayerRenderer = () => {
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
                         Save
                       </Button>
-                      <Button 
+                      <Button
                         variant="outline"
                         onClick={() => copyUrl(renderUrls.nmsr.bust(playerData.id))}
                       >
@@ -283,14 +340,14 @@ const PlayerRenderer = () => {
                   <div className="pixel-card flex flex-col">
                     <h2 className='text-center'>Full Render (isometric)</h2>
                     <div className="aspect-square relative">
-                      <img 
+                      <img
                         src={renderUrls.nmsr.fullbody(playerData.id)}
                         alt={`${playerData.username}'s full body view`}
                         className="w-full h-full object-contain"
                       />
                     </div>
                     <div className="p-4 flex gap-2 mt-auto">
-                      <Button 
+                      <Button
                         variant="default"
                         className="flex-1"
                         onClick={() => handleDownload(renderUrls.nmsr.fullbody(playerData.id), 'fullbody')}
@@ -299,7 +356,7 @@ const PlayerRenderer = () => {
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
                         Save
                       </Button>
-                      <Button 
+                      <Button
                         variant="outline"
                         onClick={() => copyUrl(renderUrls.nmsr.fullbody(playerData.id))}
                       >

@@ -187,7 +187,7 @@ const Footer = () => {
         
         <div className="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
-            <Link to="/faq" className="text-white/70 hover:text-white transition-colors text-sm relative z-50">
+            <Link to="/faq" className="text-white/70 hover:text-white transition-colors text-sm relative">
               FAQ
             </Link>
             
