@@ -11,9 +11,15 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
     
     const titleLowered = resource.title
       .toLowerCase()
-      .replace(/ /g, '%20');
+      .replace(/ /g, '');
     
-    // Use the same URL structure for all resource types
+    // Special handling for preset previews
+    if (resource.category === 'presets') {
+      const prefix = resource.subcategory === 'adobe' ? 'a' : 'd';
+      return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/presets/PREVIEWS/${prefix}${titleLowered}.mp4`;
+    }
+    
+    // Use the same URL structure for all other resource types
     if (resource.credit) {
       return `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${resource.credit}.${resource.filetype}`;
     }
@@ -73,6 +79,17 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
           Font: {resource.title}
         </div>
       </div>
+    );
+  }
+
+  if (resource.category === 'presets') {
+    return (
+      <video
+        src={downloadURL}
+        controls
+        className="w-full rounded-md aspect-video"
+        onError={() => console.log('Preview not available for this preset')}
+      />
     );
   }
 
