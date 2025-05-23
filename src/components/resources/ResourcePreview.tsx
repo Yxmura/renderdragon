@@ -11,7 +11,7 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
     
     const titleLowered = resource.title
       .toLowerCase()
-      .replace(/ /g, '');
+      .replace(/ /g, '%20');
     
     // Special handling for preset previews
     if (resource.category === 'presets') {
