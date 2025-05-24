@@ -103,7 +103,7 @@ const TextGenerator = () => {
   return (
     <>
       <Helmet>
-        <title>Minecraft Text Generator - Creator on Wheels</title>
+        <title>Minecraft Text Generator</title>
         <meta name="description" content="Generate custom Minecraft text with various styles and effects" />
       </Helmet>
 
