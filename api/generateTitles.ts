@@ -1,6 +1,6 @@
 import OpenAI from "openai";
-import { type NextApiRequest, type NextApiResponse } from "next"; // Use Next.js types
-import { type ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import type { NextApiRequest, NextApiResponse } from "next";
+import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 interface GenerateTitlesRequestBody {
   description: string;
@@ -20,12 +20,12 @@ interface TitlesResponse {
   }>;
 }
 
-// Custom error interface for OpenAI/OpenRouter errors to facilitate type narrowing
+// Custom error interface for OpenAI/OpenRouter errors
 interface OpenAIClientError extends Error {
   status?: number;
   response?: {
     status: number;
-    data: unknown; // Use unknown for potentially diverse error data
+    data: unknown;
     headers?: Record<string, string>;
   };
   error?: unknown;
@@ -50,6 +50,7 @@ const openai = new OpenAI({
   },
 });
 
+// Using ES module export syntax
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<TitlesResponse | { message: string; error?: string; details?: unknown }>
