@@ -47,16 +47,17 @@ export default async function handler(req, res) {
   }
 
   try {
-    const prompt = `Generate 3 YouTube video titles for a video described as "${description}". Inspo examples like "I Survived 100 Days in HARDCORE Minecraft", "Building the ULTIMATE Secret Base", "Exploring The DEEPEST Cave in Minecraft", "The Rarest Item I've Ever Found!", "My First Time Beating The Ender Dragon". The creativity level is ${creativity} (0-100, where 0 is factual and 100 is highly creative). Each title should have a 'type' (creative, descriptive, emotional, or trending). Return only a JSON array of objects in the format: [{title: "Title text", type: "creative | descriptive | emotional | trending"}]. Do not include any other text or formatting outside the JSON.`;
+    const prompt = `Generate 3 Minecraft YouTube titles for: "${description}". Examples: "I Survived 100 Days in HARDCORE", "The ULTIMATE Secret Base", "The Rarest Item Ever!". Creativity: ${creativity}/100. Format: JSON array [{title, type}]. Types: creative|descriptive|emotional|trending. Around 60-70 chars including spaces`;
+    
     const temperatureValue = Math.max(0.1, Math.min(1, creativity / 100));
 
     const completion = await withTimeout(
       openai.chat.completions.create({
-        model: "openai/gpt-3.5-turbo",
+        model: "google/gemini-2.5-flash-preview-05-20",
         messages: [
           {
             role: "system",
-            content: "You are a YouTube title generation expert. Always respond with valid JSON only.",
+            content: "You are a YouTube title generation expert. Respond with a JSON array containing exactly 3 objects with 'title' and 'type' properties.",
           },
           {
             role: "user",
@@ -65,16 +66,29 @@ export default async function handler(req, res) {
         ],
         temperature: temperatureValue,
         max_tokens: 200,
-        response_format: { type: "json_object" },
       })
     );
 
     const text = completion.choices[0].message.content;
     if (!text) {
-      throw new Error("AI returned empty or invalid response");
+      throw new Error("AI returned empty response");
     }
 
-    const titles = JSON.parse(text).map((title, i) => ({
+    // Clean up the response text and ensure it's valid JSON
+    const cleanedText = text.replace(/```json\s*|\s*```/g, '').trim();
+    let parsedData;
+    try {
+      parsedData = JSON.parse(cleanedText);
+      if (!Array.isArray(parsedData)) {
+        // If we got an object with a titles array
+        parsedData = parsedData.titles || [];
+      }
+    } catch (e) {
+      console.error("JSON parsing error:", e);
+      throw new Error("Failed to parse AI response as JSON");
+    }
+
+    const titles = parsedData.map((title, i) => ({
       id: String(i + 1),
       title: title.title,
       type: title.type,
@@ -83,7 +97,8 @@ export default async function handler(req, res) {
     return res.status(200).json({ titles });
   } catch (error) {
     console.error("Generation error:", error);
-
+    console.error("Full error object:", JSON.stringify(error, null, 2));
+    
     if (error.message === "Request timed out") {
       return res.status(504).json({
         message: "Timeout exceeded, please try again later.",
@@ -91,11 +106,10 @@ export default async function handler(req, res) {
       });
     }
 
-    const errorMessage =
-      error.message || "Failed to generate titles due to an internal error";
     return res.status(500).json({
-      message: errorMessage,
-      error: error.message,
+      message: "Failed to generate titles",
+      error: error.message || "Unknown error",
+      details: error.response?.data || error.cause || null,
     });
   }
 }
