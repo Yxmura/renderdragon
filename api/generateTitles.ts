@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import OpenAI from "openai";
 
 // Increased timeout to 60 seconds for slower connections
 const withTimeout = <T>(promise: Promise<T>, timeout = 60000): Promise<T> => {
@@ -10,17 +10,22 @@ const withTimeout = <T>(promise: Promise<T>, timeout = 60000): Promise<T> => {
   ]);
 };
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+const openai = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
+  defaultHeaders: {
+    "HTTP-Referer": "https://renderdragon.org",
+    "X-Title": "Renderdragon",
+  },
+});
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
 
-  if (!process.env.GEMINI_API_KEY) {
-    console.error("GEMINI_API_KEY is not set");
+  if (!process.env.OPENROUTER_API_KEY) {
+    console.error("OPENROUTER_API_KEY is not set");
     return res.status(500).json({ message: "Server misconfiguration: missing API key" });
   }
 
@@ -42,54 +47,34 @@ export default async function handler(req, res) {
   }
 
   try {
-    const prompt = `Generate 3 YouTube video titles for a video described as "${description}". Consider examples of past successful Minecraft titles like "I Survived 100 Days in HARDCORE Minecraft", "Building the ULTIMATE Secret Base", "Exploring The DEEPEST Cave in Minecraft", "The Rarest Item I've Ever Found!", "My First Time Beating The Ender Dragon". The creativity level is ${creativity} (0-100, where 0 is factual and 100 is highly creative). Each title should have a 'type' (creative, descriptive, emotional, or trending). Return only a JSON array of objects in the format: [{title: "Title text", type: "creative | descriptive | emotional | trending"}]. Do not include any other text or formatting outside the JSON.`;
+    const prompt = `Generate 3 YouTube video titles for a video described as "${description}". Inspo examples like "I Survived 100 Days in HARDCORE Minecraft", "Building the ULTIMATE Secret Base", "Exploring The DEEPEST Cave in Minecraft", "The Rarest Item I've Ever Found!", "My First Time Beating The Ender Dragon". The creativity level is ${creativity} (0-100, where 0 is factual and 100 is highly creative). Each title should have a 'type' (creative, descriptive, emotional, or trending). Return only a JSON array of objects in the format: [{title: "Title text", type: "creative | descriptive | emotional | trending"}]. Do not include any other text or formatting outside the JSON.`;
     const temperatureValue = Math.max(0.1, Math.min(1, creativity / 100));
 
-    const response = await withTimeout(
-      ai.models.generateContent({
-        model: "gemini-2.5-flash-preview-04-17",
-        config: {
-          temperature: temperatureValue,
-          topP: temperatureValue,
-          maxOutputTokens: 200,
-
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.OBJECT,
-            properties: {
-              titles: {
-                type: Type.ARRAY,
-                items: {
-                  type: Type.OBJECT,
-                  properties: {
-                    title: {
-                      type: Type.STRING,
-                    },
-                    type: {
-                      type: Type.STRING,
-                    },
-                  },
-                  propertyOrdering: ["title", "type"],
-                },
-              },
-            },
+    const completion = await withTimeout(
+      openai.chat.completions.create({
+        model: "openai/gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "You are a YouTube title generation expert. Always respond with valid JSON only.",
           },
-        },
-        contents: [prompt],
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        temperature: temperatureValue,
+        max_tokens: 200,
+        response_format: { type: "json_object" },
       })
     );
 
-    const text = response.text;
+    const text = completion.choices[0].message.content;
     if (!text) {
       throw new Error("AI returned empty or invalid response");
     }
 
-    const titles = JSON.parse(
-      text
-        .replace(/```json\s*\n/g, "")
-        .replace(/```/g, "")
-        .trim()
-    ).map((title, i) => ({
+    const titles = JSON.parse(text).map((title, i) => ({
       id: String(i + 1),
       title: title.title,
       type: title.type,

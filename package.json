@@ -62,7 +62,7 @@
     "motion": "^12.10.5",
     "next": "^15.3.2",
     "next-themes": "^0.3.0",
-    "openai": "^4.98.0",
+    "openai": "^4.103.0",
     "pixelarticons": "^1.8.1",
     "react": "^18.3.1",
     "react-audio-player": "^0.17.0",
