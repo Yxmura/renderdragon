@@ -316,7 +316,7 @@ const AiTitleHelper = () => {
                                             {titleSuggestions.map((title) => (
                                                 <div
                                                     key={title.id}
-                                                    onClick={() => handleTitleSelect(title)}
+                                                    onClick={() => handleCopyTitle}
                                                     className={`pixel-card cursor-pointer transition-all ${selectedTitle?.id === title.id
                                                         ? 'border-primary'
                                                         : 'hover:border-accent'
@@ -382,36 +382,6 @@ const AiTitleHelper = () => {
                                     )}
                                 </Card>
 
-                                {selectedTitle && (
-                                    <Card className="pixel-card space-y-4">
-                                        <h2 className="text-xl font-vt323 mb-2">
-                                            Your Selected Title
-                                        </h2>
-
-                                        <div className="bg-accent/30 p-4 rounded-md">
-                                            <p className="font-medium text-lg">{selectedTitle.title}</p>
-                                        </div>
-
-                                        <div className="flex justify-between">
-                                            <div className="space-y-1">
-                                                <div className="flex items-center gap-2">
-                                                    {getTitleTypeBadge(selectedTitle.type)}
-                                                    <span className="text-xs text-muted-foreground">
-                                                        {selectedTitle.title.length} characters
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <Button
-                                                onClick={handleCopyTitle}
-                                                className="pixel-corners"
-                                            >
-                                                <CopyIcon className="h-4 w-4 mr-2" />
-                                                <span>Copy Title</span>
-                                            </Button>
-                                        </div>
-                                    </Card>
-                                )}
                             </div>
                         </div>
                     </div>
