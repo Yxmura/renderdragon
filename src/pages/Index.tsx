@@ -57,7 +57,7 @@ const Index = () => {
         <meta property="og:url" content="https://renderdragon.org" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Renderdragon - Tools & Resources for Minecraft Content Creators" />
-        <meta name="twitter:image" content="https://renderdragon.org/ogimg/index.png" />
+        <meta name="twitter:image" content="https://renderdragon.org/ogimg.png" />
       </Helmet>
       <Navbar />
       <main className="flex-grow">
