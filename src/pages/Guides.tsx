@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import DonateButton from '@/components/DonateButton';
 import { Helmet } from 'react-helmet';
+import ReactMarkdown from 'react-markdown';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import confetti from 'canvas-confetti';
 
 interface Guide {
   id: number;
@@ -12,7 +15,7 @@ interface Guide {
   description: string;
   category: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
-  pdfUrl?: string;
+  markdownUrl: string;
 }
 
 const Guides: Guide[] = [
@@ -22,7 +25,7 @@ const Guides: Guide[] = [
     description: 'Learn how to write ideal scripts including hooks, retains, informs, satisfies, and finally persuades the audience towards an action.',
     category: 'scriptwriting',
     difficulty: 'advanced',
-    pdfUrl: '/guides/scriptwriting.pdf'
+    markdownUrl: '/guides/scriptwriting.md'
   },
   {
     id: 2,
@@ -30,7 +33,7 @@ const Guides: Guide[] = [
     description: 'Learn how to use AI tools to enhance your content creation process for free.',
     category: 'artificial intelligence',
     difficulty: 'intermediate',
-    pdfUrl: '/guides/AI.pdf'
+    markdownUrl: '/guides/AI.md'
   },
   {
     id: 3,
@@ -38,7 +41,7 @@ const Guides: Guide[] = [
     description: 'Learn how to properly ask for help and get people to notice you.',
     category: 'communication',
     difficulty: 'beginner',
-    pdfUrl: '/guides/questions.pdf'
+    markdownUrl: '/guides/questions.md'
   },
   {
     id: 4,
@@ -46,29 +49,55 @@ const Guides: Guide[] = [
     description: 'Learn how copyright works and how it affects your content creation process.',
     category: 'copyright',
     difficulty: 'intermediate',
-    pdfUrl: '/guides/copyright.pdf'
+    markdownUrl: '/guides/copyright.md'
   },
   {
-    id: 4,
+    id: 5,
     title: "Things you should ask yourself when Creating Content",
     description: 'Learn how to ask yourself the right questions to improve your content creation process.',
     category: 'content creation',
     difficulty: 'beginner',
-    pdfUrl: '/guides/thingstoask.pdf'
+    markdownUrl: '/guides/thingstoask.md'
+  },
+  {
+    id: 5,
+    title: "How to find your voice",
+    description: 'Learn how to find your voice and style in content creation.',
+    category: 'content creation',
+    difficulty: 'intermediate',
+    markdownUrl: '/guides/voice.md'
   },
 ];
 
 const GuidesPage = () => {
   const [guides, setGuides] = useState<Guide[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
+  const [markdownContent, setMarkdownContent] = useState<string>('');
 
   useEffect(() => {
     setGuides(Guides);
     setIsLoading(false);
   }, []);
 
-  const handleOpenPdf = (pdfUrl: string) => {
-    window.open(pdfUrl, '_blank');
+  const handleOpenGuide = async (guide: Guide) => {
+    try {
+      const response = await fetch(guide.markdownUrl);
+      const content = await response.text();
+      setMarkdownContent(content);
+      setSelectedGuide(guide);
+    } catch (error) {
+      console.error('Error loading markdown:', error);
+    }
+  };
+
+  const handleCloseGuide = () => {
+    setSelectedGuide(null);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -124,7 +153,7 @@ const GuidesPage = () => {
                   <Card 
                     key={guide.id} 
                     className="pixel-corners border border-border hover:border-primary transition-all cursor-pointer"
-                    onClick={() => handleOpenPdf(guide.pdfUrl || '')}
+                    onClick={() => handleOpenGuide(guide)}
                   >
                     <CardHeader>
                       <div className="flex justify-between items-start mb-2">
@@ -143,7 +172,7 @@ const GuidesPage = () => {
                     <CardContent>
                       <div className="flex items-center text-muted-foreground text-sm">
                         <BookOpen className="h-4 w-4 mr-2" />
-                        <span>Open PDF</span>
+                        <span>Open Guide</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -153,6 +182,27 @@ const GuidesPage = () => {
           </div>
         </div>
       </main>
+
+      <Dialog open={!!selectedGuide} onOpenChange={() => handleCloseGuide()}>
+        <DialogContent className="max-w-4xl h-[80vh] overflow-y-auto">
+          <div className="flex justify-between items-center sticky top-0 bg-background pt-4 pb-2">
+            <h2 className="text-2xl font-vt323">{selectedGuide?.title}</h2>
+            <button onClick={handleCloseGuide} className="text-muted-foreground hover:text-foreground">
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="prose prose-invert max-w-none">
+            <ReactMarkdown
+              components={{
+                ol: ({children}) => <ol className="list-decimal pl-6 space-y-1">{children}</ol>,
+                li: ({children}) => <li className="marker:text-muted-foreground">{children}</li>
+              }}
+            >
+              {markdownContent}
+            </ReactMarkdown>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
       <DonateButton />
