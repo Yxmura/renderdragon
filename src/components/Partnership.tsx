@@ -78,7 +78,7 @@ const Partnership = () => (
                                     Proger's Kitchen
                                 </span>
                                 <p className="text-gray-400 text-sm md:text-base max-w-md">
-                                    Proger's Kitchen is a vibrant community where creativity and collaboration thrive. It’s a place for creators to share their ideas and learn from each other to bring their visions to life.
+                                    Proger's Kitchen is a vibrant community where creativity and collaboration thrive. It's a place for creators to give feedback, get feedback, share assets, and help each other grow more and more.
                                 </p>
                                 <div className="flex gap-4 justify-center mt-4 pt-3">
                                     <a

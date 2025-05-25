@@ -75,6 +75,14 @@ const teamMembers: TeamMember[] = [
       discord: 'https://discordapp.com/users/987323487343493191'
     }
   },
+  {
+    name :'VOVOplay',
+    role: 'Animator',
+    avatar: '/assets/VOVOplay.png',
+    socials: {
+      discord: 'https://discordapp.com/users/758322333437394944'
+    }
+  }
 ];
 
 const Contact = () => {
