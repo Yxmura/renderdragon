@@ -1,17 +1,21 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const openai = new OpenAI({
-  baseURL: "https://openrouter.ai/api/v1",
-  apiKey: process.env.OPENROUTER_API_KEY,
-  defaultHeaders: {
-    "HTTP-Referer": "https://renderdragon.org",
-    "X-Title": "Renderdragon",
-  },
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const hcaptchaSecretKey = process.env.HCAPTCHA_SECRET_KEY;
 
 export const config = {
   runtime: 'edge',
 };
+
+async function verifyHCaptcha(token) {
+  const response = await fetch('https://api.hcaptcha.com/siteverify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `secret=${hcaptchaSecretKey}&response=${token}`
+  });
+  const data = await response.json();
+  return data.success;
+}
 
 export default async function handler(req) {
   if (req.method !== "POST") {
@@ -21,9 +25,9 @@ export default async function handler(req) {
     });
   }
 
-  if (!process.env.OPENROUTER_API_KEY) {
-    console.error("OPENROUTER_API_KEY is not set");
-    return new Response(JSON.stringify({ message: "Server misconfiguration: missing API key" }), {
+  if (!process.env.GEMINI_API_KEY || !process.env.HCAPTCHA_SECRET_KEY) {
+    console.error("Missing required environment variables");
+    return new Response(JSON.stringify({ message: "Server misconfiguration" }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' }
     });
@@ -31,7 +35,19 @@ export default async function handler(req) {
 
   try {
     const body = await req.json();
-    const { description, creativity } = body;
+    const { description, creativity, hcaptchaToken } = body;
+
+    // Verify invisible hCaptcha first
+    const isHCaptchaValid = await verifyHCaptcha(hcaptchaToken);
+    if (!isHCaptchaValid) {
+      return new Response(JSON.stringify({ 
+        message: "Captcha verification required",
+        requireCaptcha: true 
+      }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
 
     if (!description) {
       return new Response(JSON.stringify({ message: "Video description is required" }), {
@@ -51,27 +67,18 @@ export default async function handler(req) {
 
     const prompt = `Generate 3 Minecraft YouTube titles for: "${description}". Examples: "I Survived 100 Days in HARDCORE", "The ULTIMATE Secret Base", "The Rarest Item Ever!". Creativity: ${creativity}/100. Format: JSON array [{title, type}]. Types: creative|descriptive|emotional|trending. Around 60-70 chars including spaces`;
 
-    const temperatureValue = Math.max(0.1, Math.min(1, creativity / 100));
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const generationConfig = {
+      temperature: Math.max(0.1, Math.min(1, creativity / 100)),
+      maxOutputTokens: 200,
+    };
 
-    const messages = [
-      {
-        role: "system",
-        content: "You are a YouTube title generation expert. Respond with a JSON array containing exactly 3 objects with 'title' and 'type' properties.",
-      },
-      {
-        role: "user",
-        content: prompt,
-      },
-    ];
-
-    const completion = await openai.chat.completions.create({
-      model: "google/gemini-2.5-flash-preview-05-20",
-      messages,
-      temperature: temperatureValue,
-      max_tokens: 200,
+    const result = await model.generateContent({
+      contents: [{ role: "user", parts: [{ text: prompt }]}],
+      generationConfig,
     });
 
-    const text = completion.choices[0].message.content;
+    const text = result.response.text();
     if (!text) {
       throw new Error("AI returned empty response");
     }
