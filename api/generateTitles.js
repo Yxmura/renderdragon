@@ -3,10 +3,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const hcaptchaSecretKey = process.env.HCAPTCHA_SECRET_KEY;
 
-export const config = {
-  runtime: 'edge',
-};
-
 async function verifyHCaptcha(token) {
   const response = await fetch('https://api.hcaptcha.com/siteverify', {
     method: 'POST',
