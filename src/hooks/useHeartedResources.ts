@@ -1,30 +1,51 @@
-import { useState, useEffect } from 'react';
+
+import { useUserFavorites } from './useUserFavorites';
+import { useAuth } from './useAuth';
 
 export const useHeartedResources = () => {
-  const [heartedResources, setHeartedResources] = useState<string[]>([]);
+  const { user } = useAuth();
+  const userFavorites = useUserFavorites();
 
-  useEffect(() => {
-    // Load hearted resources from localStorage on mount
-    const stored = localStorage.getItem('heartedResources');
-    if (stored) {
-      setHeartedResources(JSON.parse(stored));
+  // If user is logged in, use user favorites, otherwise fall back to localStorage
+  if (user) {
+    return {
+      heartedResources: userFavorites.favorites,
+      toggleHeart: userFavorites.toggleFavorite,
+      isHearted: userFavorites.isFavorited
+    };
+  }
+
+  // Legacy localStorage fallback for non-authenticated users
+  const localStorageKey = 'heartedResources';
+  
+  const getLocalHeartedResources = (): string[] => {
+    try {
+      const stored = localStorage.getItem(localStorageKey);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
     }
-  }, []);
+  };
+
+  const setLocalHeartedResources = (resources: string[]) => {
+    localStorage.setItem(localStorageKey, JSON.stringify(resources));
+  };
+
+  const heartedResources = getLocalHeartedResources();
 
   const toggleHeart = (resourceId: string) => {
-    setHeartedResources(prev => {
-      const newHearted = prev.includes(resourceId)
-        ? prev.filter(id => id !== resourceId)
-        : [...prev, resourceId];
-      
-      // Save to localStorage
-      localStorage.setItem('heartedResources', JSON.stringify(newHearted));
-      return newHearted;
-    });
+    const current = getLocalHeartedResources();
+    const newHearted = current.includes(resourceId)
+      ? current.filter(id => id !== resourceId)
+      : [...current, resourceId];
+    
+    setLocalHeartedResources(newHearted);
+    // Force re-render by dispatching a custom event
+    window.dispatchEvent(new CustomEvent('localFavoritesChanged'));
   };
 
   const isHearted = (resourceId: string) => {
-    return heartedResources.includes(resourceId);
+    return getLocalHeartedResources().includes(resourceId);
   };
 
   return {

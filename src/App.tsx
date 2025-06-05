@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -5,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import VercelAnalytics from "@/components/VercelAnalytics";
 import { SpeedInsights } from '@vercel/speed-insights/react';
+import { AuthProvider } from "@/hooks/useAuth";
 
 import Index from "./pages/Index";
 import ResourcesHub from "./pages/ResourcesHub";
@@ -27,9 +29,9 @@ import TextGenerator from '@/pages/TextGenerator';
 
 const queryClient = new QueryClient();
 
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <AuthProvider>
       <TooltipProvider>
         <VercelAnalytics />
         <SpeedInsights />
@@ -54,12 +56,11 @@ const App = () => (
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/construction" element={<Construction />} />
             <Route path="/text-generator" element={<TextGenerator />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          {/* <CountdownOverlay targetDate={launchDate} /> */}
         </BrowserRouter>
       </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

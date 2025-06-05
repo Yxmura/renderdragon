@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
@@ -12,17 +13,20 @@ import {
 } from 'lucide-react';
 import { Resource } from '@/types/resources';
 import { cn } from '@/lib/utils';
+import { useUserFavorites } from '@/hooks/useUserFavorites';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ResourceCardProps {
   resource: Resource;
   downloadCount: number;
   onClick: (resource: Resource) => void;
-  onFavoriteToggle?: () => void;
-  isFavorited?: boolean;
 }
 
-const ResourceCard = ({ resource, downloadCount, onClick, onFavoriteToggle, isFavorited }: ResourceCardProps) => {
+const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const { user } = useAuth();
+  const { toggleFavorite, isFavorited } = useUserFavorites();
+  const isFavorite = isFavorited(String(resource.id));
 
   const getPreviewUrl = (resource: Resource) => {
     if (!resource.title) {
@@ -90,6 +94,11 @@ const ResourceCard = ({ resource, downloadCount, onClick, onFavoriteToggle, isFa
     }
   };
 
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFavorite(String(resource.id));
+  };
+
   const renderPreview = () => {
     const previewUrl = getPreviewUrl(resource);
 
@@ -131,61 +140,78 @@ const ResourceCard = ({ resource, downloadCount, onClick, onFavoriteToggle, isFa
   };
 
   return (
-    <div
+    <motion.div
       onClick={() => onClick(resource)}
       className={cn(
         "pixel-card group cursor-pointer hover:border-primary transition-all duration-300 h-full",
-        isFavorited && "border-red-500/50"
+        isFavorite && "border-red-500/50"
       )}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
     >
       {renderPreview()}
 
       <div className="flex justify-between items-start mb-3">
-        <div
+        <motion.div
           className={`inline-flex items-center px-2 py-1 rounded-md text-xs ${getCategoryColor(resource.category)}`}
+          whileHover={{ scale: 1.05 }}
         >
           {getCategoryIcon(resource.category)}
           <span className="ml-1 capitalize">{resource.category}</span>
           {resource.subcategory && (
             <span className="ml-1">({resource.subcategory})</span>
           )}
-        </div>
+        </motion.div>
+        
         <motion.button
-          onClick={(e) => {
-            e.stopPropagation();
-            if (onFavoriteToggle) onFavoriteToggle();
-          }}
+          onClick={handleFavoriteClick}
           className={cn(
             "p-1 rounded-full transition-colors",
-            isFavorited
+            isFavorite
               ? "text-red-500 hover:text-red-600"
               : "text-gray-400 hover:text-red-500"
           )}
+          whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          animate={isFavorited ? { scale: [1, 1.2, 1] } : undefined}
-          transition={{ duration: 0.2 }}
+          animate={isFavorite ? { 
+            scale: [1, 1.2, 1],
+            transition: { duration: 0.3 }
+          } : undefined}
         >
-          <Heart className="h-5 w-5" fill={isFavorited ? "currentColor" : "none"} />
+          <Heart className="h-5 w-5" fill={isFavorite ? "currentColor" : "none"} />
         </motion.button>
       </div>
 
-      <h3 className="text-xl font-vt323 mb-2 group-hover:text-primary transition-colors">
+      <motion.h3 
+        className="text-xl font-vt323 mb-2 group-hover:text-primary transition-colors"
+        whileHover={{ x: 5 }}
+        transition={{ duration: 0.2 }}
+      >
         {resource.title}
-      </h3>
+      </motion.h3>
 
       <div className="flex items-center justify-between">
         {resource.credit ? (
-          <div className="text-xs bg-orange-500/10 text-orange-500 px-2 py-1 rounded-md inline-flex items-center">
+          <motion.div 
+            className="text-xs bg-orange-500/10 text-orange-500 px-2 py-1 rounded-md inline-flex items-center"
+            whileHover={{ scale: 1.05 }}
+          >
             <span>Credit required</span>
-          </div>
+          </motion.div>
         ) : (
-          <div className="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded-md inline-flex items-center">
+          <motion.div 
+            className="text-xs bg-green-500/10 text-green-500 px-2 py-1 rounded-md inline-flex items-center"
+            whileHover={{ scale: 1.05 }}
+          >
             <Check className="h-3 w-3 mr-1" />
             <span>No credit needed</span>
-          </div>
+          </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
