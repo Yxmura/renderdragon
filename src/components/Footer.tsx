@@ -199,7 +199,7 @@ const Footer = () => {
               Privacy
             </Link>
 
-            <HyperpingBadge />
+            <HyperpingBadge status="online" />
 
             <div className="text-white/70 text-sm">
               <span className="mr-4">Not associated with Mojang or Microsoft</span>
