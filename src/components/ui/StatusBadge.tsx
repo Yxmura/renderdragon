@@ -25,3 +25,6 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     </div>
   );
 }
+
+// Add default export
+export default StatusBadge;
