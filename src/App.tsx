@@ -26,6 +26,7 @@ import AiTitleHelper from "./pages/AiTitleHelper";
 import PlayerRenderer from "./pages/PlayerRenderer";
 import Renderbot from "./pages/Renderbot";
 import TextGenerator from '@/pages/TextGenerator';
+import Account from './pages/Account';
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/utilities" element={<Utils />} />
             <Route path="/player-renderer" element={<PlayerRenderer />} />
             <Route path="/renderbot" element={<Renderbot />} />
+            <Route path="/account" element={<Account />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/tos" element={<TOS />} />
             <Route path="/privacy" element={<Privacy />} />

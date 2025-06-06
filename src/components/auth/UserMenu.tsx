@@ -1,5 +1,6 @@
 
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/useAuth';
-import { LogOut, Heart, User } from 'lucide-react';
+import { LogOut, Heart, User, Settings } from 'lucide-react';
 
 interface UserMenuProps {
   onShowFavorites: () => void;
@@ -52,6 +53,12 @@ const UserMenu = ({ onShowFavorites }: UserMenuProps) => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild className="cursor-pointer">
+          <Link to="/account">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Account Settings</span>
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={onShowFavorites} className="cursor-pointer">
           <Heart className="mr-2 h-4 w-4" />
           <span>My Favorites</span>

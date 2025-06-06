@@ -1,118 +1,139 @@
 
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Resource } from '@/types/resources';
-import ResourceCard from './ResourceCard';
-import { useUserFavorites } from '@/hooks/useUserFavorites';
-import { useAuth } from '@/hooks/useAuth';
+import { useHeartedResources } from '@/hooks/useHeartedResources';
+import { useResources } from '@/hooks/useResources';
+import { Heart, Download, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Heart, LogIn } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
-interface FavoritesTabProps {
-  downloadCounts: Record<string, number>;
-  onSelectResource: (resource: Resource) => void;
-  allResources: Resource[];
-  onShowAuth: () => void;
-}
+const FavoritesTab = () => {
+  const { heartedResources, toggleHeart } = useHeartedResources();
+  const { resources, loading } = useResources();
 
-const FavoritesTab = ({ downloadCounts, onSelectResource, allResources, onShowAuth }: FavoritesTabProps) => {
-  const { user } = useAuth();
-  const { favorites, loading } = useUserFavorites();
-  
-  const favoriteResources = allResources.filter(resource => 
-    favorites.includes(String(resource.id))
+  const favoriteResources = resources.filter(resource => 
+    heartedResources.includes(resource.id)
   );
 
-  if (!user) {
-    return (
-      <motion.div 
-        className="text-center py-16"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-        >
-          <Heart className="h-16 w-16 mx-auto mb-4 text-red-500" />
-        </motion.div>
-        <h3 className="text-2xl font-vt323 mb-4">Sign in to see your favorites</h3>
-        <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-          Create an account to save your favorite resources and access them from any device.
-        </p>
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Button onClick={onShowAuth} className="pixel-btn-primary">
-            <LogIn className="mr-2 h-4 w-4" />
-            Sign In
-          </Button>
-        </motion.div>
-      </motion.div>
-    );
-  }
+  const handleDownload = (resource: any) => {
+    // Track download
+    fetch('/api/download-tracker', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ assetId: resource.id })
+    }).catch(console.error);
+
+    // Open download link
+    window.open(resource.download, '_blank');
+  };
 
   if (loading) {
     return (
-      <div className="text-center py-16">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"
-        />
-        <p className="text-xl text-muted-foreground">Loading your favorites...</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="h-64 bg-muted animate-pulse rounded-lg pixel-corners" />
+        ))}
       </div>
     );
   }
 
   if (favoriteResources.length === 0) {
     return (
-      <motion.div 
-        className="text-center py-16"
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        className="text-center py-12"
       >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-        >
-          <Heart className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-        </motion.div>
-        <h3 className="text-2xl font-vt323 mb-4">No favorites yet</h3>
-        <p className="text-muted-foreground max-w-md mx-auto">
-          Start exploring resources and click the heart icon to add them to your favorites!
+        <Heart className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-vt323 mb-2">No favorites yet</h3>
+        <p className="text-muted-foreground">
+          Start exploring resources and add them to your favorites!
         </p>
       </motion.div>
     );
   }
 
   return (
-    <motion.div 
-      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {favoriteResources.map((resource, index) => (
         <motion.div
-          key={`resource-${resource.id}`}
+          key={resource.id}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1, duration: 0.3 }}
+          transition={{ delay: index * 0.1 }}
         >
-          <ResourceCard
-            resource={resource}
-            downloadCount={downloadCounts[resource.id] || 0}
-            onClick={onSelectResource}
-          />
+          <Card className="pixel-corners overflow-hidden hover:shadow-lg transition-shadow group">
+            <div className="relative">
+              <img
+                src={resource.image}
+                alt={resource.name}
+                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+              <Button
+                onClick={() => toggleHeart(resource.id)}
+                variant="ghost"
+                size="icon"
+                className="absolute top-2 right-2 bg-background/80 hover:bg-background"
+              >
+                <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+              </Button>
+            </div>
+            
+            <CardContent className="p-4">
+              <div className="space-y-3">
+                <div>
+                  <h3 className="font-vt323 text-lg text-cow-purple mb-1">
+                    {resource.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2">
+                    {resource.description}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-1">
+                  <Badge variant="secondary" className="text-xs">
+                    {resource.category}
+                  </Badge>
+                  {resource.tags?.slice(0, 2).map((tag) => (
+                    <Badge key={tag} variant="outline" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    onClick={() => handleDownload(resource)}
+                    className="flex-1 pixel-btn-primary text-sm"
+                    size="sm"
+                  >
+                    <Download className="mr-2 h-3 w-3" />
+                    Download
+                  </Button>
+                  
+                  {resource.preview && (
+                    <Button
+                      onClick={() => window.open(resource.preview, '_blank')}
+                      variant="outline"
+                      size="sm"
+                      className="pixel-corners"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+
+                {resource.downloadCount && (
+                  <p className="text-xs text-muted-foreground">
+                    {resource.downloadCount.toLocaleString()} downloads
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </motion.div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 

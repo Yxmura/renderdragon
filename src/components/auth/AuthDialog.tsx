@@ -23,14 +23,41 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error('Please fill in all fields');
+    
+    if (!email.trim()) {
+      toast.error('Email is required');
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+    
+    if (!password) {
+      toast.error('Password is required');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+
+    if (!isLogin && !displayName.trim()) {
+      toast.error('Display name is required for signup');
       return;
     }
 
@@ -45,6 +72,8 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
           toast.error('Invalid email or password');
         } else if (error.message.includes('User already registered')) {
           toast.error('Account already exists. Please sign in instead.');
+        } else if (error.message.includes('Signup is disabled')) {
+          toast.error('New registrations are currently disabled');
         } else {
           toast.error(error.message || 'Authentication failed');
         }
@@ -58,7 +87,13 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         toast.success('Account created! Please check your email to verify.');
         onOpenChange(false);
       }
+      
+      // Reset form
+      setEmail('');
+      setPassword('');
+      setDisplayName('');
     } catch (error) {
+      console.error('Auth error:', error);
       toast.error('Something went wrong');
     } finally {
       setLoading(false);
@@ -69,6 +104,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     setIsLogin(!isLogin);
     setEmail('');
     setPassword('');
+    setDisplayName('');
   };
 
   return (
@@ -89,7 +125,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         >
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm font-medium">
-              Email
+              Email *
             </Label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -105,9 +141,37 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
             </div>
           </div>
 
+          <AnimatePresence mode="wait">
+            {!isLogin && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-2"
+              >
+                <Label htmlFor="displayName" className="text-sm font-medium">
+                  Display Name *
+                </Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="displayName"
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    className="pl-10 pixel-corners"
+                    placeholder="How others will see you"
+                    required={!isLogin}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="space-y-2">
             <Label htmlFor="password" className="text-sm font-medium">
-              Password
+              Password *
             </Label>
             <div className="relative">
               <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -134,6 +198,11 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
                 )}
               </Button>
             </div>
+            {!isLogin && (
+              <p className="text-xs text-muted-foreground">
+                Must be at least 6 characters long
+              </p>
+            )}
           </div>
 
           <AnimatePresence mode="wait">
