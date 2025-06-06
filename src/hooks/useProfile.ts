@@ -7,9 +7,9 @@ import { toast } from 'sonner';
 interface UserProfile {
   id: string;
   email: string | null;
-  display_name: string | null;
-  first_name: string | null;
-  last_name: string | null;
+  display_name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -40,13 +40,13 @@ export const useProfile = () => {
 
       if (error) throw error;
       
-      // Transform the data to match our interface
+      // Transform the data to match our interface, handling missing fields
       const profileData: UserProfile = {
         id: data.id,
         email: data.email,
-        display_name: data.display_name,
-        first_name: data.first_name,
-        last_name: data.last_name,
+        display_name: data.display_name || null,
+        first_name: data.first_name || null,
+        last_name: data.last_name || null,
         created_at: data.created_at,
         updated_at: data.updated_at
       };
@@ -74,13 +74,13 @@ export const useProfile = () => {
 
       if (error) throw error;
       
-      // Transform the data to match our interface
+      // Transform the data to match our interface, handling missing fields
       const profileData: UserProfile = {
         id: data.id,
         email: data.email,
-        display_name: data.display_name,
-        first_name: data.first_name,
-        last_name: data.last_name,
+        display_name: data.display_name || null,
+        first_name: data.first_name || null,
+        last_name: data.last_name || null,
         created_at: data.created_at,
         updated_at: data.updated_at
       };

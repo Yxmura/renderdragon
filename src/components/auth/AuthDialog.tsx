@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Turnstile } from '@marsidev/react-turnstile';
@@ -254,7 +253,6 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
                 onSuccess={(token) => setCaptchaToken(token)}
                 onError={() => setCaptchaToken(null)}
                 onExpire={() => setCaptchaToken(null)}
-                theme="auto"
               />
             </div>
           </div>

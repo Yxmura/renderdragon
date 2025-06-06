@@ -1,4 +1,3 @@
-
 import { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
@@ -186,12 +185,7 @@ const ResourcesHub = () => {
                       exit={{ opacity: 0, x: -20 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <FavoritesTab
-                        downloadCounts={downloadCounts}
-                        onSelectResource={setSelectedResource}
-                        allResources={resources}
-                        onShowAuth={() => setAuthDialogOpen(true)}
-                      />
+                      <FavoritesTab />
                     </motion.div>
                   </TabsContent>
                 </AnimatePresence>

@@ -1,3 +1,4 @@
+
 export interface Resource {
   id: number;
   title: string;
@@ -7,6 +8,11 @@ export interface Resource {
   filetype?: string;
   downloads?: number;
   software?: string;
+  image_url?: string;
+  description?: string;
+  preview_url?: string;
+  download_count?: number;
+  download_url?: string;
 }
 
 export interface ResourcesData {
