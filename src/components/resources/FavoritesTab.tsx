@@ -9,10 +9,10 @@ import { Badge } from '@/components/ui/badge';
 
 const FavoritesTab = () => {
   const { heartedResources, toggleHeart } = useHeartedResources();
-  const { resources, loading } = useResources();
+  const { resources, isLoading } = useResources();
 
   const favoriteResources = resources.filter(resource => 
-    heartedResources.includes(resource.id)
+    heartedResources.includes(resource.id.toString())
   );
 
   const handleDownload = (resource: any) => {
@@ -24,10 +24,10 @@ const FavoritesTab = () => {
     }).catch(console.error);
 
     // Open download link
-    window.open(resource.download, '_blank');
+    window.open(resource.download_url, '_blank');
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
@@ -65,12 +65,12 @@ const FavoritesTab = () => {
           <Card className="pixel-corners overflow-hidden hover:shadow-lg transition-shadow group">
             <div className="relative">
               <img
-                src={resource.image}
-                alt={resource.name}
+                src={resource.image_url}
+                alt={resource.title}
                 className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <Button
-                onClick={() => toggleHeart(resource.id)}
+                onClick={() => toggleHeart(resource.id.toString())}
                 variant="ghost"
                 size="icon"
                 className="absolute top-2 right-2 bg-background/80 hover:bg-background"
@@ -83,7 +83,7 @@ const FavoritesTab = () => {
               <div className="space-y-3">
                 <div>
                   <h3 className="font-vt323 text-lg text-cow-purple mb-1">
-                    {resource.name}
+                    {resource.title}
                   </h3>
                   <p className="text-sm text-muted-foreground line-clamp-2">
                     {resource.description}
@@ -94,11 +94,11 @@ const FavoritesTab = () => {
                   <Badge variant="secondary" className="text-xs">
                     {resource.category}
                   </Badge>
-                  {resource.tags?.slice(0, 2).map((tag) => (
-                    <Badge key={tag} variant="outline" className="text-xs">
-                      {tag}
+                  {resource.category && (
+                    <Badge variant="outline" className="text-xs">
+                      {resource.category}
                     </Badge>
-                  ))}
+                  )}
                 </div>
 
                 <div className="flex gap-2 pt-2">
@@ -111,9 +111,9 @@ const FavoritesTab = () => {
                     Download
                   </Button>
                   
-                  {resource.preview && (
+                  {resource.preview_url && (
                     <Button
-                      onClick={() => window.open(resource.preview, '_blank')}
+                      onClick={() => window.open(resource.preview_url, '_blank')}
                       variant="outline"
                       size="sm"
                       className="pixel-corners"
@@ -123,9 +123,9 @@ const FavoritesTab = () => {
                   )}
                 </div>
 
-                {resource.downloadCount && (
+                {resource.download_count && (
                   <p className="text-xs text-muted-foreground">
-                    {resource.downloadCount.toLocaleString()} downloads
+                    {resource.download_count.toLocaleString()} downloads
                   </p>
                 )}
               </div>

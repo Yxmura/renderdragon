@@ -39,7 +39,19 @@ export const useProfile = () => {
         .single();
 
       if (error) throw error;
-      setProfile(data);
+      
+      // Transform the data to match our interface
+      const profileData: UserProfile = {
+        id: data.id,
+        email: data.email,
+        display_name: data.display_name,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      };
+      
+      setProfile(profileData);
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast.error('Failed to load profile');
@@ -62,7 +74,18 @@ export const useProfile = () => {
 
       if (error) throw error;
       
-      setProfile(data);
+      // Transform the data to match our interface
+      const profileData: UserProfile = {
+        id: data.id,
+        email: data.email,
+        display_name: data.display_name,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        created_at: data.created_at,
+        updated_at: data.updated_at
+      };
+      
+      setProfile(profileData);
       toast.success('Profile updated successfully');
       return { success: true };
     } catch (error) {

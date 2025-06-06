@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Turnstile } from '@marsidev/react-turnstile';
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Shield } from 'lucide-react';
 
 interface AuthDialogProps {
   open: boolean;
@@ -26,11 +27,31 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const { signIn, signUp } = useAuth();
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  };
+
+  const verifyCaptcha = async (token: string) => {
+    try {
+      const response = await fetch('https://bmywdrwjdqmrkafhiuwn.supabase.co/functions/v1/verify-turnstile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJteXdkcndqZHFtcmthZmhpdXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2OTcyNzIsImV4cCI6MjA2MDI3MzI3Mn0.5FDdsLqE8Tgb1KFphJRbjg65CFsYUzcxt_l7xMRgT0E`
+        },
+        body: JSON.stringify({ token })
+      });
+
+      const result = await response.json();
+      return result.success;
+    } catch (error) {
+      console.error('Captcha verification failed:', error);
+      return false;
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,8 +82,21 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       return;
     }
 
+    if (!captchaToken) {
+      toast.error('Please complete the captcha verification');
+      return;
+    }
+
     setLoading(true);
     try {
+      // Verify captcha first
+      const captchaValid = await verifyCaptcha(captchaToken);
+      if (!captchaValid) {
+        toast.error('Captcha verification failed. Please try again.');
+        setCaptchaToken(null);
+        return;
+      }
+
       const { error } = isLogin 
         ? await signIn(email, password)
         : await signUp(email, password);
@@ -77,6 +111,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         } else {
           toast.error(error.message || 'Authentication failed');
         }
+        setCaptchaToken(null);
         return;
       }
 
@@ -92,9 +127,11 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       setEmail('');
       setPassword('');
       setDisplayName('');
+      setCaptchaToken(null);
     } catch (error) {
       console.error('Auth error:', error);
       toast.error('Something went wrong');
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -105,6 +142,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     setEmail('');
     setPassword('');
     setDisplayName('');
+    setCaptchaToken(null);
   };
 
   return (
@@ -205,6 +243,22 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
             )}
           </div>
 
+          <div className="space-y-2">
+            <Label className="text-sm font-medium flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Security Verification *
+            </Label>
+            <div className="flex justify-center">
+              <Turnstile
+                siteKey="0x4AAAAAAA4oGb0LNkQo9fOF"
+                onSuccess={(token) => setCaptchaToken(token)}
+                onError={() => setCaptchaToken(null)}
+                onExpire={() => setCaptchaToken(null)}
+                theme="auto"
+              />
+            </div>
+          </div>
+
           <AnimatePresence mode="wait">
             <motion.div
               key={isLogin ? 'login' : 'signup'}
@@ -216,7 +270,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
               <Button
                 type="submit"
                 className="w-full pixel-btn-primary"
-                disabled={loading}
+                disabled={loading || !captchaToken}
               >
                 {loading ? (
                   <motion.div
