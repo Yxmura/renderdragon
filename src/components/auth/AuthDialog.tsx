@@ -249,7 +249,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
             </Label>
             <div className="flex justify-center">
               <Turnstile
-                siteKey="0x4AAAAAAA4oGb0LNkQo9fOF"
+                siteKey="0x4AAAAAABgSiniGjeFvoBh-"
                 onSuccess={(token) => setCaptchaToken(token)}
                 onError={() => setCaptchaToken(null)}
                 onExpire={() => setCaptchaToken(null)}
