@@ -27,7 +27,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaVerified, setCaptchaVerified] = useState(false); // Add this state
+  const [captchaVerified, setCaptchaVerified] = useState(false);
   const { signIn, signUp } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -35,32 +35,12 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     return emailRegex.test(email);
   };
 
-  const verifyCaptcha = async (token: string) => {
-    try {
-      const response = await fetch('https://bmywdrwjdqmrkafhiuwn.supabase.co/functions/v1/verify-turnstile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJteXdkcndqZHFtcmthZmhpdXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2OTcyNzIsImV4cCI6MjA2MDI3MzI3Mn0.5FDdsLqE8Tgb1KFphJRbjg65CFsYUzcxt_l7xMRgT0E`
-        },
-        body: JSON.stringify({ token })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      return result.success;
-    } catch (error) {
-      console.error('Captcha verification failed:', error);
-      return false;
-    }
-  };
-
   // Handle captcha success
   const handleCaptchaSuccess = async (token: string) => {
+    setLoading(true); // Indicate captcha verification is in progress
     try {
+      setCaptchaToken(token); // Store the received token
+
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-turnstile`,
         {
@@ -74,38 +54,44 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       console.log('CAPTCHA verify response:', data);
 
       if (!res.ok || data.success !== true) {
-        toast.error('CAPTCHA verification failed');
+        toast.error('CAPTCHA verification failed. Please try again.');
+        setCaptchaVerified(false); // Ensure state is false on failure
+        setCaptchaToken(null); // Clear token on failure
         return;
       }
 
       toast.success('CAPTCHA verified!');
-      // Continue with your auth logic here...
-
+      setCaptchaVerified(true); // Crucially, set verified to true
     } catch (err) {
       console.error('Error verifying CAPTCHA:', err);
       toast.error('Unexpected error during CAPTCHA verification');
+      setCaptchaVerified(false); // Ensure state is false on error
+      setCaptchaToken(null); // Clear token on error
+    } finally {
+      setLoading(false); // Always stop loading
     }
   };
 
   // Handle captcha error/expire
   const handleCaptchaError = () => {
+    toast.error('CAPTCHA expired or failed. Please re-verify.');
     setCaptchaToken(null);
     setCaptchaVerified(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email.trim()) {
       toast.error('Email is required');
       return;
     }
-    
+
     if (!validateEmail(email)) {
       toast.error('Please enter a valid email address');
       return;
     }
-    
+
     if (!password) {
       toast.error('Password is required');
       return;
@@ -121,14 +107,15 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       return;
     }
 
+    // Now, this check accurately reflects the current captcha status
     if (!captchaToken || !captchaVerified) {
-      toast.error('Please complete the captcha verification');
+      toast.error('Please complete the security verification');
       return;
     }
 
     setLoading(true);
     try {
-      const { error } = isLogin 
+      const { error } = isLogin
         ? await signIn(email, password)
         : await signUp(email, password);
 
@@ -142,7 +129,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         } else {
           toast.error(error.message || 'Authentication failed');
         }
-        // Reset captcha on auth error
+        // Reset captcha on auth error to force re-verification
         setCaptchaToken(null);
         setCaptchaVerified(false);
         return;
@@ -155,7 +142,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         toast.success('Account created! Please check your email to verify.');
         onOpenChange(false);
       }
-      
+
       // Reset form
       setEmail('');
       setPassword('');
@@ -183,37 +170,38 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
 
   // Check if form is valid and ready to submit
   const isFormValid = () => {
-    const basicValidation = email.trim() && 
-                           validateEmail(email) && 
-                           password.length >= 6 && 
-                           captchaToken && 
-                           captchaVerified;
-    
+    const basicValidation =
+      email.trim() &&
+      validateEmail(email) &&
+      password.length >= 6 &&
+      captchaToken && // Ensure token exists
+      captchaVerified; // Ensure verification was successful
+
     if (!isLogin) {
       return basicValidation && displayName.trim();
     }
-    
+
     return basicValidation;
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="pixel-corners border-2 border-cow-purple max-w-md">
+      <DialogContent className="pixel-corners max-w-md border-2 border-cow-purple">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-vt323 text-center">
+          <DialogTitle className="font-vt323 text-center text-2xl">
             {isLogin ? 'Sign In' : 'Create Account'}
           </DialogTitle>
         </DialogHeader>
 
-        <motion.form 
-          onSubmit={handleSubmit} 
+        <motion.form
+          onSubmit={handleSubmit}
           className="space-y-4"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium">
+            <Label htmlFor="email" className="font-medium text-sm">
               Email *
             </Label>
             <div className="relative">
@@ -223,7 +211,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 pixel-corners"
+                className="pixel-corners pl-10"
                 placeholder="Enter your email"
                 required
               />
@@ -239,7 +227,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
                 transition={{ duration: 0.2 }}
                 className="space-y-2"
               >
-                <Label htmlFor="displayName" className="text-sm font-medium">
+                <Label htmlFor="displayName" className="font-medium text-sm">
                   Display Name *
                 </Label>
                 <div className="relative">
@@ -249,7 +237,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="pl-10 pixel-corners"
+                    className="pixel-corners pl-10"
                     placeholder="How others will see you"
                     required={!isLogin}
                   />
@@ -259,7 +247,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
           </AnimatePresence>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-medium">
+            <Label htmlFor="password" className="font-medium text-sm">
               Password *
             </Label>
             <div className="relative">
@@ -269,7 +257,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 pr-10 pixel-corners"
+                className="pixel-corners pl-10 pr-10"
                 placeholder="Enter your password"
                 required
               />
@@ -295,11 +283,11 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-sm font-medium flex items-center gap-2">
+            <Label className="flex items-center gap-2 font-medium text-sm">
               <Shield className="h-4 w-4" />
               Security Verification *
               {captchaVerified && (
-                <span className="text-green-500 text-xs">✓ Verified</span>
+                <span className="text-xs text-green-500">✓ Verified</span>
               )}
             </Label>
             <div className="flex justify-center">
@@ -323,14 +311,18 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
             >
               <Button
                 type="submit"
-                className="w-full pixel-btn-primary"
-                disabled={loading || !isFormValid()}
+                className="pixel-btn-primary w-full"
+                disabled={loading || !isFormValid()} // Use loading state here
               >
                 {loading ? (
                   <motion.div
                     animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      ease: 'linear',
+                    }}
+                    className="h-4 w-4 rounded-full border-2 border-white border-t-transparent"
                   />
                 ) : (
                   <>
@@ -349,7 +341,9 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
               onClick={toggleMode}
               className="text-sm text-cow-purple hover:text-cow-purple/80"
             >
-              {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+              {isLogin
+                ? "Don't have an account? Sign up"
+                : 'Already have an account? Sign in'}
             </Button>
           </div>
         </motion.form>
