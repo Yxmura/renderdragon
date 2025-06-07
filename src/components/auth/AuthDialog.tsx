@@ -27,6 +27,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaVerified, setCaptchaVerified] = useState(false); // Add this state
   const { signIn, signUp } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -45,12 +46,43 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         body: JSON.stringify({ token })
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const result = await response.json();
       return result.success;
     } catch (error) {
       console.error('Captcha verification failed:', error);
       return false;
     }
+  };
+
+  // Handle captcha success
+  const handleCaptchaSuccess = async (token: string) => {
+    setCaptchaToken(token);
+    
+    // Verify the captcha immediately when it's completed
+    try {
+      const isValid = await verifyCaptcha(token);
+      setCaptchaVerified(isValid);
+      
+      if (!isValid) {
+        toast.error('Captcha verification failed. Please try again.');
+        setCaptchaToken(null);
+      }
+    } catch (error) {
+      console.error('Error verifying captcha:', error);
+      setCaptchaVerified(false);
+      setCaptchaToken(null);
+      toast.error('Error verifying captcha. Please try again.');
+    }
+  };
+
+  // Handle captcha error/expire
+  const handleCaptchaError = () => {
+    setCaptchaToken(null);
+    setCaptchaVerified(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,21 +113,13 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       return;
     }
 
-    if (!captchaToken) {
+    if (!captchaToken || !captchaVerified) {
       toast.error('Please complete the captcha verification');
       return;
     }
 
     setLoading(true);
     try {
-      // Verify captcha first
-      const captchaValid = await verifyCaptcha(captchaToken);
-      if (!captchaValid) {
-        toast.error('Captcha verification failed. Please try again.');
-        setCaptchaToken(null);
-        return;
-      }
-
       const { error } = isLogin 
         ? await signIn(email, password)
         : await signUp(email, password);
@@ -110,7 +134,9 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         } else {
           toast.error(error.message || 'Authentication failed');
         }
+        // Reset captcha on auth error
         setCaptchaToken(null);
+        setCaptchaVerified(false);
         return;
       }
 
@@ -127,10 +153,12 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       setPassword('');
       setDisplayName('');
       setCaptchaToken(null);
+      setCaptchaVerified(false);
     } catch (error) {
       console.error('Auth error:', error);
       toast.error('Something went wrong');
       setCaptchaToken(null);
+      setCaptchaVerified(false);
     } finally {
       setLoading(false);
     }
@@ -142,6 +170,22 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     setPassword('');
     setDisplayName('');
     setCaptchaToken(null);
+    setCaptchaVerified(false);
+  };
+
+  // Check if form is valid and ready to submit
+  const isFormValid = () => {
+    const basicValidation = email.trim() && 
+                           validateEmail(email) && 
+                           password.length >= 6 && 
+                           captchaToken && 
+                           captchaVerified;
+    
+    if (!isLogin) {
+      return basicValidation && displayName.trim();
+    }
+    
+    return basicValidation;
   };
 
   return (
@@ -246,13 +290,17 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
             <Label className="text-sm font-medium flex items-center gap-2">
               <Shield className="h-4 w-4" />
               Security Verification *
+              {captchaVerified && (
+                <span className="text-green-500 text-xs">✓ Verified</span>
+              )}
             </Label>
             <div className="flex justify-center">
               <Turnstile
+                key={`${isLogin}-${captchaToken}`} // Force re-render on mode change
                 siteKey="0x4AAAAAABgSiniGjeFvoBh-"
-                onSuccess={(token) => setCaptchaToken(token)}
-                onError={() => setCaptchaToken(null)}
-                onExpire={() => setCaptchaToken(null)}
+                onSuccess={handleCaptchaSuccess}
+                onError={handleCaptchaError}
+                onExpire={handleCaptchaError}
               />
             </div>
           </div>
@@ -268,7 +316,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
               <Button
                 type="submit"
                 className="w-full pixel-btn-primary"
-                disabled={loading || !captchaToken}
+                disabled={loading || !isFormValid()}
               >
                 {loading ? (
                   <motion.div
