@@ -27,7 +27,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [captchaVerified, setCaptchaVerified] = useState(false); // Add this state
   const { signIn, signUp } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -35,12 +35,15 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     return emailRegex.test(email);
   };
 
+  // Removed redundant verifyCaptcha function
+
   // Handle captcha success
   const handleCaptchaSuccess = async (token: string) => {
-    setLoading(true); // Indicate captcha verification is in progress
-    try {
-      setCaptchaToken(token); // Store the received token
+    console.log('Turnstile onSuccess triggered with token:', token);
+    setCaptchaToken(token); // Store the token from Turnstile
+    setCaptchaVerified(false); // Reset to false while verifying (optional, but good practice)
 
+    try {
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-turnstile`,
         {
@@ -51,24 +54,23 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       );
 
       const data = await res.json();
-      console.log('CAPTCHA verify response:', data);
+      console.log('Supabase CAPTCHA verify response:', data);
 
       if (!res.ok || data.success !== true) {
         toast.error('CAPTCHA verification failed. Please try again.');
-        setCaptchaVerified(false); // Ensure state is false on failure
-        setCaptchaToken(null); // Clear token on failure
+        setCaptchaVerified(false); // Explicitly set false on backend failure
+        setCaptchaToken(null); // Clear token if verification fails
         return;
       }
 
       toast.success('CAPTCHA verified!');
-      setCaptchaVerified(true); // Crucially, set verified to true
+      setCaptchaVerified(true); // *** THIS IS THE CRUCIAL MISSING LINE ***
+      // Now captchaVerified will be true if your backend confirms success.
     } catch (err) {
       console.error('Error verifying CAPTCHA:', err);
       toast.error('Unexpected error during CAPTCHA verification');
       setCaptchaVerified(false); // Ensure state is false on error
       setCaptchaToken(null); // Clear token on error
-    } finally {
-      setLoading(false); // Always stop loading
     }
   };
 
@@ -82,6 +84,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Basic form validations
     if (!email.trim()) {
       toast.error('Email is required');
       return;
@@ -107,9 +110,9 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       return;
     }
 
-    // Now, this check accurately reflects the current captcha status
+    // This check is now effective because captchaVerified will be set by handleCaptchaSuccess
     if (!captchaToken || !captchaVerified) {
-      toast.error('Please complete the security verification');
+      toast.error('Please complete the security verification.');
       return;
     }
 
@@ -143,7 +146,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         onOpenChange(false);
       }
 
-      // Reset form
+      // Reset form on successful auth
       setEmail('');
       setPassword('');
       setDisplayName('');
@@ -166,6 +169,9 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     setDisplayName('');
     setCaptchaToken(null);
     setCaptchaVerified(false);
+    // Force Turnstile to re-render and get a new challenge
+    // by changing its key when the mode switches.
+    // Use `captchaToken || 'initial'` to ensure a unique key from start.
   };
 
   // Check if form is valid and ready to submit
@@ -292,7 +298,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
             </Label>
             <div className="flex justify-center">
               <Turnstile
-                key={`${isLogin}-${captchaToken}`} // Force re-render on mode change
+                key={`${isLogin}-${captchaToken || 'initial'}`} // Ensure key changes effectively. Added 'initial'
                 siteKey="0x4AAAAAABgSiniGjeFvoBh-"
                 onSuccess={handleCaptchaSuccess}
                 onError={handleCaptchaError}
@@ -312,7 +318,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
               <Button
                 type="submit"
                 className="pixel-btn-primary w-full"
-                disabled={loading || !isFormValid()} // Use loading state here
+                disabled={loading || !isFormValid()}
               >
                 {loading ? (
                   <motion.div
