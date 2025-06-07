@@ -20,9 +20,9 @@ const TextGenerator = () => {
   const [fonts, setFonts] = useState<Resource[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [settings, setSettings] = useState<TextSettings>({
-    text: 'Hello World',
+    text: 'Renderdragon',
     font: 'Minecraft',
-    fontSize: 32,
+    fontSize: 21,
     lineHeight: 1.2,
     characterSpacing: 0,
     rotation: 0,
@@ -118,7 +118,7 @@ const TextGenerator = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Preview Section */}
-              <div className="pixel-card p-6 bg-black/50 min-h-[400px] flex items-center justify-center">
+              <div className="pixel-card p-6 bg-black/50 min-h-[400px] flex items-center ">
                 <TextPreview settings={settings} canvasRef={canvasRef} />
               </div>
 

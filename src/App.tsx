@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,8 +13,7 @@ import Contact from "./pages/Contact";
 import BackgroundGenerator from "./pages/BackgroundGenerator";
 import MusicCopyright from "./pages/MusicCopyright";
 import Guides from "./pages/Guides";
-import YouTubeVideos from "./pages/YouTubeVideos";
-import DiscordServers from "./pages/DiscordServers";
+import Community from "./pages/Community";
 import FAQ from "./pages/FAQ";
 import TOS from "./pages/TOS";
 import Privacy from "./pages/Privacy";
@@ -44,8 +42,7 @@ const App = () => (
             <Route path="/resources" element={<ResourcesHub />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/guides" element={<Guides />} />
-            <Route path="/youtube-videos" element={<YouTubeVideos />} />
-            <Route path="/discord-servers" element={<DiscordServers />} />
+            <Route path="/community" element={<Community />} />
             <Route path="/music-copyright" element={<MusicCopyright />} />
             <Route path="/ai-title-helper" element={<AiTitleHelper />} />
             <Route path="/background-generator" element={<BackgroundGenerator />} />

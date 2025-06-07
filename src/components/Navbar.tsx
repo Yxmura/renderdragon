@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
@@ -20,8 +19,12 @@ const Navbar = () => {
   const navItems = [
     { name: 'Home', path: '/' },
     { name: 'Resources', path: '/resources' },
+    { name: 'Community', path: '/community' },
     { name: 'Guides', path: '/guides' },
     { name: 'Utilities', path: '/utilities' },
+    { name: 'Copyright Checker', path: '/music-copyright' },
+    { name: 'Player Renderer', path: '/player-renderer' },
+    { name: 'Text Generator', path: '/text-generator' },
     { name: 'Contact', path: '/contact' },
   ];
 

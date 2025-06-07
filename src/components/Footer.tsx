@@ -131,6 +131,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/community" className="text-white/70 hover:text-white transition-colors">
+                  Community
+                </Link>
+              </li>
+              <li>
                 <Link to="/guides" className="text-white/70 hover:text-white transition-colors">
                   Guides
                 </Link>
@@ -197,6 +202,10 @@ const Footer = () => {
             
             <Link to="/privacy" className="text-white/70 hover:text-white transition-colors text-sm">
               Privacy
+            </Link>
+
+            <Link to="/renderbot" className="text-white/70 hover:text-white transition-colors text-sm">
+              Renderbot
             </Link>
 
             <HyperpingBadge status="online" />
