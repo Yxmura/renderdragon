@@ -119,8 +119,8 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     console.log('Set loading to true for auth submission.');
     try {
       const { error } = isLogin
-        ? await signIn(email, password)
-        : await signUp(email, password);
+        ? await signIn(email, password, captchaToken)
+        : await signUp(email, password, displayName, '', '', captchaToken);
 
       if (error) {
         if (error.message.includes('Invalid login credentials')) {

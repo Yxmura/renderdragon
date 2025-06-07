@@ -1,15 +1,33 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User, Session, AuthError } from '@supabase/supabase-js'; // Import AuthError for better typing
 import { supabase } from '@/integrations/supabase/client';
+
+// Define the return type for auth operations for better type safety
+interface AuthResult {
+  success: boolean;
+  error?: string; // Optional error message
+}
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
-  signUp: (email: string, password: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signOut: () => Promise<void>;
+  // Updated signUp signature
+  signUp: (
+    email: string,
+    password: string,
+    displayName: string,
+    firstName: string,
+    lastName: string,
+    captchaToken: string | null,
+  ) => Promise<AuthResult>;
+  // Updated signIn signature
+  signIn: (
+    email: string,
+    password: string,
+    captchaToken: string | null,
+  ) => Promise<AuthResult>;
+  signOut: () => Promise<AuthResult>; // SignOut now returns an AuthResult
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-      }
+      },
     );
 
     // THEN check for existing session
@@ -40,40 +58,81 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string) => {
+  // UPDATED signUp function
+  const signUp = async (
+    email: string,
+    password: string,
+    displayName: string,
+    firstName: string,
+    lastName: string,
+    captchaToken: string | null,
+  ): Promise<AuthResult> => {
     const redirectUrl = `${window.location.origin}/`;
-    
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: redirectUrl
-      }
+        emailRedirectTo: redirectUrl,
+        captchaToken: captchaToken || undefined, // Pass captcha token
+        data: {
+          // Pass custom user metadata here
+          display_name: displayName,
+          first_name: firstName,
+          last_name: lastName,
+        },
+      },
     });
-    return { error };
+
+    if (error) {
+      console.error('Sign up error:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   };
 
-  const signIn = async (email: string, password: string) => {
+  // UPDATED signIn function
+  const signIn = async (
+    email: string,
+    password: string,
+    captchaToken: string | null,
+  ): Promise<AuthResult> => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
+      options: {
+        captchaToken: captchaToken || undefined, // Pass captcha token
+      },
     });
-    return { error };
+
+    if (error) {
+      console.error('Sign in error:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   };
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  // UPDATED signOut function
+  const signOut = async (): Promise<AuthResult> => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error('Sign out error:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      session,
-      loading,
-      signUp,
-      signIn,
-      signOut,
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        session,
+        loading,
+        signUp,
+        signIn,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
