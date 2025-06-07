@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react'; // Added useCallback for better performance
 import { motion, AnimatePresence } from 'framer-motion';
 import { Turnstile } from '@marsidev/react-turnstile';
 import {
@@ -25,9 +25,9 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Controls button loading state
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaVerified, setCaptchaVerified] = useState(false); // Add this state
+  const [captchaVerified, setCaptchaVerified] = useState(false);
   const { signIn, signUp } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -35,88 +35,88 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     return emailRegex.test(email);
   };
 
-  // Removed redundant verifyCaptcha function
+  const handleCaptchaSuccess = useCallback(
+    async (token: string) => {
+      console.log('handleCaptchaSuccess triggered with token:', token);
+      setLoading(true); // Disable button while CAPTCHA is being verified by backend
+      setCaptchaToken(token); // Store the token from Turnstile
 
-  // Handle captcha success
-  const handleCaptchaSuccess = async (token: string) => {
-    console.log('Turnstile onSuccess triggered with token:', token);
-    setCaptchaToken(token); // Store the token from Turnstile
-    setCaptchaVerified(false); // Reset to false while verifying (optional, but good practice)
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-turnstile`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token }),
+          },
+        );
 
-    try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-turnstile`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token }),
+        const data = await res.json();
+        console.log('Supabase CAPTCHA verify response:', data);
+
+        if (!res.ok || data.success !== true) {
+          toast.error('CAPTCHA verification failed. Please try again.');
+          setCaptchaVerified(false);
+          setCaptchaToken(null); // Clear token so user has to re-verify
+          return;
         }
-      );
 
-      const data = await res.json();
-      console.log('Supabase CAPTCHA verify response:', data);
-
-      if (!res.ok || data.success !== true) {
-        toast.error('CAPTCHA verification failed. Please try again.');
-        setCaptchaVerified(false); // Explicitly set false on backend failure
-        setCaptchaToken(null); // Clear token if verification fails
-        return;
+        toast.success('CAPTCHA verified!');
+        setCaptchaVerified(true); // Set to true on successful verification
+      } catch (err) {
+        console.error('Error verifying CAPTCHA:', err);
+        toast.error('Unexpected error during CAPTCHA verification');
+        setCaptchaVerified(false);
+        setCaptchaToken(null); // Clear token on error
+      } finally {
+        setLoading(false); // Re-enable button after CAPTCHA verification attempt (success or failure)
+        console.log('handleCaptchaSuccess finished, setLoading(false)');
       }
+    },
+    [], // Dependencies are empty as state setters are stable
+  );
 
-      toast.success('CAPTCHA verified!');
-      setCaptchaVerified(true); // *** THIS IS THE CRUCIAL MISSING LINE ***
-      // Now captchaVerified will be true if your backend confirms success.
-    } catch (err) {
-      console.error('Error verifying CAPTCHA:', err);
-      toast.error('Unexpected error during CAPTCHA verification');
-      setCaptchaVerified(false); // Ensure state is false on error
-      setCaptchaToken(null); // Clear token on error
-    }
-  };
-
-  // Handle captcha error/expire
-  const handleCaptchaError = () => {
+  const handleCaptchaError = useCallback(() => {
     toast.error('CAPTCHA expired or failed. Please re-verify.');
     setCaptchaToken(null);
     setCaptchaVerified(false);
-  };
+    // No need to set loading here, as this is a client-side error/expire
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('handleSubmit triggered');
+    console.log('Current state at handleSubmit - captchaToken:', captchaToken, 'captchaVerified:', captchaVerified, 'loading:', loading);
 
-    // Basic form validations
-    if (!email.trim()) {
-      toast.error('Email is required');
+
+    // Prevent submission if already loading from CAPTCHA verification or previous auth attempt
+    if (loading) {
+      console.log("Already loading, preventing duplicate submission.");
       return;
     }
 
-    if (!validateEmail(email)) {
+    // Client-side validations
+    if (!email.trim() || !validateEmail(email)) {
       toast.error('Please enter a valid email address');
       return;
     }
-
-    if (!password) {
-      toast.error('Password is required');
-      return;
-    }
-
-    if (password.length < 6) {
+    if (!password || password.length < 6) {
       toast.error('Password must be at least 6 characters long');
       return;
     }
-
     if (!isLogin && !displayName.trim()) {
       toast.error('Display name is required for signup');
       return;
     }
 
-    // This check is now effective because captchaVerified will be set by handleCaptchaSuccess
+    // Critical check: Ensure CAPTCHA is verified before attempting auth
     if (!captchaToken || !captchaVerified) {
-      toast.error('Please complete the security verification.');
+      toast.error('Please complete the security verification first.');
       return;
     }
 
-    setLoading(true);
+    setLoading(true); // Set loading for the actual auth attempt
+    console.log('Set loading to true for auth submission.');
     try {
       const { error } = isLogin
         ? await signIn(email, password)
@@ -132,12 +132,14 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         } else {
           toast.error(error.message || 'Authentication failed');
         }
-        // Reset captcha on auth error to force re-verification
+        console.error('Auth error:', error);
+        // Reset captcha on auth error to force re-verification if needed
         setCaptchaToken(null);
         setCaptchaVerified(false);
         return;
       }
 
+      // Success
       if (isLogin) {
         toast.success('Welcome back!');
         onOpenChange(false);
@@ -146,49 +148,50 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         onOpenChange(false);
       }
 
-      // Reset form on successful auth
+      // Reset form & captcha state on success
       setEmail('');
       setPassword('');
       setDisplayName('');
       setCaptchaToken(null);
       setCaptchaVerified(false);
+      console.log('Auth successful, form and captcha reset.');
     } catch (error) {
-      console.error('Auth error:', error);
-      toast.error('Something went wrong');
+      console.error('Auth unexpected error:', error);
+      toast.error('Something went wrong during authentication.');
       setCaptchaToken(null);
       setCaptchaVerified(false);
     } finally {
-      setLoading(false);
+      setLoading(false); // Always stop loading, whether auth succeeded or failed
+      console.log('handleSubmit finished, setLoading(false)');
     }
   };
 
-  const toggleMode = () => {
-    setIsLogin(!isLogin);
+  const toggleMode = useCallback(() => {
+    setIsLogin((prevMode) => !prevMode); // Use functional update for safety
     setEmail('');
     setPassword('');
     setDisplayName('');
-    setCaptchaToken(null);
+    setCaptchaToken(null); // Clear captcha state on mode toggle
     setCaptchaVerified(false);
-    // Force Turnstile to re-render and get a new challenge
-    // by changing its key when the mode switches.
-    // Use `captchaToken || 'initial'` to ensure a unique key from start.
-  };
+    console.log('Toggling mode, resetting form and captcha state.');
+  }, []);
 
-  // Check if form is valid and ready to submit
-  const isFormValid = () => {
-    const basicValidation =
+
+  const isFormValid = useCallback(() => {
+    // Basic validation for all fields
+    const fieldsValid =
       email.trim() &&
       validateEmail(email) &&
       password.length >= 6 &&
-      captchaToken && // Ensure token exists
-      captchaVerified; // Ensure verification was successful
+      (isLogin || displayName.trim()); // displayName only required for signup
 
-    if (!isLogin) {
-      return basicValidation && displayName.trim();
-    }
+    // The form is valid if all fields are good AND captcha is verified AND not currently loading
+    const formReady = fieldsValid && captchaVerified && !loading;
 
-    return basicValidation;
-  };
+    // console.log('isFormValid check:', { fieldsValid, captchaVerified, loading, formReady });
+    return formReady;
+  }, [email, password, displayName, captchaVerified, isLogin, loading]);
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -298,7 +301,8 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
             </Label>
             <div className="flex justify-center">
               <Turnstile
-                key={`${isLogin}-${captchaToken || 'initial'}`} // Ensure key changes effectively. Added 'initial'
+                // Simplified key to prevent constant re-initialization
+                key={isLogin ? 'login-captcha' : 'signup-captcha'}
                 siteKey="0x4AAAAAABgSiniGjeFvoBh-"
                 onSuccess={handleCaptchaSuccess}
                 onError={handleCaptchaError}
@@ -318,9 +322,9 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
               <Button
                 type="submit"
                 className="pixel-btn-primary w-full"
-                disabled={loading || !isFormValid()}
+                disabled={!isFormValid()} // Disabled if not valid
               >
-                {loading ? (
+                {loading ? ( // Use loading state for spinner only
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{
