@@ -74,6 +74,34 @@ const utilities: Utility[] = [
     isFree: true
   },
   {
+    name: 'Bloop Shaders',
+    description: 'A shader aimed at maximum speed while maintaining good visuals. Scalable from low to high end computers.',
+    url: 'https://modrinth.com/shader/bloop-shaders',
+    category: 'minecraft-shaders',
+    isFree: true
+  },
+  {
+    name: 'Vanilletix Shaders',
+    description: 'A shader pack that improves graphics while maintaining vanilla style',
+    url: 'https://modrinth.com/shader/vanilletix',
+    category: 'minecraft-shaders',
+    isFree: true
+  },
+  {
+    name: 'MC VHS',
+    description: 'A shader that emulates the look of old VHS recordings with realistic effects',
+    url: 'https://modrinth.com/shader/mc-vhs',
+    category: 'minecraft-shaders',
+    isFree: true
+  },
+  {
+    name: 'Exposa Shaders',
+    description: 'Shaders that aim for a nice mix of natural and fantasy visuals',
+    url: 'https://modrinth.com/shader/exposa-shaders',
+    category: 'minecraft-shaders',
+    isFree: true
+  },
+  {
     name: "Seltop's NewNPC mod",
     description: 'Adds new NPCs to Minecraft with customizable skins and behaviors - great for thumbnails',
     url: 'https://modrinth.com/mod/seltops-newnpcs-mod/',
