@@ -1,6 +1,6 @@
-
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Turnstile } from '@marsidev/react-turnstile';
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Shield } from 'lucide-react';
 
 interface AuthDialogProps {
   open: boolean;
@@ -26,11 +26,71 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaVerified, setCaptchaVerified] = useState(false); // Add this state
   const { signIn, signUp } = useAuth();
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  };
+
+  const verifyCaptcha = async (token: string) => {
+    try {
+      const response = await fetch('https://bmywdrwjdqmrkafhiuwn.supabase.co/functions/v1/verify-turnstile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJteXdkcndqZHFtcmthZmhpdXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2OTcyNzIsImV4cCI6MjA2MDI3MzI3Mn0.5FDdsLqE8Tgb1KFphJRbjg65CFsYUzcxt_l7xMRgT0E`
+        },
+        body: JSON.stringify({ token })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result.success;
+    } catch (error) {
+      console.error('Captcha verification failed:', error);
+      return false;
+    }
+  };
+
+  // Handle captcha success
+  const handleCaptchaSuccess = async (token: string) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-turnstile`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data?.error || 'CAPTCHA failed verification');
+      }
+
+      console.log('Turnstile verified successfully:', data);
+
+      // Continue with sign-in/signup logic here...
+    } catch (err) {
+      console.error('Captcha verification error:', err);
+      toast.error('CAPTCHA verification failed. Try again.');
+    }
+  };
+
+  // Handle captcha error/expire
+  const handleCaptchaError = () => {
+    setCaptchaToken(null);
+    setCaptchaVerified(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,6 +121,11 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       return;
     }
 
+    if (!captchaToken || !captchaVerified) {
+      toast.error('Please complete the captcha verification');
+      return;
+    }
+
     setLoading(true);
     try {
       const { error } = isLogin 
@@ -77,6 +142,9 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         } else {
           toast.error(error.message || 'Authentication failed');
         }
+        // Reset captcha on auth error
+        setCaptchaToken(null);
+        setCaptchaVerified(false);
         return;
       }
 
@@ -92,9 +160,13 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       setEmail('');
       setPassword('');
       setDisplayName('');
+      setCaptchaToken(null);
+      setCaptchaVerified(false);
     } catch (error) {
       console.error('Auth error:', error);
       toast.error('Something went wrong');
+      setCaptchaToken(null);
+      setCaptchaVerified(false);
     } finally {
       setLoading(false);
     }
@@ -105,6 +177,23 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     setEmail('');
     setPassword('');
     setDisplayName('');
+    setCaptchaToken(null);
+    setCaptchaVerified(false);
+  };
+
+  // Check if form is valid and ready to submit
+  const isFormValid = () => {
+    const basicValidation = email.trim() && 
+                           validateEmail(email) && 
+                           password.length >= 6 && 
+                           captchaToken && 
+                           captchaVerified;
+    
+    if (!isLogin) {
+      return basicValidation && displayName.trim();
+    }
+    
+    return basicValidation;
   };
 
   return (
@@ -205,6 +294,25 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
             )}
           </div>
 
+          <div className="space-y-2">
+            <Label className="text-sm font-medium flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Security Verification *
+              {captchaVerified && (
+                <span className="text-green-500 text-xs">✓ Verified</span>
+              )}
+            </Label>
+            <div className="flex justify-center">
+              <Turnstile
+                key={`${isLogin}-${captchaToken}`} // Force re-render on mode change
+                siteKey="0x4AAAAAABgSiniGjeFvoBh-"
+                onSuccess={handleCaptchaSuccess}
+                onError={handleCaptchaError}
+                onExpire={handleCaptchaError}
+              />
+            </div>
+          </div>
+
           <AnimatePresence mode="wait">
             <motion.div
               key={isLogin ? 'login' : 'signup'}
@@ -216,7 +324,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
               <Button
                 type="submit"
                 className="w-full pixel-btn-primary"
-                disabled={loading}
+                disabled={loading || !isFormValid()}
               >
                 {loading ? (
                   <motion.div
