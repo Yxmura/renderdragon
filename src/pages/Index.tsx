@@ -6,7 +6,6 @@ import Hero from '@/components/Hero';
 import FeaturedResources from '@/components/FeaturedResources';
 import PopularTools from '@/components/PopularTools';
 import Testimonials from '@/components/Testimonials';
-import Stats from '@/components/Stats';
 import Partnership from '@/components/Partnership';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
@@ -81,12 +80,6 @@ const Index = () => {
           <Testimonials />
         </motion.section>
 
-        <motion.div
-          {...fadeInUp}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <Stats />
-        </motion.div>
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 40 }}
           whileInView={{ opacity: 1, scale: 1, y: 0 }}
