@@ -61,29 +61,29 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   // Handle captcha success
   const handleCaptchaSuccess = async (token: string) => {
     try {
-      const response = await fetch(
+      const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-turnstile`,
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token }),
         }
       );
 
-      const data = await response.json();
+      const data = await res.json();
+      console.log('CAPTCHA verify response:', data);
 
-      if (!response.ok || !data.success) {
-        throw new Error(data?.error || 'CAPTCHA failed verification');
+      if (!res.ok || data.success !== true) {
+        toast.error('CAPTCHA verification failed');
+        return;
       }
 
-      console.log('Turnstile verified successfully:', data);
+      toast.success('CAPTCHA verified!');
+      // Continue with your auth logic here...
 
-      // Continue with sign-in/signup logic here...
     } catch (err) {
-      console.error('Captcha verification error:', err);
-      toast.error('CAPTCHA verification failed. Try again.');
+      console.error('Error verifying CAPTCHA:', err);
+      toast.error('Unexpected error during CAPTCHA verification');
     }
   };
 
