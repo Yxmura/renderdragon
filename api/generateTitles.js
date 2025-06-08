@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const hcaptchaSecretKey = process.env.HCAPTCHA_SECRET_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 async function verifyHCaptcha(token) {
   const response = await fetch('https://api.hcaptcha.com/siteverify', {
@@ -13,6 +14,34 @@ async function verifyHCaptcha(token) {
   return data.success;
 }
 
+async function generateTitlesWithOpenRouter(description, creativity) {
+  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+      'HTTP-Referer': 'https://creatoronwheels.com', // Replace with your actual domain
+      'X-Title': 'Creator on Wheels'
+    },
+    body: JSON.stringify({
+      model: 'mistralai/mistral-7b-instruct',
+      messages: [{
+        role: 'user',
+        content: `Generate 3 Minecraft YouTube titles for: "${description}". Examples: "I Survived 100 Days in HARDCORE", "The ULTIMATE Secret Base", "The Rarest Item Ever!". Creativity: ${creativity}/100. Format: JSON array [{title, type}]. Types: creative|descriptive|emotional|trending. Around 60-70 chars including spaces`
+      }],
+      temperature: Math.max(0.1, Math.min(1, creativity / 100)),
+      max_tokens: 200
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`OpenRouter API error: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+
 export default async function handler(req) {
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ message: "Method Not Allowed" }), {
@@ -21,7 +50,7 @@ export default async function handler(req) {
     });
   }
 
-  if (!process.env.GEMINI_API_KEY || !process.env.HCAPTCHA_SECRET_KEY) {
+  if (!process.env.OPENROUTER_API_KEY || !process.env.HCAPTCHA_SECRET_KEY) {
     console.error("Missing required environment variables");
     return new Response(JSON.stringify({ message: "Server misconfiguration" }), {
       status: 500,
@@ -61,20 +90,7 @@ export default async function handler(req) {
       });
     }
 
-    const prompt = `Generate 3 Minecraft YouTube titles for: "${description}". Examples: "I Survived 100 Days in HARDCORE", "The ULTIMATE Secret Base", "The Rarest Item Ever!". Creativity: ${creativity}/100. Format: JSON array [{title, type}]. Types: creative|descriptive|emotional|trending. Around 60-70 chars including spaces`;
-
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-    const generationConfig = {
-      temperature: Math.max(0.1, Math.min(1, creativity / 100)),
-      maxOutputTokens: 200,
-    };
-
-    const result = await model.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt }]}],
-      generationConfig,
-    });
-
-    const text = result.response.text();
+    const text = await generateTitlesWithOpenRouter(description, creativity);
     if (!text) {
       throw new Error("AI returned empty response");
     }
