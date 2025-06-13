@@ -32,6 +32,27 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    optimizeDeps: {
+      include: [
+        'html2canvas',
+        '@radix-ui/react-primitive',
+        '@radix-ui/react-use-callback-ref',
+        '@radix-ui/react-use-controllable-state',
+        '@radix-ui/react-use-layout-effect',
+        '@radix-ui/react-use-previous',
+        '@radix-ui/react-visually-hidden',
+        'aria-hidden',
+        'react-remove-scroll',
+        '@radix-ui/react-context',
+        '@radix-ui/react-compose-refs'
+      ]
+    },
+    build: {
+      commonjsOptions: {
+        include: [/node_modules/],
+        transformMixedEsModules: true
+      }
+    },
     // Vite env configuration
     define: {
       'process.env': env

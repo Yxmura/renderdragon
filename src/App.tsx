@@ -25,6 +25,7 @@ import PlayerRenderer from "./pages/PlayerRenderer";
 import Renderbot from "./pages/Renderbot";
 import TextGenerator from '@/pages/TextGenerator';
 import Account from './pages/Account';
+import Generators from './pages/Generators';
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/construction" element={<Construction />} />
             <Route path="/text-generator" element={<TextGenerator />} />
+            <Route path="/generators" element={<Generators />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

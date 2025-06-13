@@ -66,7 +66,8 @@ const mainLinks: (NavLink | NavDropdown)[] = [
       { name: 'AI Title Helper', path: '/ai-title-helper', icon: 'bot' },
       { name: 'Background Generator', path: '/background-generator', icon: 'background' },
       { name: 'Player Renderer', path: '/player-renderer', icon: 'player' },
-      { name: 'Text Generator', path: '/text-generator', icon: 'text' }
+      { name: 'Text Generator', path: '/text-generator', icon: 'text' },
+      { name: 'Content Generators', path: '/generators', icon: 'text' }
     ]
   }
 ];

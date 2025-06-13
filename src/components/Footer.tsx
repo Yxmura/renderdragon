@@ -112,9 +112,6 @@ const Footer = () => {
                 <img className="w-6 h-6" src="/assets/github_icon.png" alt="GitHub" />
               </a>
             </div>
-            <a href="https://bsky.app/profile/creatorskingdom.bsky.social" className="hover:bg-yellow-600 transition-transform duration-200">
-              <img className='mt-3' src="/assets/partnership.png" alt="partnership" />
-            </a>
           </div>
           
           <div>
@@ -184,6 +181,11 @@ const Footer = () => {
               <li>
                 <Link to="/text-generator" className="text-white/70 hover:text-white transition-colors">
                   Text Generator
+                </Link>
+              </li>
+              <li>
+                <Link to="/generators" className="text-white/70 hover:text-white transition-colors">
+                  Content Generators
                 </Link>
               </li>
             </ul>
