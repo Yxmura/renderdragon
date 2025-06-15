@@ -207,7 +207,7 @@ const Hero = () => {
               transition: { duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
             }}
           >
-            MINECRAFT POTENTIAL
+            CREATION POTENTIAL
           </motion.span>
         </motion.h1>
 
