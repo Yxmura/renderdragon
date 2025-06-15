@@ -42,17 +42,54 @@ export interface YouTubeSearchResult {
 }
 
 export interface CopyrightResult {
-  id: string;
+  status: string;
   title: string;
   artist: string;
-  album?: string;
-  releaseYear?: number;
-  copyrightStatus: 'safe' | 'likely_safe' | 'claim' | 'likely_claim' | 'block' | 'likely_block' | 'unknown';
-  details: string;
-  source?: string;
-  previewUrl?: string;
-  status?: 'success' | 'error';
-  message?: string;
-  matchDetails?: Array<{ type: string; description: string }>;
-  recommendations?: string[];
+  confidence: number;
+  riskAssessment: string;
+  recommendedAction: string;
+  platforms: {
+    youtube: string;
+    twitch: string;
+  };
+  sources: {
+    contentId: string;
+    pro: string;
+    drm: string;
+    publicDomain: string;
+    royaltyFree: string;
+    commercialDatabases: string;
+    openSources: string;
+  };
+  sourceAnalysis: {
+    commercialPresence: boolean;
+    openSourcePresence: boolean;
+    totalMatches: number;
+  };
+  processingTime: string;
+  sourcesChecked: string[];
+  sourceStats: {
+    total: number;
+    successful: number;
+    coverage: number;
+  };
+  lastUpdated: string;
+  apiVersion: string;
+  imageUrl?: string;
+  riskFactors?: {
+    commercial: number;
+    popularity: number;
+    official: number;
+    label: number;
+    distribution: number;
+  };
+  totalRiskScore?: number;
+  youtubeAnalysis?: {
+    totalVideos: number;
+    officialContent: number;
+    userGeneratedContent: number;
+    userContentRatio: number;
+    assessment: string;
+  };
+  error?: string;
 }
