@@ -80,6 +80,7 @@ const teamMembers: TeamMember[] = [
     role: 'Animator',
     avatar: '/assets/VOVOplay.png',
     socials: {
+      website: 'https://vovomotion.com/',
       discord: 'https://discordapp.com/users/758322333437394944'
     }
   }

@@ -1,3 +1,4 @@
+
 import { CopyrightResult } from '@/types/copyright';
 
 // YouTube URL pattern
@@ -12,11 +13,11 @@ export function extractYouTubeID(url: string): string | null {
 // New function to check copyright status that MusicCopyright.tsx needs
 export async function checkCopyrightStatus(query: { artist: string; title: string } | { youtube_url: string }): Promise<CopyrightResult> {
   try {
-    // TODO: Move API keys to a .env file for better security
+    // Use the correct API URL - this appears to be an external service
+    const apiUrl = "https://ltazpjoqbhtqxqvrvnka.supabase.co/functions/v1/check";
     const apiKey = "gappa_prod_d3cc029d4c6bd5f646ebbbff0842e2c7bf33cec584588b3087e0d65adb2622f1";
     const anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx0YXpwam9xYmh0cXhxdnJ2bmthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5MTUyMDYsImV4cCI6MjA2NTQ5MTIwNn0.-s6KS8ocMGjHCX6eEOEy_pX39QW1-GtfvglpQwsjqOw";
 
-    const apiUrl = '/api/functions/v1/check';
     const body = query;
 
     const response = await fetch(apiUrl, {
@@ -28,8 +29,6 @@ export async function checkCopyrightStatus(query: { artist: string; title: strin
       },
       body: JSON.stringify(body)
     });
-
-
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
