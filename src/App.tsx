@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import VercelAnalytics from "@/components/VercelAnalytics";
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { AuthProvider } from "@/hooks/useAuth";
@@ -44,7 +44,8 @@ const App = () => (
             <Route path="/contact" element={<Contact />} />
             <Route path="/guides" element={<Guides />} />
             <Route path="/community" element={<Community />} />
-            <Route path="/music-copyright" element={<MusicCopyright />} />
+            <Route path="/gappa" element={<MusicCopyright />} />
+            <Route path="/music-copyright" element={<Navigate to="/gappa" replace />} />
             <Route path="/ai-title-helper" element={<AiTitleHelper />} />
             <Route path="/background-generator" element={<BackgroundGenerator />} />
             <Route path="/utilities" element={<Utils />} />

@@ -11,6 +11,8 @@ import { checkCopyrightStatus, extractYouTubeID } from '@/utils/copyrightChecker
 import { CopyrightResult } from '@/types/copyright';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import { Helmet } from 'react-helmet';
+import { useAuth } from '@/hooks/useAuth';
+import AuthDialog from '@/components/auth/AuthDialog';
 
 const MusicCopyright = () => {
   const [activeTab, setActiveTab] = useState('song');
@@ -20,6 +22,32 @@ const MusicCopyright = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<CopyrightResult | null>(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
+  const { user, loading } = useAuth();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const RATE_LIMIT = 6;
+  const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+  const LOCALSTORAGE_KEY = 'gappa-checks';
+
+  function getRecentChecks() {
+    const raw = localStorage.getItem(LOCALSTORAGE_KEY);
+    if (!raw) return [];
+    try {
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return [];
+      // Only keep timestamps within the last hour
+      const now = Date.now();
+      return arr.filter((ts) => now - ts < RATE_LIMIT_WINDOW_MS);
+    } catch {
+      return [];
+    }
+  }
+
+  function logCheck() {
+    const now = Date.now();
+    const arr = getRecentChecks();
+    arr.push(now);
+    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(arr));
+  }
 
   const handleReset = () => {
     setResult(null);
@@ -31,6 +59,14 @@ const MusicCopyright = () => {
   
   const handleSearch = async () => {
     setSearchAttempted(true);
+    // Rate limit check
+    const recentChecks = getRecentChecks();
+    if (recentChecks.length >= RATE_LIMIT) {
+      toast.error('Rate limit reached', {
+        description: `You can only check 6 songs per hour per device. Please try again later.`,
+      });
+      return;
+    }
     let query;
     if (activeTab === 'song') {
       if (!songArtist.trim() || !songTitle.trim()) {
@@ -52,6 +88,7 @@ const MusicCopyright = () => {
     try {
       const copyrightData = await checkCopyrightStatus(query);
       setResult(copyrightData);
+      logCheck(); // Log the check only if the request was made
 
       if (copyrightData.error) {
         toast.error('Error checking copyright', {
@@ -70,10 +107,38 @@ const MusicCopyright = () => {
     }
   };
 
-
-
-
-
+  // Show AuthDialog if not logged in and not loading
+  if (!loading && !user) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Helmet>
+          <title>Music Copyright Checker - Renderdragon</title>
+          <meta name="description" content="Check if music is safe to use in your Minecraft videos. Avoid copyright strikes with our music copyright checker tool." />
+          <meta property="og:title" content="Music Copyright Checker - Renderdragon" />
+          <meta property="og:description" content="Check if music is safe to use in your Minecraft videos. Avoid copyright strikes with our music copyright checker tool." />
+          <meta property="og:image" content="https://renderdragon.org/ogimg/copyright.png" />
+          <meta property="og:url" content="https://renderdragon.org/gappa" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="Music Copyright Checker - Renderdragon" />
+          <meta name="twitter:image" content="https://renderdragon.org/ogimg/copyright.png" />
+        </Helmet>
+        <Navbar />
+        <main className="flex-grow pt-24 pb-16 cow-grid-bg flex flex-col items-center justify-center">
+          <div className="max-w-md w-full mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
+              <span className="text-cow-purple">Music Copyright</span> Checker
+            </h1>
+            <p className="mb-6 text-lg text-muted-foreground">You must be logged in to use the Music Copyright Checker.</p>
+            <Button className="pixel-btn-primary mb-4" onClick={() => setAuthDialogOpen(true)}>
+              Sign In / Create Account
+            </Button>
+            <AuthDialog open={authDialogOpen} onOpenChange={setAuthDialogOpen} />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -83,7 +148,7 @@ const MusicCopyright = () => {
         <meta property="og:title" content="Music Copyright Checker - Renderdragon" />
         <meta property="og:description" content="Check if music is safe to use in your Minecraft videos. Avoid copyright strikes with our music copyright checker tool." />
         <meta property="og:image" content="https://renderdragon.org/ogimg/copyright.png" />
-        <meta property="og:url" content="https://renderdragon.org/music-copyright" />
+        <meta property="og:url" content="https://renderdragon.org/gappa" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Music Copyright Checker - Renderdragon" />
         <meta name="twitter:image" content="https://renderdragon.org/ogimg/copyright.png" />

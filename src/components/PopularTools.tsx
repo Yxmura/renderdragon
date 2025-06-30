@@ -19,7 +19,7 @@ const tools: Tool[] = [
     title: 'Music Copyright Checker',
     description: 'Check if music tracks are safe to use in your videos',
     icon: Music,
-    path: '/music-copyright',
+    path: '/gappa',
     color: 'from-blue-500/80 to-blue-600/80'
   },
   {

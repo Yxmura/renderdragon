@@ -39,7 +39,6 @@ const Hero = () => {
       y: 0,
       opacity: 1,
       transition: {
-        type: "spring",
         stiffness: 100,
         damping: 10,
       },
@@ -48,16 +47,15 @@ const Hero = () => {
 
   const decorationVariants = {
     hidden: { scale: 0, opacity: 0 },
-    visible: (i: number) => ({
+    visible: {
       scale: 1,
       opacity: 1,
       transition: {
-        delay: 0.2 + i * 0.1,
-        type: "spring",
+        delay: 0.2,
         stiffness: 200,
         damping: 10,
       },
-    }),
+    },
   }
 
   const titleVariants = {
@@ -66,7 +64,6 @@ const Hero = () => {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
         stiffness: 100,
         damping: 10,
         when: "beforeChildren",
@@ -81,7 +78,6 @@ const Hero = () => {
       opacity: 1,
       y: 0,
       transition: {
-        type: "spring",
         stiffness: 100,
         damping: 10,
       },
@@ -95,7 +91,6 @@ const Hero = () => {
       opacity: 1,
       transition: {
         delay: 1.2,
-        type: "spring",
         stiffness: 200,
         damping: 10,
       },
@@ -129,7 +124,6 @@ const Hero = () => {
       >
         <motion.div
           className="absolute left-[10%] top-[15%] w-16 h-16 border-2 border-cow-purple/30 rounded-lg rotate-45"
-          custom={0}
           initial="hidden"
           animate="visible"
           variants={decorationVariants}
@@ -140,7 +134,6 @@ const Hero = () => {
         />
         <motion.div
           className="absolute right-[12%] top-[20%] w-10 h-10 bg-cow-purple/20 rounded-full"
-          custom={1}
           initial="hidden"
           animate="visible"
           variants={decorationVariants}
@@ -152,7 +145,6 @@ const Hero = () => {
         />
         <motion.div
           className="absolute left-[20%] bottom-[20%] w-12 h-12 bg-cow-purple/20 rotate-12 pixel-corners"
-          custom={2}
           initial="hidden"
           animate="visible"
           variants={decorationVariants}
@@ -164,7 +156,6 @@ const Hero = () => {
         />
         <motion.div
           className="absolute right-[25%] bottom-[15%] w-8 h-8 bg-cow-purple/30 pixel-corners"
-          custom={3}
           initial="hidden"
           animate="visible"
           variants={decorationVariants}
@@ -222,7 +213,7 @@ const Hero = () => {
           <motion.div
             whileHover={{
               scale: 1.05,
-              transition: { type: "spring", stiffness: 400, damping: 10 },
+              transition: { stiffness: 400, damping: 10 },
             }}
             whileTap={{ scale: 0.95 }}
           >
@@ -243,12 +234,12 @@ const Hero = () => {
           <motion.div
             whileHover={{
               scale: 1.05,
-              transition: { type: "spring", stiffness: 400, damping: 10 },
+              transition: { stiffness: 400, damping: 10 },
             }}
             whileTap={{ scale: 0.95 }}
           >
             <Link
-              to="/music-copyright"
+              to="/gappa"
               className="pixel-btn-secondary inline-flex items-center gap-2 px-6 py-3 text-sm transition-transform"
             >
               <motion.span
