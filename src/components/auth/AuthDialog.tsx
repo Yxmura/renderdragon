@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -26,8 +25,6 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false); // Controls button loading state
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaVerified, setCaptchaVerified] = useState(false);
   const { signIn, signUp } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -38,8 +35,6 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('handleSubmit triggered');
-    console.log('Current state at handleSubmit - captchaToken:', captchaToken, 'captchaVerified:', captchaVerified, 'loading:', loading);
-
 
     // Prevent submission if already loading from CAPTCHA verification or previous auth attempt
     if (loading) {
@@ -60,18 +55,12 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       return;
     }
 
-    // Critical check: Ensure CAPTCHA is verified before attempting auth
-    if (!captchaToken || !captchaVerified) {
-      toast.error('Please complete the security verification first.');
-      return;
-    }
-
     setLoading(true); // Set loading for the actual auth attempt
     console.log('Set loading to true for auth submission.');
     try {
       const { error } = isLogin
-        ? await signIn(email, password, captchaToken)
-        : await signUp(email, password, displayName, '', '', captchaToken);
+        ? await signIn(email, password, null)
+        : await signUp(email, password, displayName, '', '', null);
 
       if (error) {
         if (error.includes('Invalid login credentials')) {
@@ -84,9 +73,6 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
           toast.error(error || 'Authentication failed');
         }
         console.error('Auth error:', error);
-        // Reset captcha on auth error to force re-verification if needed
-        setCaptchaToken(null);
-        setCaptchaVerified(false);
         return;
       }
 
@@ -103,9 +89,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       setEmail('');
       setPassword('');
       setDisplayName('');
-      setCaptchaToken(null);
-      setCaptchaVerified(false);
-      console.log('Auth successful, form and captcha reset.');
+      console.log('Auth successful, form reset.');
     } catch (error) {
       console.error('Auth unexpected error:', error);
       toast.error('Something went wrong during authentication.');
@@ -119,9 +103,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     setEmail('');
     setPassword('');
     setDisplayName('');
-    setCaptchaToken(null); // Clear captcha state on mode toggle
-    setCaptchaVerified(false);
-    console.log('Toggling mode, resetting form and captcha state.');
+    console.log('Toggling mode, resetting form state.');
   }, []);
 
   const isFormValid = useCallback(() => {
@@ -131,12 +113,12 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       password.length >= 6 &&
       (isLogin || displayName.trim());
 
-    // The form is valid if all fields are good AND captcha is verified AND not currently loading
-    const formReady = fieldsValid && captchaVerified && !loading;
+    // The form is valid if all fields are good AND not currently loading
+    const formReady = fieldsValid && !loading;
 
     // console.log('isFormValid check:', { fieldsValid, captchaVerified, loading, formReady });
     return formReady;
-  }, [email, password, displayName, captchaVerified, isLogin, loading]);
+  }, [email, password, displayName, isLogin, loading]);
 
 
   return (
