@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -60,7 +61,7 @@ const FeaturedResources = () => {
       y: 0,
       transition: {
         duration: 0.25,
-        ease: "easeOut"
+        ease: [0.4, 0.0, 0.2, 1]
       }
     }
   };

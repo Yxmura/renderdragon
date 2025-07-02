@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react'; // Added useCallback for better performance
+
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Turnstile } from '@marsidev/react-turnstile';
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Mail, Lock, User, Shield } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 
 interface AuthDialogProps {
   open: boolean;
@@ -25,9 +25,7 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false); // Controls button loading state
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -35,63 +33,10 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
     return emailRegex.test(email);
   };
 
-  const handleCaptchaSuccess = useCallback(
-    async (token: string) => {
-      console.log('handleCaptchaSuccess triggered with token:', token);
-      setLoading(true); // Disable button while CAPTCHA is being verified by backend
-      setCaptchaToken(token); // Store the token from Turnstile
-
-      try {
-        const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-turnstile`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token }),
-          },
-        );
-
-        const data = await res.json();
-        console.log('Supabase CAPTCHA verify response:', data);
-
-        if (!res.ok || data.success !== true) {
-          toast.error('CAPTCHA verification failed. Please try again.');
-          setCaptchaVerified(false);
-          setCaptchaToken(null); // Clear token so user has to re-verify
-          return;
-        }
-
-        toast.success('CAPTCHA verified!');
-        setCaptchaVerified(true); // Set to true on successful verification
-      } catch (err) {
-        console.error('Error verifying CAPTCHA:', err);
-        toast.error('Unexpected error during CAPTCHA verification');
-        setCaptchaVerified(false);
-        setCaptchaToken(null); // Clear token on error
-      } finally {
-        setLoading(false); // Re-enable button after CAPTCHA verification attempt (success or failure)
-        console.log('handleCaptchaSuccess finished, setLoading(false)');
-      }
-    },
-    [], // Dependencies are empty as state setters are stable
-  );
-
-  const handleCaptchaError = useCallback(() => {
-    toast.error('CAPTCHA expired or failed. Please re-verify.');
-    setCaptchaToken(null);
-    setCaptchaVerified(false);
-    // No need to set loading here, as this is a client-side error/expire
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('handleSubmit triggered');
-    console.log('Current state at handleSubmit - captchaToken:', captchaToken, 'captchaVerified:', captchaVerified, 'loading:', loading);
 
-
-    // Prevent submission if already loading from CAPTCHA verification or previous auth attempt
     if (loading) {
-      console.log("Already loading, preventing duplicate submission.");
       return;
     }
 
@@ -109,33 +54,22 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       return;
     }
 
-    // Critical check: Ensure CAPTCHA is verified before attempting auth
-    if (!captchaToken || !captchaVerified) {
-      toast.error('Please complete the security verification first.');
-      return;
-    }
-
-    setLoading(true); // Set loading for the actual auth attempt
-    console.log('Set loading to true for auth submission.');
+    setLoading(true);
     try {
-      const { error } = isLogin
-        ? await signIn(email, password, captchaToken)
-        : await signUp(email, password, displayName, '', '', captchaToken);
+      const result = isLogin
+        ? await signIn(email, password, null)
+        : await signUp(email, password, displayName, '', '', null);
 
-      if (error) {
-        if (error.message.includes('Invalid login credentials')) {
+      if (!result.success && result.error) {
+        if (result.error.includes('Invalid login credentials')) {
           toast.error('Invalid email or password');
-        } else if (error.message.includes('User already registered')) {
+        } else if (result.error.includes('User already registered')) {
           toast.error('Account already exists. Please sign in instead.');
-        } else if (error.message.includes('Signup is disabled')) {
+        } else if (result.error.includes('Signup is disabled')) {
           toast.error('New registrations are currently disabled');
         } else {
-          toast.error(error.message || 'Authentication failed');
+          toast.error(result.error || 'Authentication failed');
         }
-        console.error('Auth error:', error);
-        // Reset captcha on auth error to force re-verification if needed
-        setCaptchaToken(null);
-        setCaptchaVerified(false);
         return;
       }
 
@@ -148,50 +82,34 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         onOpenChange(false);
       }
 
-      // Reset form & captcha state on success
+      // Reset form
       setEmail('');
       setPassword('');
       setDisplayName('');
-      setCaptchaToken(null);
-      setCaptchaVerified(false);
-      console.log('Auth successful, form and captcha reset.');
     } catch (error) {
       console.error('Auth unexpected error:', error);
       toast.error('Something went wrong during authentication.');
-      setCaptchaToken(null);
-      setCaptchaVerified(false);
     } finally {
-      setLoading(false); // Always stop loading, whether auth succeeded or failed
-      console.log('handleSubmit finished, setLoading(false)');
+      setLoading(false);
     }
   };
 
   const toggleMode = useCallback(() => {
-    setIsLogin((prevMode) => !prevMode); // Use functional update for safety
+    setIsLogin((prevMode) => !prevMode);
     setEmail('');
     setPassword('');
     setDisplayName('');
-    setCaptchaToken(null); // Clear captcha state on mode toggle
-    setCaptchaVerified(false);
-    console.log('Toggling mode, resetting form and captcha state.');
   }, []);
 
-
   const isFormValid = useCallback(() => {
-    // Basic validation for all fields
     const fieldsValid =
       email.trim() &&
       validateEmail(email) &&
       password.length >= 6 &&
-      (isLogin || displayName.trim()); // displayName only required for signup
+      (isLogin || displayName.trim());
 
-    // The form is valid if all fields are good AND captcha is verified AND not currently loading
-    const formReady = fieldsValid && captchaVerified && !loading;
-
-    // console.log('isFormValid check:', { fieldsValid, captchaVerified, loading, formReady });
-    return formReady;
-  }, [email, password, displayName, captchaVerified, isLogin, loading]);
-
+    return fieldsValid && !loading;
+  }, [email, password, displayName, isLogin, loading]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -291,26 +209,6 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 font-medium text-sm">
-              <Shield className="h-4 w-4" />
-              Security Verification *
-              {captchaVerified && (
-                <span className="text-xs text-green-500">✓ Verified</span>
-              )}
-            </Label>
-            <div className="flex justify-center">
-              <Turnstile
-                // Simplified key to prevent constant re-initialization
-                key={isLogin ? 'login-captcha' : 'signup-captcha'}
-                siteKey="0x4AAAAAABgSiniGjeFvoBh-"
-                onSuccess={handleCaptchaSuccess}
-                onError={handleCaptchaError}
-                onExpire={handleCaptchaError}
-              />
-            </div>
-          </div>
-
           <AnimatePresence mode="wait">
             <motion.div
               key={isLogin ? 'login' : 'signup'}
@@ -322,9 +220,9 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
               <Button
                 type="submit"
                 className="pixel-btn-primary w-full"
-                disabled={!isFormValid()} // Disabled if not valid
+                disabled={!isFormValid()}
               >
-                {loading ? ( // Use loading state for spinner only
+                {loading ? (
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{

@@ -1,112 +1,88 @@
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Plus, Edit, Trash2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { Plus, Search, Edit, Trash2, Download, Calendar } from 'lucide-react';
 import { Resource } from '@/types/resources';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 import AdminResourceDialog from './AdminResourceDialog';
-import { useDownloadCounts } from '@/hooks/useDownloadCounts';
 
 const AdminResourcesManager = () => {
   const [resources, setResources] = useState<Resource[]>([]);
-  const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { toast } = useToast();
-  const { downloadCounts } = useDownloadCounts();
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingResource, setEditingResource] = useState<Resource | undefined>();
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; resource: Resource | null }>({
+    open: false,
+    resource: null,
+  });
+
+  const categories = ['all', 'music', 'sfx', 'images', 'animations', 'fonts', 'presets'];
+
+  useEffect(() => {
+    fetchResources();
+  }, []);
 
   const fetchResources = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const { data, error } = await supabase
         .from('resources')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-
       setResources(data || []);
-      setFilteredResources(data || []);
     } catch (error) {
       console.error('Error fetching resources:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to fetch resources',
-        variant: 'destructive',
-      });
+      toast.error('Failed to fetch resources');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchResources();
-  }, []);
-
-  useEffect(() => {
-    if (searchQuery.trim() === '') {
-      setFilteredResources(resources);
-    } else {
-      const filtered = resources.filter(resource =>
-        resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        resource.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (resource.credit && resource.credit.toLowerCase().includes(searchQuery.toLowerCase()))
-      );
-      setFilteredResources(filtered);
-    }
-  }, [searchQuery, resources]);
-
-  const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this resource?')) return;
-
+  const handleDelete = async (resource: Resource) => {
     try {
       const { error } = await supabase
         .from('resources')
         .delete()
-        .eq('id', id);
+        .eq('id', resource.id);
 
       if (error) throw error;
-
-      toast({
-        title: 'Success',
-        description: 'Resource deleted successfully',
-      });
       
+      toast.success('Resource deleted successfully');
       fetchResources();
+      setDeleteDialog({ open: false, resource: null });
     } catch (error) {
       console.error('Error deleting resource:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to delete resource',
-        variant: 'destructive',
-      });
+      toast.error('Failed to delete resource');
     }
   };
 
-  const handleEdit = (resource: Resource) => {
-    setSelectedResource(resource);
-    setIsDialogOpen(true);
+  const filteredResources = resources.filter((resource) => {
+    const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         resource.credit?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || resource.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
+  const getResourceStats = () => {
+    const stats = categories.slice(1).map(category => ({
+      category,
+      count: resources.filter(r => r.category === category).length
+    }));
+    return stats;
   };
 
-  const handleAdd = () => {
-    setSelectedResource(null);
-    setIsDialogOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setIsDialogOpen(false);
-    setSelectedResource(null);
-    fetchResources();
-  };
-
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cow-purple"></div>
@@ -116,101 +92,176 @@ const AdminResourcesManager = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Search resources..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pixel-corners"
-          />
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-vt323 mb-2">Resources Manager</h2>
+          <p className="text-muted-foreground">
+            Manage all resources in your database. Total: {resources.length} resources
+          </p>
         </div>
-        <Button onClick={handleAdd} className="pixel-btn-primary">
-          <Plus className="mr-2 h-4 w-4" />
+        <Button
+          onClick={() => {
+            setEditingResource(undefined);
+            setDialogOpen(true);
+          }}
+          className="pixel-btn-primary"
+        >
+          <Plus className="h-4 w-4 mr-2" />
           Add Resource
         </Button>
       </div>
 
-      <div className="grid gap-4">
-        {filteredResources.map((resource, index) => (
-          <motion.div
-            key={resource.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-          >
-            <Card className="pixel-corners">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg font-vt323 text-cow-purple">
-                      {resource.title}
-                    </CardTitle>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary">{resource.category}</Badge>
-                      {resource.subcategory && (
-                        <Badge variant="outline">{resource.subcategory}</Badge>
-                      )}
-                      {resource.credit && (
-                        <Badge variant="outline">by {resource.credit}</Badge>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => handleEdit(resource)}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      onClick={() => handleDelete(resource.id)}
-                      variant="outline"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">ID:</span> {resource.id}
-                  </div>
-                  <div>
-                    <span className="font-medium">Filetype:</span> {resource.filetype || 'N/A'}
-                  </div>
-                  <div>
-                    <span className="font-medium">Downloads:</span> {downloadCounts[resource.id] || 0}
-                  </div>
-                  <div>
-                    <span className="font-medium">Created:</span> {new Date(resource.created_at || '').toLocaleDateString()}
-                  </div>
-                </div>
-                {resource.description && (
-                  <p className="text-muted-foreground mt-2 text-sm">{resource.description}</p>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {getResourceStats().map(({ category, count }) => (
+          <Card key={category} className="pixel-corners">
+            <CardContent className="p-4 text-center">
+              <p className="text-2xl font-bold text-cow-purple">{count}</p>
+              <p className="text-sm text-muted-foreground capitalize">{category}</p>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
-      {filteredResources.length === 0 && !isLoading && (
+      {/* Search and Filter */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search resources..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full sm:w-auto">
+          <TabsList className="grid grid-cols-4 lg:grid-cols-7 w-full">
+            {categories.map((category) => (
+              <TabsTrigger key={category} value={category} className="capitalize text-xs">
+                {category}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
+
+      {/* Resources Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredResources.map((resource) => (
+          <Card key={resource.id} className="pixel-corners overflow-hidden">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-lg font-vt323 mb-1">{resource.title}</CardTitle>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {resource.category}
+                    </Badge>
+                    {resource.subcategory && (
+                      <Badge variant="outline" className="text-xs">
+                        {resource.subcategory}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setEditingResource(resource);
+                      setDialogOpen(true);
+                    }}
+                  >
+                    <Edit className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setDeleteDialog({ open: true, resource })}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {resource.image_url && (
+                <div className="mb-3 aspect-video bg-muted rounded overflow-hidden">
+                  <img
+                    src={resource.image_url}
+                    alt={resource.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              
+              {resource.description && (
+                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                  {resource.description}
+                </p>
+              )}
+              
+              <div className="space-y-2 text-xs text-muted-foreground">
+                {resource.credit && (
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">Credit:</span>
+                    <span>{resource.credit}</span>
+                  </div>
+                )}
+                {resource.filetype && (
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">Type:</span>
+                    <span>{resource.filetype}</span>
+                  </div>
+                )}
+                {resource.created_at && (
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    <span>{new Date(resource.created_at).toLocaleDateString()}</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {filteredResources.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">No resources found</p>
+          <p className="text-muted-foreground">No resources found matching your criteria.</p>
         </div>
       )}
 
+      {/* Dialogs */}
       <AdminResourceDialog
-        resource={selectedResource}
-        open={isDialogOpen}
-        onClose={handleDialogClose}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        resource={editingResource}
+        onSave={fetchResources}
       />
+
+      <AlertDialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ open, resource: null })}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Resource</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete "{deleteDialog.resource?.title}"? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteDialog.resource && handleDelete(deleteDialog.resource)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
