@@ -20,8 +20,6 @@ const Account = () => {
   const [displayName, setDisplayName] = useState<string | null>("")
   const [firstName, setFirstName] = useState<string | null>("")
   const [lastName, setLastName] = useState<string | null>("")
-  const [website, setWebsite] = useState<string | null>("")
-  const [avatarUrl, setAvatarUrl] = useState<string | null>("")
   const [updatedAt, setUpdatedAt] = useState<string | null>("")
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState(false)
@@ -36,7 +34,7 @@ const Account = () => {
 
         let { data, error, status } = await supabase
           .from("profiles")
-          .select(`display_name, first_name, last_name, website, avatar_url, updated_at`)
+          .select(`display_name, first_name, last_name, updated_at`)
           .eq("id", user?.id)
           .single()
 
@@ -48,8 +46,6 @@ const Account = () => {
           setDisplayName(data.display_name)
           setFirstName(data.first_name)
           setLastName(data.last_name)
-          setWebsite(data.website)
-          setAvatarUrl(data.avatar_url)
           setUpdatedAt(data.updated_at)
         }
       } catch (error: any) {
@@ -67,14 +63,10 @@ const Account = () => {
     displayName,
     firstName,
     lastName,
-    website,
-    avatarUrl,
   }: {
     displayName: string | null
     firstName: string | null
     lastName: string | null
-    website: string | null
-    avatarUrl: string | null
   }) {
     try {
       setLoading(true)
@@ -86,13 +78,9 @@ const Account = () => {
         display_name: displayName,
         first_name: firstName,
         last_name: lastName,
-        website: website,
-        avatar_url: avatarUrl,
       }
 
-      let { error } = await supabase.from("profiles").upsert(updates, {
-        returning: "minimal", // Don't return values after insert
-      })
+      let { error } = await supabase.from("profiles").upsert(updates)
 
       if (error) {
         throw error
@@ -128,11 +116,7 @@ const Account = () => {
           {/* Avatar Section */}
           <div className="flex flex-col items-center justify-center">
             <Avatar className="h-32 w-32 border-2 border-muted-foreground mb-4">
-              {avatarUrl ? (
-                <AvatarImage src={avatarUrl} alt="Avatar" />
-              ) : (
-                <AvatarFallback>{displayName?.slice(0, 2).toUpperCase()}</AvatarFallback>
-              )}
+              <AvatarFallback>{displayName?.slice(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
             <p className="text-sm text-muted-foreground">
               Last updated: {updatedAt ? new Date(updatedAt).toLocaleDateString() : "Not available"}
@@ -169,31 +153,13 @@ const Account = () => {
                   onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
-              <div>
-                <Label htmlFor="website">Website</Label>
-                <Input
-                  id="website"
-                  type="url"
-                  value={website || ""}
-                  onChange={(e) => setWebsite(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="avatarUrl">Avatar URL</Label>
-                <Input
-                  id="avatarUrl"
-                  type="url"
-                  value={avatarUrl || ""}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                />
-              </div>
 
               <div>
                 <Button
                   className="w-full"
                   disabled={loading}
                   onClick={() =>
-                    updateProfile({ displayName, firstName, lastName, website, avatarUrl })
+                    updateProfile({ displayName, firstName, lastName })
                   }
                 >
                   {loading ? "Updating ..." : "Update Profile"}
