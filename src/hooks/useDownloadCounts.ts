@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -9,7 +10,7 @@ export const useDownloadCounts = () => {
       try {
         const { data, error } = await supabase
           .from('downloads')
-          .select('asset_id, count');
+          .select('resource_id, count');
 
         if (error) {
           console.error('Error fetching download counts:', error);
@@ -18,7 +19,9 @@ export const useDownloadCounts = () => {
 
         if (data) {
           const mapped = data.reduce((acc, row) => {
-            acc[parseInt(row.asset_id)] = row.count;
+            if (row.resource_id) {
+              acc[row.resource_id] = row.count || 0;
+            }
             return acc;
           }, {} as Record<number, number>);
           setDownloadCounts(mapped);
@@ -31,12 +34,19 @@ export const useDownloadCounts = () => {
     fetchCounts();
   }, []);
 
-  const incrementDownload = async (assetId: number) => {
+  const incrementDownload = async (resourceId: number) => {
     try {
-      const { data, error } = await supabase
+      const currentCount = downloadCounts[resourceId] || 0;
+      const newCount = currentCount + 1;
+
+      const { error } = await supabase
         .from('downloads')
-        .upsert({ asset_id: assetId, count: downloadCounts[assetId] + 1 })
-        .eq('asset_id', assetId);
+        .upsert({ 
+          resource_id: resourceId, 
+          count: newCount 
+        }, {
+          onConflict: 'resource_id'
+        });
 
       if (error) {
         console.error('Error incrementing download count:', error);
@@ -45,7 +55,7 @@ export const useDownloadCounts = () => {
 
       setDownloadCounts(prev => ({
         ...prev,
-        [assetId]: (prev[assetId] || 0) + 1,
+        [resourceId]: newCount,
       }));
     } catch (err) {
       console.error('Unexpected error incrementing download count:', err);
