@@ -61,7 +61,7 @@ const FeaturedResources = () => {
       y: 0,
       transition: {
         duration: 0.25,
-        ease: [0.4, 0.0, 0.2, 1]
+        ease: "easeOut"
       }
     }
   };

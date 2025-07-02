@@ -11,6 +11,7 @@ export interface Resource {
   description?: string;
   preview_url?: string;
   download_url?: string;
+  download_count?: number;
   created_at?: string;
   updated_at?: string;
 }

@@ -66,10 +66,23 @@ const AdminResourceDialog = ({ open, onOpenChange, resource, onSave }: AdminReso
         if (error) throw error;
         toast.success('Resource updated successfully');
       } else {
-        // Create new resource
+        // Create new resource - ensure required fields are present
+        const resourceData = {
+          title: formData.title || '',
+          category: formData.category || 'music',
+          subcategory: formData.subcategory || null,
+          credit: formData.credit || null,
+          filetype: formData.filetype || null,
+          software: formData.software || null,
+          image_url: formData.image_url || null,
+          description: formData.description || null,
+          preview_url: formData.preview_url || null,
+          download_url: formData.download_url || null,
+        };
+
         const { error } = await supabase
           .from('resources')
-          .insert([formData]);
+          .insert([resourceData]);
 
         if (error) throw error;
         toast.success('Resource created successfully');
