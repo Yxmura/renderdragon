@@ -60,15 +60,16 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         ? await signIn(email, password, null)
         : await signUp(email, password, displayName, '', '', null);
 
-      if (!result.success && result.error) {
-        if (result.error.includes('Invalid login credentials')) {
+      if (!result.success) {
+        const errorMsg = result.error || 'Authentication failed';
+        if (errorMsg.includes('Invalid login credentials')) {
           toast.error('Invalid email or password');
-        } else if (result.error.includes('User already registered')) {
+        } else if (errorMsg.includes('User already registered')) {
           toast.error('Account already exists. Please sign in instead.');
-        } else if (result.error.includes('Signup is disabled')) {
+        } else if (errorMsg.includes('Signup is disabled')) {
           toast.error('New registrations are currently disabled');
         } else {
-          toast.error(result.error || 'Authentication failed');
+          toast.error(errorMsg);
         }
         return;
       }

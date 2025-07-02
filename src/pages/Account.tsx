@@ -1,199 +1,232 @@
 
-"use client"
-
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { useAuth } from "@/hooks/useAuth"
-import { ArrowLeft } from "lucide-react"
-import { motion } from "framer-motion"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
-import DonateButton from "@/components/DonateButton"
-import { supabase } from "@/integrations/supabase/client"
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { Navigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { toast } from 'sonner';
+import { User, Mail, Calendar, LogOut } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet';
 
 const Account = () => {
-  const [loading, setLoading] = useState(false)
-  const [displayName, setDisplayName] = useState<string | null>("")
-  const [firstName, setFirstName] = useState<string | null>("")
-  const [lastName, setLastName] = useState<string | null>("")
-  const [updatedAt, setUpdatedAt] = useState<string | null>("")
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState(false)
-  const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, loading, signOut, updateProfile } = useAuth();
+  const [displayName, setDisplayName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    const getProfile = async () => {
-      try {
-        setLoading(true)
-        if (!user) throw new Error("Please login to update your profile.")
-
-        let { data, error, status } = await supabase
-          .from("profiles")
-          .select(`display_name, first_name, last_name, updated_at`)
-          .eq("id", user?.id)
-          .single()
-
-        if (error && status !== 406) {
-          throw error
-        }
-
-        if (data) {
-          setDisplayName(data.display_name)
-          setFirstName(data.first_name)
-          setLastName(data.last_name)
-          setUpdatedAt(data.updated_at)
-        }
-      } catch (error: any) {
-        console.error(error)
-        alert(error.message)
-      } finally {
-        setLoading(false)
-      }
+    if (user) {
+      // Load profile data from user metadata or profile
+      setDisplayName(user.user_metadata?.display_name || user.email?.split('@')[0] || '');
+      setFirstName(user.user_metadata?.first_name || '');
+      setLastName(user.user_metadata?.last_name || '');
     }
+  }, [user]);
 
-    getProfile()
-  }, [user])
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cow-purple"></div>
+      </div>
+    );
+  }
 
-  async function updateProfile({
-    displayName,
-    firstName,
-    lastName,
-  }: {
-    displayName: string | null
-    firstName: string | null
-    lastName: string | null
-  }) {
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUpdating(true);
+
     try {
-      setLoading(true)
-      if (!user) throw new Error("Please login to update your profile.")
-
-      const updates = {
-        id: user?.id,
-        updated_at: new Date().toISOString(),
+      const result = await updateProfile({
         display_name: displayName,
         first_name: firstName,
         last_name: lastName,
-      }
+      });
 
-      let { error } = await supabase.from("profiles").upsert(updates)
-
-      if (error) {
-        throw error
+      if (result.success) {
+        toast.success('Profile updated successfully!');
+      } else {
+        toast.error('Failed to update profile. Please try again.');
       }
-      setSuccess(true)
-      setTimeout(() => {
-        setSuccess(false)
-      }, 3000)
-    } catch (error: any) {
-      setError(true)
-      setTimeout(() => {
-        setError(false)
-      }, 5000)
-      console.error(error)
-      alert(error.message)
+    } catch (error) {
+      console.error('Profile update error:', error);
+      toast.error('An error occurred while updating your profile.');
     } finally {
-      setLoading(false)
+      setIsUpdating(false);
     }
-  }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const result = await signOut();
+      if (result.success) {
+        toast.success('Signed out successfully');
+      } else {
+        toast.error('Failed to sign out. Please try again.');
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+      toast.error('An error occurred while signing out.');
+    }
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>My Account - Renderdragon</title>
+        <meta name="description" content="Manage your Renderdragon account settings and profile information." />
+      </Helmet>
+      
       <Navbar />
+      
+      <main className="flex-grow pt-24 pb-16 cow-grid-bg">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-2xl mx-auto"
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <User className="h-8 w-8 text-cow-purple" />
+              <h1 className="text-4xl md:text-5xl font-vt323">
+                My <span className="text-cow-purple">Account</span>
+              </h1>
+            </div>
 
-      <main className="container mx-auto px-4 py-24 flex-grow">
-        <div className="mb-8">
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back
-          </Button>
-        </div>
+            <Card className="pixel-corners border-2 border-cow-purple/20">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-3">
+                  <Avatar className="h-16 w-16">
+                    <AvatarImage src={user.user_metadata?.avatar_url} />
+                    <AvatarFallback className="bg-cow-purple text-white font-bold text-lg">
+                      {getInitials(displayName || user.email || 'U')}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h2 className="text-2xl font-vt323">{displayName || 'User'}</h2>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Mail className="h-4 w-4" />
+                      {user.email}
+                    </div>
+                  </div>
+                </CardTitle>
+              </CardHeader>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Avatar Section */}
-          <div className="flex flex-col items-center justify-center">
-            <Avatar className="h-32 w-32 border-2 border-muted-foreground mb-4">
-              <AvatarFallback>{displayName?.slice(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <p className="text-sm text-muted-foreground">
-              Last updated: {updatedAt ? new Date(updatedAt).toLocaleDateString() : "Not available"}
-            </p>
-          </div>
+              <Separator />
 
-          {/* Form Section */}
-          <div>
-            <form className="space-y-6">
-              <div>
-                <Label htmlFor="displayName">Display Name</Label>
-                <Input
-                  id="displayName"
-                  type="text"
-                  value={displayName || ""}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  type="text"
-                  value={firstName || ""}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  type="text"
-                  value={lastName || ""}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </div>
+              <CardContent className="pt-6">
+                <form onSubmit={handleUpdateProfile} className="space-y-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-vt323 text-cow-purple">Profile Information</h3>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="displayName">Display Name</Label>
+                      <Input
+                        id="displayName"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        placeholder="How others will see you"
+                        className="pixel-corners"
+                      />
+                    </div>
 
-              <div>
-                <Button
-                  className="w-full"
-                  disabled={loading}
-                  onClick={() =>
-                    updateProfile({ displayName, firstName, lastName })
-                  }
-                >
-                  {loading ? "Updating ..." : "Update Profile"}
-                </Button>
-              </div>
-              {success && (
-                <motion.p
-                  className="text-green-500"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  Profile updated successfully!
-                </motion.p>
-              )}
-              {error && (
-                <motion.p
-                  className="text-red-500"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  Failed to update profile. Please try again.
-                </motion.p>
-              )}
-            </form>
-          </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="firstName">First Name</Label>
+                        <Input
+                          id="firstName"
+                          value={firstName}
+                          onChange={(e) => setFirstName(e.target.value)}
+                          placeholder="Your first name"
+                          className="pixel-corners"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="lastName">Last Name</Label>
+                        <Input
+                          id="lastName"
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          placeholder="Your last name"
+                          className="pixel-corners"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-vt323 text-cow-purple">Account Details</h3>
+                    
+                    <div className="space-y-3 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">Email:</span>
+                        <span>{user.email}</span>
+                      </div>
+                      
+                      {user.created_at && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span className="font-medium">Member since:</span>
+                          <span>{new Date(user.created_at).toLocaleDateString()}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row justify-between gap-4 pt-6">
+                    <Button
+                      type="submit"
+                      disabled={isUpdating}
+                      className="pixel-btn-primary"
+                    >
+                      {isUpdating ? 'Updating...' : 'Update Profile'}
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleSignOut}
+                      className="pixel-corners border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
       </main>
-
+      
       <Footer />
-      <DonateButton />
     </div>
-  )
-}
+  );
+};
 
-export default Account
+export default Account;
