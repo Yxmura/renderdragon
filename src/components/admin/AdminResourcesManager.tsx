@@ -11,6 +11,7 @@ import { Resource } from '@/types/resources';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import AdminResourceDialog from './AdminResourceDialog';
+import ResourceMigration from './ResourceMigration';
 
 const AdminResourcesManager = () => {
   const [resources, setResources] = useState<Resource[]>([]);
@@ -92,6 +93,12 @@ const AdminResourcesManager = () => {
 
   return (
     <div className="space-y-6">
+      {/* Migration Section */}
+      <div className="mb-8">
+        <h3 className="text-lg font-vt323 mb-4">Data Migration</h3>
+        <ResourceMigration />
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
