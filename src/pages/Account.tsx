@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,8 @@ import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet';
 
 const Account = () => {
-  const { user, loading, signOut, updateProfile } = useAuth();
+  const { user, loading, signOut } = useAuth();
+  const { updateProfile } = useProfile();
   const [displayName, setDisplayName] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');

@@ -74,14 +74,14 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         : await signUp(email, password, displayName, '', '', captchaToken);
 
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
+        if (error.includes('Invalid login credentials')) {
           toast.error('Invalid email or password');
-        } else if (error.message.includes('User already registered')) {
+        } else if (error.includes('User already registered')) {
           toast.error('Account already exists. Please sign in instead.');
-        } else if (error.message.includes('Signup is disabled')) {
+        } else if (error.includes('Signup is disabled')) {
           toast.error('New registrations are currently disabled');
         } else {
-          toast.error(error.message || 'Authentication failed');
+          toast.error(error || 'Authentication failed');
         }
         console.error('Auth error:', error);
         // Reset captcha on auth error to force re-verification if needed
