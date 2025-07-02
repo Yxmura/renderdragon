@@ -11,21 +11,29 @@ export type Database = {
     Tables: {
       downloads: {
         Row: {
-          asset_id: string | null
           count: number | null
           id: number
+          resource_id: number | null
         }
         Insert: {
-          asset_id?: string | null
           count?: number | null
           id?: number
+          resource_id?: number | null
         }
         Update: {
-          asset_id?: string | null
           count?: number | null
           id?: number
+          resource_id?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "downloads_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -54,6 +62,60 @@ export type Database = {
           id?: string
           last_name?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      resources: {
+        Row: {
+          category: Database["public"]["Enums"]["resource_category"]
+          created_at: string | null
+          credit: string | null
+          description: string | null
+          download_url: string | null
+          filetype: string | null
+          id: number
+          image_url: string | null
+          preview_url: string | null
+          software: string | null
+          subcategory:
+            | Database["public"]["Enums"]["resource_subcategory"]
+            | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["resource_category"]
+          created_at?: string | null
+          credit?: string | null
+          description?: string | null
+          download_url?: string | null
+          filetype?: string | null
+          id?: number
+          image_url?: string | null
+          preview_url?: string | null
+          software?: string | null
+          subcategory?:
+            | Database["public"]["Enums"]["resource_subcategory"]
+            | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["resource_category"]
+          created_at?: string | null
+          credit?: string | null
+          description?: string | null
+          download_url?: string | null
+          filetype?: string | null
+          id?: number
+          image_url?: string | null
+          preview_url?: string | null
+          software?: string | null
+          subcategory?:
+            | Database["public"]["Enums"]["resource_subcategory"]
+            | null
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -86,7 +148,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      resource_category:
+        | "music"
+        | "sfx"
+        | "images"
+        | "animations"
+        | "fonts"
+        | "presets"
+      resource_subcategory: "davinci" | "adobe"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -201,6 +270,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      resource_category: [
+        "music",
+        "sfx",
+        "images",
+        "animations",
+        "fonts",
+        "presets",
+      ],
+      resource_subcategory: ["davinci", "adobe"],
+    },
   },
 } as const

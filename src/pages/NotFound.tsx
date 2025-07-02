@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useEffect } from "react"
@@ -33,7 +34,7 @@ const NotFound = () => {
     visible: {
       y: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 100 },
+      transition: { duration: 0.6 },
     },
   }
 
@@ -41,7 +42,7 @@ const NotFound = () => {
   const blockHover = {
     scale: 1.05,
     rotate: [0, -1, 1, -1, 0],
-    transition: { type: "spring", stiffness: 400 },
+    transition: { duration: 0.4 },
   }
 
   return (
@@ -111,7 +112,7 @@ const NotFound = () => {
               }}
               transition={{
                 textShadow: { duration: 2, repeat: Number.POSITIVE_INFINITY },
-                y: { duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
+                y: { duration: 3, repeat: Number.POSITIVE_INFINITY },
               }}
             >
               404
@@ -127,7 +128,6 @@ const NotFound = () => {
                 duration: 1.5,
                 repeat: Number.POSITIVE_INFINITY,
                 repeatType: "reverse",
-                ease: "easeInOut",
                 delay: 1,
               }}
             >

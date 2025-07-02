@@ -1,3 +1,4 @@
+
 import { motion } from 'framer-motion';
 import { Bot, Command } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -66,8 +67,7 @@ const Renderbot = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5,
-        ease: "easeOut"
+        duration: 0.5
       }
     }
   };

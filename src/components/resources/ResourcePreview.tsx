@@ -1,3 +1,4 @@
+
 import { Resource } from '@/types/resources';
 import AudioPlayer from '@/components/AudioPlayer';
 import { useState, useEffect } from 'react';
@@ -16,6 +17,17 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
   const getDownloadURL = (resource: Resource) => {
     if (!resource || !resource.filetype) return '';
     
+    // Use preview_url if available, otherwise construct URL
+    if (resource.preview_url) {
+      return resource.preview_url;
+    }
+    
+    // Use download_url if available
+    if (resource.download_url) {
+      return resource.download_url;
+    }
+    
+    // Fallback to the old URL construction method
     const titleLowered = resource.title
       .toLowerCase()
       .replace(/ /g, '%20');
@@ -57,7 +69,7 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
     return (
       <div className="rounded-md overflow-hidden bg-muted/20 border border-border">
         <img
-          src={downloadURL}
+          src={resource.image_url || downloadURL}
           alt={resource.title}
           className="w-full h-full object-contain max-h-[400px]"
           loading="lazy"

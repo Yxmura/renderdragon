@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Resource, ResourcesData } from '@/types/resources';
-import { useDownloadCounts } from '@/hooks/useDownloadCounts'
 
-let resourceIds: number[] = [];
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Resource } from '@/types/resources';
+import { useDownloadCounts } from '@/hooks/useDownloadCounts';
+import { supabase } from '@/integrations/supabase/client';
 
 // Utility to normalize numbers and words
 const numberWordMap: Record<string, string> = {
@@ -44,27 +44,22 @@ export const useResources = () => {
   const fetchResources = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/resources.json');
-      if (!response.ok) {
-        throw new Error(
-          `Failed to fetch resources: ${response.status} ${response.statusText}`,
-        );
-      }
-      const resourcesData = (await response.json()) as ResourcesData;
+      const { data, error } = await supabase
+        .from('resources')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      let globalIndex = 0; // Global index to ensure unique IDs across categories
-      const allResources: Resource[] = Object.entries(resourcesData).flatMap(
-        ([category, resources]) =>
-          resources.map((resource) => ({ 
-            ...resource, 
-            id: resource.id || `${category}-${globalIndex++}`, // Generate unique ID using category and global index
-            category: category as 'music' | 'sfx' | 'images' | 'animations' | 'fonts' | 'presets',
-            downloads: 0 // Set all resources to have 0 downloads by default
-          })),
-      );
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      const allResources: Resource[] = (data || []).map(resource => ({
+        ...resource,
+        downloads: 0 // Set all resources to have 0 downloads by default
+      }));
 
       setResources(allResources);
-      resourceIds = allResources.map(r => r.id); // Set resourceIds after resources are fetched
       
       // Initialize download counts
       const counts: Record<number, number> = {};
@@ -150,18 +145,18 @@ export const useResources = () => {
     });
   }, [resources, selectedCategory, selectedSubcategory, searchQuery, isSearching]);
 
-
   const handleDownload = async (resource: Resource) => {
-      if (!resource) return;
+    if (!resource) return;
 
-      // Properly handle the title and credit encoding
+    // Use the download_url from the database if available, otherwise construct it
+    let fileUrl = resource.download_url;
+    
+    if (!fileUrl) {
+      // Fallback to the old URL construction method
       const titleLowered = encodeURIComponent(resource.title.toLowerCase());
       const creditName = resource.credit ? encodeURIComponent(resource.credit) : '';
       const filetype = resource.filetype;
 
-      let fileUrl = '';
-
-      // Handle download URL based on resource category and credit
       if (resource.category === 'presets' && resource.subcategory) {
         fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${resource.subcategory}/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
       } else if (resource.credit) {
@@ -169,38 +164,38 @@ export const useResources = () => {
       } else {
         fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${filetype}`;
       }
+    }
 
-      const filename = `${resource.title}.${filetype}`;
+    const filename = `${resource.title}.${resource.filetype || 'file'}`;
+    const shouldForceDownload = ['presets', 'images'].includes(resource.category);
 
-      const shouldForceDownload = ['presets', 'images'].includes(resource.category);
+    try {
+      if (shouldForceDownload) {
+        const res = await fetch(fileUrl);
+        if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
+        const blob = await res.blob();
 
-      try {
-        if (shouldForceDownload) {
-          const res = await fetch(fileUrl);
-          if (!res.ok) throw new Error(`Failed to fetch: ${res.statusText}`);
-          const blob = await res.blob();
-
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          URL.revokeObjectURL(a.href);
-        } else {
-          // Let the browser handle the download (works well for audio, fonts, etc.)
-          const a = document.createElement('a');
-          a.href = fileUrl;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        }
-
-        incrementDownload(resource.id);
-      } catch (err) {
-        console.error('Download failed', err);
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(a.href);
+      } else {
+        // Let the browser handle the download (works well for audio, fonts, etc.)
+        const a = document.createElement('a');
+        a.href = fileUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
       }
+
+      incrementDownload(resource.id);
+    } catch (err) {
+      console.error('Download failed', err);
+    }
   };   
 
   return {

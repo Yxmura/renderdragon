@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,6 +27,7 @@ import Renderbot from "./pages/Renderbot";
 import TextGenerator from '@/pages/TextGenerator';
 import Account from './pages/Account';
 import Generators from './pages/Generators';
+import Admin from './pages/Admin';
 
 const queryClient = new QueryClient();
 
@@ -52,6 +54,7 @@ const App = () => (
             <Route path="/player-renderer" element={<PlayerRenderer />} />
             <Route path="/renderbot" element={<Renderbot />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/tos" element={<TOS />} />
             <Route path="/privacy" element={<Privacy />} />

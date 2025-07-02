@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'; // Added useCallback for better performance
+
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Dialog,
@@ -11,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Eye, EyeOff, Mail, Lock, User, Shield } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 
 interface AuthDialogProps {
   open: boolean;
@@ -25,6 +26,8 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const [displayName, setDisplayName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false); // Controls button loading state
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
   const { signIn, signUp } = useAuth();
 
   const validateEmail = (email: string) => {
@@ -35,10 +38,11 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('handleSubmit triggered');
+    console.log('Current state at handleSubmit - captchaToken:', captchaToken, 'captchaVerified:', captchaVerified, 'loading:', loading);
 
-    // Prevent submission if already loading from previous auth attempt
+
+    // Prevent submission if already loading from CAPTCHA verification or previous auth attempt
     if (loading) {
-      console.log("Already loading, preventing duplicate submission.");
       return;
     }
 
@@ -56,24 +60,33 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
       return;
     }
 
+    // Critical check: Ensure CAPTCHA is verified before attempting auth
+    if (!captchaToken || !captchaVerified) {
+      toast.error('Please complete the security verification first.');
+      return;
+    }
+
     setLoading(true); // Set loading for the actual auth attempt
     console.log('Set loading to true for auth submission.');
     try {
       const { error } = isLogin
-        ? await signIn(email, password, null)
-        : await signUp(email, password, displayName, '', '', null);
+        ? await signIn(email, password, captchaToken)
+        : await signUp(email, password, displayName, '', '', captchaToken);
 
       if (error) {
-        if (error.includes('Invalid login credentials')) {
+        if (error.message.includes('Invalid login credentials')) {
           toast.error('Invalid email or password');
-        } else if (error.includes('User already registered')) {
+        } else if (error.message.includes('User already registered')) {
           toast.error('Account already exists. Please sign in instead.');
-        } else if (error.includes('Signup is disabled')) {
+        } else if (error.message.includes('Signup is disabled')) {
           toast.error('New registrations are currently disabled');
         } else {
-          toast.error(error || 'Authentication failed');
+          toast.error(error.message || 'Authentication failed');
         }
         console.error('Auth error:', error);
+        // Reset captcha on auth error to force re-verification if needed
+        setCaptchaToken(null);
+        setCaptchaVerified(false);
         return;
       }
 
@@ -86,40 +99,45 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
         onOpenChange(false);
       }
 
-      // Reset form state on success
+      // Reset form & captcha state on success
       setEmail('');
       setPassword('');
       setDisplayName('');
-      console.log('Auth successful, form reset.');
+      setCaptchaToken(null);
+      setCaptchaVerified(false);
+      console.log('Auth successful, form and captcha reset.');
     } catch (error) {
       console.error('Auth unexpected error:', error);
       toast.error('Something went wrong during authentication.');
     } finally {
-      setLoading(false); // Always stop loading, whether auth succeeded or failed
-      console.log('handleSubmit finished, setLoading(false)');
+      setLoading(false);
     }
   };
 
   const toggleMode = useCallback(() => {
-    setIsLogin((prevMode) => !prevMode); // Use functional update for safety
+    setIsLogin((prevMode) => !prevMode);
     setEmail('');
     setPassword('');
     setDisplayName('');
-    console.log('Toggling mode, resetting form state.');
+    setCaptchaToken(null); // Clear captcha state on mode toggle
+    setCaptchaVerified(false);
+    console.log('Toggling mode, resetting form and captcha state.');
   }, []);
 
   const isFormValid = useCallback(() => {
-    // Basic validation for all fields
     const fieldsValid =
       email.trim() &&
       validateEmail(email) &&
       password.length >= 6 &&
-      (isLogin || displayName.trim()); // displayName only required for signup
+      (isLogin || displayName.trim());
 
-    // The form is valid if all fields are good AND not currently loading
-    const formReady = fieldsValid && !loading;
+    // The form is valid if all fields are good AND captcha is verified AND not currently loading
+    const formReady = fieldsValid && captchaVerified && !loading;
+
+    // console.log('isFormValid check:', { fieldsValid, captchaVerified, loading, formReady });
     return formReady;
-  }, [email, password, displayName, isLogin, loading]);
+  }, [email, password, displayName, captchaVerified, isLogin, loading]);
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -230,9 +248,9 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
               <Button
                 type="submit"
                 className="pixel-btn-primary w-full"
-                disabled={!isFormValid()} // Disabled if not valid
+                disabled={!isFormValid()}
               >
-                {loading ? ( // Use loading state for spinner only
+                {loading ? (
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{
