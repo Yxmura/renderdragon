@@ -1,8 +1,9 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useUser, useSupabaseClient } from "@supabase/auth-helpers-react"
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "@/hooks/useAuth"
 import { ArrowLeft } from "lucide-react"
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
@@ -12,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import DonateButton from "@/components/DonateButton"
+import { supabase } from "@/integrations/supabase/client"
 
 const Account = () => {
   const [loading, setLoading] = useState(false)
@@ -21,11 +23,10 @@ const Account = () => {
   const [website, setWebsite] = useState<string | null>("")
   const [avatarUrl, setAvatarUrl] = useState<string | null>("")
   const [updatedAt, setUpdatedAt] = useState<string | null>("")
-  const [success, setSuccess] = useState<{ success: boolean }>({ success: false })
-  const [error, setError] = useState<{ error: boolean }>({ error: false })
-  const router = useRouter()
-  const supabaseClient = useSupabaseClient()
-  const user = useUser()
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState(false)
+  const navigate = useNavigate()
+  const { user } = useAuth()
 
   useEffect(() => {
     const getProfile = async () => {
@@ -33,7 +34,7 @@ const Account = () => {
         setLoading(true)
         if (!user) throw new Error("Please login to update your profile.")
 
-        let { data, error, status } = await supabaseClient
+        let { data, error, status } = await supabase
           .from("profiles")
           .select(`display_name, first_name, last_name, website, avatar_url, updated_at`)
           .eq("id", user?.id)
@@ -60,7 +61,7 @@ const Account = () => {
     }
 
     getProfile()
-  }, [user, supabaseClient])
+  }, [user])
 
   async function updateProfile({
     displayName,
@@ -89,21 +90,21 @@ const Account = () => {
         avatar_url: avatarUrl,
       }
 
-      let { error } = await supabaseClient.from("profiles").upsert(updates, {
+      let { error } = await supabase.from("profiles").upsert(updates, {
         returning: "minimal", // Don't return values after insert
       })
 
       if (error) {
         throw error
       }
-      setSuccess({ success: true })
+      setSuccess(true)
       setTimeout(() => {
-        setSuccess({ success: false })
+        setSuccess(false)
       }, 3000)
     } catch (error: any) {
-      setError({ error: true })
+      setError(true)
       setTimeout(() => {
-        setError({ error: false })
+        setError(false)
       }, 5000)
       console.error(error)
       alert(error.message)
@@ -118,7 +119,7 @@ const Account = () => {
 
       <main className="container mx-auto px-4 py-24 flex-grow">
         <div className="mb-8">
-          <Button variant="ghost" onClick={() => router.back()}>
+          <Button variant="ghost" onClick={() => navigate(-1)}>
             <ArrowLeft className="mr-2 h-4 w-4" /> Back
           </Button>
         </div>
@@ -198,7 +199,7 @@ const Account = () => {
                   {loading ? "Updating ..." : "Update Profile"}
                 </Button>
               </div>
-              {success.success && (
+              {success && (
                 <motion.p
                   className="text-green-500"
                   initial={{ opacity: 0, y: 10 }}
@@ -208,7 +209,7 @@ const Account = () => {
                   Profile updated successfully!
                 </motion.p>
               )}
-              {error.error && (
+              {error && (
                 <motion.p
                   className="text-red-500"
                   initial={{ opacity: 0, y: 10 }}
