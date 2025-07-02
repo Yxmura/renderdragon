@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
@@ -15,6 +14,9 @@ const Admin = () => {
 
   useEffect(() => {
     if (!loading && user) {
+      console.log('Admin user object:', user);
+      console.log('Admin user email:', user.email);
+      console.log('Admin loading:', loading);
       setIsAuthorized(user.email === 'yamura@duck.com');
     }
   }, [user, loading]);
