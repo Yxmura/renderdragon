@@ -10,16 +10,6 @@ import { Shield } from 'lucide-react';
 
 const Admin = () => {
   const { user, loading } = useAuth();
-  const [isAuthorized, setIsAuthorized] = useState(false);
-
-  useEffect(() => {
-    if (!loading && user) {
-      console.log('Admin user object:', user);
-      console.log('Admin user email:', user.email);
-      console.log('Admin loading:', loading);
-      setIsAuthorized(user.email === 'yamura@duck.com');
-    }
-  }, [user, loading]);
 
   if (loading) {
     return (
@@ -28,6 +18,8 @@ const Admin = () => {
       </div>
     );
   }
+
+  const isAuthorized = user && user.email === 'yamura@duck.com';
 
   if (!user || !isAuthorized) {
     return <Navigate to="/" replace />;
