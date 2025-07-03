@@ -144,14 +144,14 @@ const AdminResourceDialog = ({ open, onOpenChange, resource, onSave }: AdminReso
             <div className="space-y-2">
               <Label htmlFor="subcategory">Subcategory</Label>
               <Select
-                value={formData.subcategory || ''}
-                onValueChange={(value) => setFormData({ ...formData, subcategory: value as Resource['subcategory'] || undefined })}
+                value={formData.subcategory || 'none'}
+                onValueChange={(value) => setFormData({ ...formData, subcategory: value === 'none' ? undefined : value as Resource['subcategory'] })}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select subcategory (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   {subcategories.map((subcat) => (
                     <SelectItem key={subcat} value={subcat}>
                       {subcat.charAt(0).toUpperCase() + subcat.slice(1)}
