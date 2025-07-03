@@ -19,7 +19,8 @@ const Admin = () => {
     );
   }
 
-  const isAuthorized = user && user.email === 'yamura@duck.com';
+  const authorizedEmails = ['yamura@duck.com', 'theckie@protonmail.com'];
+  const isAuthorized = user && authorizedEmails.includes(user.email);
 
   if (!user || !isAuthorized) {
     return <Navigate to="/" replace />;
