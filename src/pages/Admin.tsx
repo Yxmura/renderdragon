@@ -19,7 +19,7 @@ const Admin = () => {
     );
   }
 
-  const authorizedEmails = ['yamura@duck.com', 'theckie@protonmail.com'];
+  const authorizedEmails = ['yamura@duck.com', 'theckie@protonmail.com', 'vovoplaygame3@gmail.com'];
   const isAuthorized = user && authorizedEmails.includes(user.email);
 
   if (!user || !isAuthorized) {
