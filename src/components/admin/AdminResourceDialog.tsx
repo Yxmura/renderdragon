@@ -66,20 +66,23 @@ const AdminResourceDialog = ({ open, onOpenChange, resource, onSave }: AdminReso
         if (error) throw error;
         toast.success('Resource updated successfully');
       } else {
-        // Create new resource - ensure required fields are present and exclude id
+        // Create new resource - explicitly exclude id and other auto-generated fields
+        const { id, created_at, updated_at, download_count, ...cleanFormData } = formData as any;
+        
         const resourceData = {
-          title: formData.title || '',
-          category: formData.category || 'music',
-          subcategory: formData.subcategory || null,
-          credit: formData.credit || null,
-          filetype: formData.filetype || null,
-          software: formData.software || null,
-          image_url: formData.image_url || null,
-          description: formData.description || null,
-          preview_url: formData.preview_url || null,
-          download_url: formData.download_url || null,
-          // Explicitly exclude id - let the database auto-generate it
+          title: cleanFormData.title || '',
+          category: cleanFormData.category || 'music',
+          subcategory: cleanFormData.subcategory || null,
+          credit: cleanFormData.credit || null,
+          filetype: cleanFormData.filetype || null,
+          software: cleanFormData.software || null,
+          image_url: cleanFormData.image_url || null,
+          description: cleanFormData.description || null,
+          preview_url: cleanFormData.preview_url || null,
+          download_url: cleanFormData.download_url || null,
         };
+
+        console.log('Inserting resource data:', resourceData);
 
         const { error } = await supabase
           .from('resources')
