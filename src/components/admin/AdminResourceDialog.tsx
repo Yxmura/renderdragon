@@ -66,7 +66,7 @@ const AdminResourceDialog = ({ open, onOpenChange, resource, onSave }: AdminReso
         if (error) throw error;
         toast.success('Resource updated successfully');
       } else {
-        // Create new resource - ensure required fields are present
+        // Create new resource - ensure required fields are present and exclude id
         const resourceData = {
           title: formData.title || '',
           category: formData.category || 'music',
@@ -78,13 +78,17 @@ const AdminResourceDialog = ({ open, onOpenChange, resource, onSave }: AdminReso
           description: formData.description || null,
           preview_url: formData.preview_url || null,
           download_url: formData.download_url || null,
+          // Explicitly exclude id - let the database auto-generate it
         };
 
         const { error } = await supabase
           .from('resources')
           .insert([resourceData]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
+        }
         toast.success('Resource created successfully');
       }
 
