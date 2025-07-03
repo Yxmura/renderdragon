@@ -66,32 +66,33 @@ const AdminResourceDialog = ({ open, onOpenChange, resource, onSave }: AdminReso
         if (error) throw error;
         toast.success('Resource updated successfully');
       } else {
-        // Create new resource - explicitly exclude id and other auto-generated fields
-        const { id, created_at, updated_at, download_count, ...cleanFormData } = formData as any;
-        
-        const resourceData = {
-          title: cleanFormData.title || '',
-          category: cleanFormData.category || 'music',
-          subcategory: cleanFormData.subcategory || null,
-          credit: cleanFormData.credit || null,
-          filetype: cleanFormData.filetype || null,
-          software: cleanFormData.software || null,
-          image_url: cleanFormData.image_url || null,
-          description: cleanFormData.description || null,
-          preview_url: cleanFormData.preview_url || null,
-          download_url: cleanFormData.download_url || null,
+        // Create new resource - build a clean object with only the fields we want
+        const newResourceData = {
+          title: formData.title?.trim() || '',
+          category: formData.category || 'music',
+          subcategory: formData.subcategory || null,
+          credit: formData.credit?.trim() || null,
+          filetype: formData.filetype?.trim() || null,
+          software: formData.software?.trim() || null,
+          image_url: formData.image_url?.trim() || null,
+          description: formData.description?.trim() || null,
+          preview_url: formData.preview_url?.trim() || null,
+          download_url: formData.download_url?.trim() || null,
         };
 
-        console.log('Inserting resource data:', resourceData);
+        console.log('Creating new resource with data:', newResourceData);
 
-        const { error } = await supabase
+        const { error, data } = await supabase
           .from('resources')
-          .insert([resourceData]);
+          .insert(newResourceData)
+          .select();
 
         if (error) {
-          console.error('Supabase error:', error);
+          console.error('Supabase insert error:', error);
           throw error;
         }
+        
+        console.log('Successfully created resource:', data);
         toast.success('Resource created successfully');
       }
 
