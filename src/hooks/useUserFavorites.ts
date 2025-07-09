@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { toast } from 'sonner';
@@ -38,7 +37,7 @@ export const useUserFavorites = () => {
     }
   };
 
-  const toggleFavorite = async (resourceId: string) => {
+  const toggleFavorite = useCallback(async (resourceId: string) => {
     if (!user) {
       toast.error('Please sign in to save favorites');
       return;
@@ -72,7 +71,7 @@ export const useUserFavorites = () => {
       console.error('Error toggling favorite:', error);
       toast.error('Failed to update favorites');
     }
-  };
+  }, [user, favorites]);
 
   const isFavorited = (resourceId: string) => favorites.includes(resourceId);
 

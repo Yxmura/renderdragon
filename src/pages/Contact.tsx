@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import DonateButton from '@/components/DonateButton';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 interface TeamMember {
   name: string;
@@ -197,6 +197,7 @@ const Contact = () => {
                         src={member.avatar} 
                         alt={member.name} 
                         className="w-full h-full object-cover"
+                        loading="lazy"
                       />
                     </div>
                     <h3 className="text-lg font-medium">{member.name}</h3>
@@ -213,7 +214,7 @@ const Contact = () => {
                             className="bg-secondary hover:bg-primary hover:text-primary-foreground p-2 rounded-md transition-colors"
                             aria-label={`${member.name}'s GitHub`}
                           >
-                            <img className="w-4 h-4" src="/assets/github_icon.png" alt="GitHub" />
+                            <img className="w-4 h-4" src="/assets/github_icon.png" alt="GitHub" loading="lazy" />
                           </a>
                         )}
                         {member.socials.website && (
@@ -224,7 +225,7 @@ const Contact = () => {
                             className="bg-secondary hover:bg-primary hover:text-primary-foreground p-2 rounded-md transition-colors"
                             aria-label={`${member.name}'s Website`}
                           >
-                            <img className="w-4 h-4" src="/assets/domain_icon.png" alt="Website" />
+                            <img className="w-4 h-4" src="/assets/domain_icon.png" alt="Website" loading="lazy" />
                           </a>
                         )}
                         {member.socials.discord && (
@@ -235,7 +236,7 @@ const Contact = () => {
                             className="bg-secondary hover:bg-primary hover:text-primary-foreground p-2 rounded-md transition-colors"
                             aria-label={`${member.name}'s Discord`}
                           >
-                            <img className="w-4 h-4" src="/assets/discord_icon.png" alt="Discord" />
+                            <img className="w-4 h-4" src="/assets/discord_icon.png" alt="Discord" loading="lazy" />
                           </a>
                         )}
                       </div>

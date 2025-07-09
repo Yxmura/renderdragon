@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Download, Music, Bot, Image, PersonStanding } from 'lucide-react';
@@ -152,4 +151,4 @@ const PopularTools = () => {
   );
 };
 
-export default PopularTools;
+export default React.memo(PopularTools);

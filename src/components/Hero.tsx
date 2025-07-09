@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { ArrowRight, Music } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -268,4 +268,4 @@ const Hero = () => {
   )
 }
 
-export default Hero
+export default React.memo(Hero)

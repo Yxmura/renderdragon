@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const Logo = ({ className = "", size = "md" }: { className?: string, size?: "sm" | "md" | "lg" }) => {
   const dimensions = {
     sm: "w-6 h-6",
@@ -11,9 +13,10 @@ export const Logo = ({ className = "", size = "md" }: { className?: string, size
         src="/renderdragon.png"
         alt="Renderdragon Logo"
         className="w-full h-full object-contain"
+        loading="lazy"
       />
     </div>
   );
 };
 
-export default Logo;
+export default React.memo(Logo);

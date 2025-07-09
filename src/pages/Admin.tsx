@@ -1,20 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Helmet } from 'react-helmet';
-import AdminResourcesManager from '@/components/admin/AdminResourcesManager';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Shield } from 'lucide-react';
+import AdminPageSkeleton from '@/components/skeletons/AdminPageSkeleton';
+
+const AdminResourcesManager = lazy(() => import('@/components/admin/AdminResourcesManager'));
 
 const Admin = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cow-purple"></div>
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow pt-24 pb-16 cow-grid-bg">
+          <div className="container mx-auto px-4">
+            <div className="max-w-7xl mx-auto">
+              <AdminPageSkeleton />
+            </div>
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }
@@ -50,7 +60,9 @@ const Admin = () => {
               </h1>
             </div>
             
-            <AdminResourcesManager />
+            <Suspense fallback={<AdminPageSkeleton />}>
+              <AdminResourcesManager />
+            </Suspense>
           </motion.div>
         </div>
       </main>

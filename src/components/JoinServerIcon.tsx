@@ -1,4 +1,6 @@
-export function JoinServerIcon() {
+import React from 'react';
+
+export const JoinServerIcon = React.memo(() => {
   return (
     <svg 
       width="16" 
@@ -14,4 +16,4 @@ export function JoinServerIcon() {
       /> 
     </svg>
   );
-}
+});

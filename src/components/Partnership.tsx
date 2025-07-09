@@ -1,136 +1,132 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
-const Partnership = () => (
-    <section className='cow-grid-bg py-16'>
-        <div className="bg-background max-w-5xl mx-auto my-32 px-6 py-16 rounded-2xl bg-gradient-to-br from-cow-purple/10 to-cow-pink/10 shadow-xl border border-cow-purple/20 pixel-corners">
-            <div className="text-center space-y-8 ">
-                <div className="space-y-3">
-                    <h2 className="text-4xl md:text-5xl font-vt323 text-cow-purple drop-shadow-sm">
-                        Partnership
-                    </h2>
-                    <p className="text-base md:text-lg text-cow-purple/80 max-w-xl mx-auto">
-                        We're excited to be working together with
-                    </p>
-                </div>
+const partners = [
+  {
+    name: "Creators' Kingdom",
+    description: "A community built on creativity and teamwork, where everyone's passion helps bring bold visions into reality.",
+    logo: "https://cdn.bsky.app/img/avatar/plain/did:plc:2v6n63ayh4zfevupgxrkufx4/bafkreibufdbu2k76p5mdnwo64bmptl6g2wnl6imd3wxm3nvkstoqgjkz2q@jpeg",
+    links: [
+      { name: 'Bluesky', url: 'https://bsky.app/profile/creatorskingdom.bsky.social', icon: '/assets/bluesky_icon.png' },
+      { name: 'Instagram', url: 'https://instagram.com/creatorskingdom', icon: '/assets/instagram_icon.png' },
+    ],
+    bgColor: 'from-yellow-400/10 to-yellow-500/10',
+    borderColor: 'border-yellow-500/30',
+    hoverColor: 'hover:border-yellow-500/60'
+  },
+  {
+    name: "Proger's Kitchen",
+    description: "A vibrant community for creators to give and get feedback, share assets, and help each other grow.",
+    logo: "/assets/progerskitchen.webp",
+    links: [
+      { name: 'Discord', url: 'https://discord.gg/wXhHe5bVgz', icon: '/assets/discord_icon.png' },
+    ],
+    bgColor: 'from-blue-400/10 to-blue-500/10',
+    borderColor: 'border-blue-500/30',
+    hoverColor: 'hover:border-blue-500/60'
+  },
+  {
+    name: "Decour SMP",
+    description: "A fully non-economy based Lifesteal SMP with useful plugins that enhance the vanilla experience.",
+    logo: "/assets/Decour.jpg",
+    links: [
+      { name: 'Discord', url: 'https://dsc.gg/decoursmp', icon: '/assets/discord_icon.png' },
+    ],
+    bgColor: 'from-green-400/10 to-green-500/10',
+    borderColor: 'border-green-500/30',
+    hoverColor: 'hover:border-green-500/60'
+  }
+];
 
-                <div className="flex flex-col md:flex-row justify-center items-center gap-8">
+const Partnership = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+        delayChildren: 0.2,
+      },
+    },
+  };
 
-                    <a href="https://bsky.app/profile/creatorskingdom.bsky.social"
-                       target="_blank"
-                       rel="noopener"
-                       className="inline-block group hover:scale-105 transition-all duration-300 ease-in-out"
-                    >
-                        <div id='skibidi' className="border-[#FFD700] border-[1px] bg-[#2F2E49] flex flex-col items-center space-y-4 p-6 rounded-xl bg-gradient-to-br from-cow-purple/5 to-cow-pink/5 hover:from-cow-purple/10 hover:to-cow-pink/10 transition-all shadow-[0_0_15px_-3px_rgba(255,215,0,0.3),0_0_30px_-5px_rgba(255,215,0,0.2),inset_0_0_10px_rgba(255,215,0,0.1)] hover:shadow-[0_0_20px_-1px_rgba(255,215,0,0.4),0_0_40px_-5px_rgba(255,215,0,0.3),inset_0_0_15px_rgba(255,215,0,0.2)]">
-                            <img
-                                src="https://cdn.bsky.app/img/avatar/plain/did:plc:2v6n63ayh4zfevupgxrkufx4/bafkreibufdbu2k76p5mdnwo64bmptl6g2wnl6imd3wxm3nvkstoqgjkz2q@jpeg"
-                                alt="Creator's Kingdom"
-                                className="h-24 w-24 rounded-full border-2 border-cow-purple/20 shadow-lg group-hover:border-cow-yellow/50 transition-all"
-                            />
-                            <div className="space-y-2">
-                                <span className="block text-2xl md:text-3xl font-vt323 group-hover:text-cow-yellow transition-colors">
-                                    Creators' Kingdom
-                                </span>
-                                {(() => {
-                                    const description = true;
-                                    return description && (
-                                        <p className="text-cow-purple/70 text-sm md:text-base max-w-md">
-                                            Creators Kingdom is a place where your ideas can grow and come to life. It's a community built on creativity and teamwork, where everyone's passion helps bring bold visions into reality.
-                                        </p>
-                                    );
-                                })()}
-                                <div className="flex gap-4 justify-center mt-4 pt-3">
-                                    <a
-                                        href="https://bsky.app/profile/creatorskingdom.bsky.social"
-                                        target="_blank"
-                                        rel="noopener"
-                                        className="px-2 py-2 bg-[#0085ff] text-white rounded-lg font-medium hover:bg-[#0070d6] transition-colors flex items-center gap-2"
-                                    >
-                                        <img className='w-5 h-5' src="/assets/bluesky_icon.png" alt="Bluesky"></img>
-                                        Bluesky
-                                    </a>
-                                    <a
-                                        href="https://instagram.com/creatorskingdom"
-                                        target="_blank"
-                                        rel="noopener"
-                                        className="px-2 py-2 bg-[#E1306C] text-white rounded-lg font-medium hover:bg-[#c2255b] transition-colors flex items-center gap-2"
-                                    >
-                                        <img className="w-5 h-5" src="/assets/instagram_icon.png" alt="Instagram"></img>
-                                        Instagram
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: 'easeOut',
+      },
+    },
+  };
 
-                    <a href="https://discord.gg/wXhHe5bVgz"
-                       target="_blank"
-                       rel="noopener"
-                       className="inline-block group hover:scale-105 transition-all duration-300 ease-in-out"
-                    >
-                         <div className="border-blue-500 border-[1px] bg-gray-800 flex flex-col items-center space-y-4 p-6 rounded-xl bg-gradient-to-br from-blue-500/5 to-green-500/5 hover:from-blue-500/10 hover:to-green-500/10 transition-all shadow-[0_0_15px_-3px_rgba(59,130,246,0.3),0_0_30px_-5px_rgba(59,130,246,0.2),inset_0_0_10px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_-1px_rgba(59,130,246,0.4),0_0_40px_-5px_rgba(59,130,246,0.3),inset_0_0_15px_rgba(59,130,246,0.2)]">
-                             <img
-                                src="/assets/progerskitchen.webp" 
-                                alt="Proger's Kitchen icon" 
-                                className="h-24 w-24 rounded-full border-2 border-blue-500/20 shadow-lg group-hover:border-blue-400/50 transition-all"
-                             />
-                            <div className="space-y-2">
-                                <span className="block text-2xl md:text-3xl font-vt323 group-hover:text-blue-400 transition-colors">
-                                    Proger's Kitchen
-                                </span>
-                                <p className="text-gray-400 text-sm md:text-base max-w-md">
-                                    Proger's Kitchen is a vibrant community where creativity and collaboration thrive. It's a place for creators to give feedback, get feedback, share assets, and help each other grow more and more.
-                                </p>
-                                <div className="flex gap-4 justify-center mt-4 pt-3">
-                                    <a
-                                        href="https://discord.gg/wXhHe5bVgz"
-                                        target="_blank"
-                                        rel="noopener"
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
-                                    >
-                                      <img className='w-5 h-5' src="/assets/discord_icon.png" alt="Discord"></img>
-                                        Join Discord Server
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+  return (
+    <section className="py-20 bg-background cow-grid-bg">
+      <div className="container mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-3xl md:text-4xl font-vt323 mb-4">
+            Our Awesome <span className="text-cow-purple">Partners</span>
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            We're proud to collaborate with these amazing communities and projects.
+          </p>
+        </motion.div>
 
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {partners.map((partner) => (
+            <motion.div
+              key={partner.name}
+              variants={itemVariants}
+              className={`pixel-card bg-gradient-to-br ${partner.bgColor} ${partner.borderColor} ${partner.hoverColor} transition-all duration-300 flex flex-col`}
+            >
+              <div className="flex flex-col items-center text-center p-6 flex-grow">
+                <img
+                  src={partner.logo}
+                  alt={`${partner.name} logo`}
+                  className="w-24 h-24 rounded-full mb-4 border-4 border-background shadow-lg"
+                  loading="lazy"
+                />
+                <h3 className="text-2xl font-vt323 mb-2">{partner.name}</h3>
+                <p className="text-muted-foreground text-sm flex-grow">
+                  {partner.description}
+                </p>
+              </div>
+              <div className="border-t border-border/20 p-4 mt-auto">
+                <div className="flex justify-center items-center gap-4">
+                  {partner.links.map((link) => (
                     <a
-                       href="https://dsc.gg/decoursmp"
-                       target="_blank"
-                       rel="noopener"
-                       className="inline-block group hover:scale-105 transition-all duration-300 ease-in-out"
+                      key={link.name}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
                     >
-                        <div className="border-green-500 border-[1px] bg-gray-800 flex flex-col items-center space-y-4 p-6 rounded-xl bg-gradient-to-br from-green-500/5 to-blue-500/5 hover:from-green-500/10 hover:to-blue-500/10 transition-all shadow-[0_0_15px_-3px_rgba(34,197,94,0.3),0_0_30px_-5px_rgba(34,197,94,0.2),inset_0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_-1px_rgba(34,197,94,0.4),0_0_40px_-5px_rgba(34,197,94,0.3),inset_0_0_15px_rgba(34,197,94,0.2)]">
-                            <img
-                                src="/assets/Decour.jpg"
-                                alt="Decour SMP icon"
-                                className="h-24 w-24 rounded-full border-2 border-green-500/20 shadow-lg group-hover:border-green-400/50 transition-all"
-                            />
-                            <span className="block text-2xl md:text-3xl font-vt323 group-hover:text-green-400 transition-colors">
-                                Decour SMP
-                            </span>
-                            <p className="text-gray-400 text-sm md:text-base max-w-md">
-                                A fully non-economy based Lifesteal SMP with useful plugins that enhance the vanilla experience. Join our quickly growing community!
-                            </p>
-                            <div className="flex gap-4 justify-center mt-4 pt-3">
-                                <a
-                                    href="https://dsc.gg/decoursmp"
-                                    target="_blank"
-                                    rel="noopener"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
-                                >
-                                    <img className='w-5 h-5' src="/assets/discord_icon.png" alt="Discord"></img>
-                                    Join Discord Server
-                                </a>
-                            </div>
-                        </div>
+                      <img src={link.icon} alt={link.name} className="w-5 h-5" loading="lazy" />
+                      <span>{link.name}</span>
                     </a>
-
-                </div> 
-            </div>
-        </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </section>
-);
+  );
+};
 
-export default Partnership;
+export default React.memo(Partnership);

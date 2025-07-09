@@ -2,15 +2,18 @@ import { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
-import { ChevronRight, Play, Users, ExternalLink } from 'lucide-react';
+import { ChevronRight, Play, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
 import { JoinServerIcon } from '@/components/JoinServerIcon';
+import { Skeleton } from '@/components/ui/skeleton';
+import VideoCardSkeleton from '@/components/skeletons/VideoCardSkeleton';
+import ServerCardSkeleton from '@/components/skeletons/ServerCardSkeleton';
 
 // Types
 interface VideoCategory {
@@ -248,10 +251,14 @@ const Community = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setVideoCategories(defaultVideoCategories);
-    setServers(SERVERS_DATA);
-    setOpenCategories([1]);
-    setIsLoading(false);
+    const timer = setTimeout(() => {
+      setVideoCategories(defaultVideoCategories);
+      setServers(SERVERS_DATA);
+      setOpenCategories([1]);
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleCategory = (categoryId: number) => {
@@ -276,7 +283,7 @@ const Community = () => {
         <meta name="description" content="Join our community of Minecraft content creators. Find helpful tutorials, guides, and Discord servers to connect with other creators." />
         <meta property="og:title" content="Community - Renderdragon" />
         <meta property="og:description" content="Join our community of Minecraft content creators. Find helpful tutorials, guides, and Discord servers to connect with other creators." />
-        <meta property="og:image" content="https://renderdragon.org/ogimg.png" />
+        <meta property="og:image" content="https://renderdragon.org/ogimg/community.png" />
         <meta property="og:url" content="https://renderdragon.org/community" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Community - Renderdragon" />
@@ -305,9 +312,19 @@ const Community = () => {
 
               <TabsContent value="videos">
                 {isLoading ? (
-                  <div className="space-y-8 animate-pulse">
+                  <div className="space-y-8">
                     {[1, 2, 3].map(i => (
-                      <div key={i} className="bg-card rounded-md h-20"></div>
+                      <div key={i} className="pixel-corners border border-border rounded-md overflow-hidden">
+                        <div className="bg-card p-4">
+                          <Skeleton className="h-8 w-1/2 mb-2" />
+                          <Skeleton className="h-4 w-3/4" />
+                        </div>
+                        <div className="p-4 bg-background/80">
+                          <div className="flex overflow-x-auto pb-4 space-x-4 custom-scrollbar">
+                            {[...Array(4)].map((_, j) => <VideoCardSkeleton key={j} />)}
+                          </div>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 ) : (
@@ -347,6 +364,7 @@ const Community = () => {
                                         src={video.thumbnail} 
                                         alt={video.title}
                                         className="w-full h-[168px] object-cover"
+                                        loading="lazy"
                                       />
                                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                         <Button 
@@ -384,10 +402,8 @@ const Community = () => {
 
               <TabsContent value="servers">
                 {isLoading ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
-                    {[1, 2, 3, 4].map(i => (
-                      <div key={i} className="bg-card rounded-md h-64"></div>
-                    ))}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {[...Array(4)].map((_, i) => <ServerCardSkeleton key={i} />)}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -403,6 +419,7 @@ const Community = () => {
                                 src={server.image} 
                                 alt={server.name} 
                                 className="w-16 h-16 rounded-full object-cover ring-2 ring-border"
+                                loading="lazy"
                               />
                             </div>
                           )}
@@ -496,4 +513,4 @@ const Community = () => {
   );
 };
 
-export default Community; 
+export default Community;

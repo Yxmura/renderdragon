@@ -1,10 +1,9 @@
-
 import { motion } from 'framer-motion';
 import { Bot, Command } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 interface BotCommand {
   name: string;

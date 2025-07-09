@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const FAQ = () => {
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { MessageSquare, Twitter, Tag } from 'lucide-react';
 import DonateButton from '@/components/DonateButton';
 import TweetGenerator from '@/components/generators/TweetGenerator';
@@ -76,4 +76,4 @@ const Generators = () => {
   );
 };
 
-export default Generators; 
+export default Generators;

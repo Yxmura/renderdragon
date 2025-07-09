@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -14,9 +14,10 @@ import { Resource } from '@/types/resources';
 import { TextSettings } from '@/types/textGenerator';
 import TextPreview from '@/components/text-generator/TextPreview';
 import { toast } from 'sonner';
+import TextGeneratorControlsSkeleton from '@/components/skeletons/TextGeneratorControlsSkeleton';
 
 const TextGenerator = () => {
-  const { resources } = useResources();
+  const { resources, isLoading: isLoadingResources } = useResources();
   const [fonts, setFonts] = useState<Resource[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [settings, setSettings] = useState<TextSettings>({
@@ -123,6 +124,7 @@ const TextGenerator = () => {
               </div>
 
               {/* Controls Section */}
+              {isLoadingResources ? <TextGeneratorControlsSkeleton /> : (
               <div className="space-y-6">
                 {/* Text Input */}
                 <div className="space-y-2">
@@ -490,6 +492,7 @@ const TextGenerator = () => {
                   Download Text
                 </Button>
               </div>
+              )}
             </div>
           </div>
         </div>
@@ -500,4 +503,4 @@ const TextGenerator = () => {
   );
 };
 
-export default TextGenerator; 
+export default TextGenerator;

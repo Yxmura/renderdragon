@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { OAuthProviders } from './OAuthProviders';
 
 interface AuthDialogProps {
   open: boolean;
@@ -251,20 +252,30 @@ const AuthDialog = ({ open, onOpenChange }: AuthDialogProps) => {
               </Button>
             </motion.div>
           </AnimatePresence>
+          <OAuthProviders />
+        </motion.form>
 
-          <div className="text-center">
+        <div className="mt-4 text-center text-sm">
+          {isLogin ? (
             <Button
               type="button"
               variant="link"
               onClick={toggleMode}
               className="text-sm text-cow-purple hover:text-cow-purple/80"
             >
-              {isLogin
-                ? "Don't have an account? Sign up"
-                : 'Already have an account? Sign in'}
+              Don't have an account? Sign up
             </Button>
-          </div>
-        </motion.form>
+          ) : (
+            <Button
+              type="button"
+              variant="link"
+              onClick={toggleMode}
+              className="text-sm text-cow-purple hover:text-cow-purple/80"
+            >
+              Already have an account? Sign in
+            </Button>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -116,4 +116,4 @@ const PixelSvgIcon: React.FC<PixelSvgIconProps> = ({ name, className }) => {
   ) : null;
 };
 
-export default PixelSvgIcon;
+export default React.memo(PixelSvgIcon);

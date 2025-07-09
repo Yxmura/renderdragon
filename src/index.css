@@ -225,17 +225,3 @@
     color: hsl(var(--foreground) / 0.7);
   }
 }
-
-/* Animation for glowing effects */
-@keyframes animate-glow {
-  0%, 100% {
-    text-shadow: 0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3);
-  }
-  50% {
-    text-shadow: 0 0 20px rgba(155, 135, 245, 0.8), 0 0 30px rgba(155, 135, 245, 0.5);
-  }
-}
-
-.animate-glow {
-  animation: animate-glow 2s infinite;
-}

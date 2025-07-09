@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Download, RefreshCcw, Image as ImageIcon, Upload, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const BackgroundGenerator = () => {
   const [color, setColor] = useState('#9b87f5');

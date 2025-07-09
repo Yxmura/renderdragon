@@ -7,10 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
 import { JoinServerIcon } from '@/components/JoinServerIcon';
+import CommunityPageSkeleton from '@/components/skeletons/CommunityPageSkeleton';
 
 // Types
 interface VideoCategory {
@@ -248,10 +249,12 @@ const Community = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setVideoCategories(defaultVideoCategories);
-    setServers(SERVERS_DATA);
-    setOpenCategories([1]);
-    setIsLoading(false);
+    // Simulate loading data
+    setTimeout(() => {
+      setVideoCategories(defaultVideoCategories);
+      setServers(SERVERS_DATA);
+      setIsLoading(false);
+    }, 1500);
   }, []);
 
   const toggleCategory = (categoryId: number) => {
@@ -285,25 +288,26 @@ const Community = () => {
       
       <Navbar />
       
-      <main className="flex-grow pt-24 pb-16 cow-grid-bg">
+      <main className="flex-grow py-24 cow-grid-bg">
         <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
-              <span className="text-cow-purple">Creator</span> Community
-            </h1>
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
+                <span className="text-cow-purple">Creator</span> Community
+              </h1>
+              <p className="max-w-2xl mx-auto text-muted-foreground">
+                Connect with other creators, get feedback, and find resources in these active Discord communities.
+              </p>
+            </div>
             
-            <p className="text-center text-muted-foreground mb-12 max-w-xl mx-auto">
-              Connect with other creators, learn from tutorials, and join our growing community.
-              From tutorials to Discord servers, we've got you covered.
-            </p>
-
-            <Tabs defaultValue="videos" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-8">
-                <TabsTrigger value="videos" className="text-lg font-vt323">YouTube Tutorials</TabsTrigger>
-                <TabsTrigger value="servers" className="text-lg font-vt323">Discord Servers</TabsTrigger>
+            {isLoading ? <CommunityPageSkeleton /> : (
+            <Tabs defaultValue="tutorials" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6 max-w-lg mx-auto pixel-corners">
+                <TabsTrigger value="tutorials">Tutorials</TabsTrigger>
+                <TabsTrigger value="servers">Discord Servers</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="videos">
+              <TabsContent value="tutorials">
                 {isLoading ? (
                   <div className="space-y-8 animate-pulse">
                     {[1, 2, 3].map(i => (
@@ -450,6 +454,7 @@ const Community = () => {
                 )}
               </TabsContent>
             </Tabs>
+            )}
           </div>
         </div>
       </main>

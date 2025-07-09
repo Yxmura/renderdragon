@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   ChevronDown, 
@@ -62,10 +62,10 @@ const mainLinks: (NavLink | NavDropdown)[] = [
     icon: 'tools',
     links: [
       { name: 'Music Copyright Checker', path: '/gappa', icon: 'music' },
-      { name: 'AI Title Helper', path: '/ai-title-helper', icon: 'bot' },
       { name: 'Background Generator', path: '/background-generator', icon: 'background' },
       { name: 'Player Renderer', path: '/player-renderer', icon: 'player' },
       { name: 'Text Generator', path: '/text-generator', icon: 'text' },
+      { name: 'YouTube Downloader', path: '/youtube-downloader', icon: 'video' },
       { name: 'Content Generators', path: '/generators', icon: 'text' }
     ]
   }
@@ -185,6 +185,9 @@ const Navbar = () => {
     return baseStyle;
   };
 
+  const isHomePage = location.pathname === '/';
+  const isTransparent = isHomePage && !scrolled;
+
   return (
     <>
       <header 
@@ -193,7 +196,11 @@ const Navbar = () => {
         }`}
       >
         <div 
-          className="absolute inset-0 z-[-1] pointer-events-none bg-gradient-to-r from-background/80 via-background/90 to-background/80 dark:from-background/80 dark:via-background/90 dark:to-background/80 transition-all duration-300"
+          className={`absolute inset-0 z-[-1] pointer-events-none transition-all duration-300 ${
+            isTransparent 
+              ? 'bg-transparent' 
+              : 'bg-gradient-to-r from-background/80 via-background/90 to-background/80 dark:from-background/80 dark:via-background/90 dark:to-background/80'
+          }`}
           style={getBackgroundStyle()}
         />
         <div className="container mx-auto px-4 flex justify-between items-center relative z-10">
@@ -442,4 +449,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

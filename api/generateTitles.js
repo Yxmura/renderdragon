@@ -1,18 +1,15 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const hcaptchaSecretKey = process.env.HCAPTCHA_SECRET_KEY;
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
-async function verifyHCaptcha(token) {
-  const response = await fetch('https://api.hcaptcha.com/siteverify', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: `secret=${hcaptchaSecretKey}&response=${token}`
-  });
-  const data = await response.json();
-  return data.success;
-}
+// Define CORS headers
+const corsHeaders = {
+  // TODO: Restrict this to your frontend's production origin
+  'Access-Control-Allow-Origin': '*', // This should be your frontend's origin in production (e.g., 'http://localhost:8080' or 'https://renderdragon.org')
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key, X-Title', // Include any custom headers you send
+};
+
+
 
 async function generateTitlesWithOpenRouter(description, creativity) {
   const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -24,7 +21,7 @@ async function generateTitlesWithOpenRouter(description, creativity) {
       'X-Title': 'Creator on Wheels'
     },
     body: JSON.stringify({
-      model: 'mistralai/mistral-7b-instruct',
+      model: 'google/gemini-2.0-flash-exp:free',
       messages: [{
         role: 'user',
         content: `Generate 3 Minecraft YouTube titles for: "${description}". Examples: "I Survived 100 Days in HARDCORE", "The ULTIMATE Secret Base", "The Rarest Item Ever!". Creativity: ${creativity}/100. Format: JSON array [{title, type}]. Types: creative|descriptive|emotional|trending. Around 60-70 chars including spaces`
@@ -43,41 +40,40 @@ async function generateTitlesWithOpenRouter(description, creativity) {
 }
 
 export default async function handler(req) {
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ message: "Method Not Allowed" }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' }
+  // Handle OPTIONS preflight request
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204, // No Content
+      headers: corsHeaders,
     });
   }
 
-  if (!process.env.OPENROUTER_API_KEY || !process.env.HCAPTCHA_SECRET_KEY) {
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ message: "Method Not Allowed" }), {
+      status: 405,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+
+  if (!process.env.OPENROUTER_API_KEY) {
     console.error("Missing required environment variables");
     return new Response(JSON.stringify({ message: "Server misconfiguration" }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
 
   try {
     const body = await req.json();
-    const { description, creativity, hcaptchaToken } = body;
+    const { description, creativity } = body;
 
-    // Verify invisible hCaptcha first
-    const isHCaptchaValid = await verifyHCaptcha(hcaptchaToken);
-    if (!isHCaptchaValid) {
-      return new Response(JSON.stringify({ 
-        message: "Captcha verification required",
-        requireCaptcha: true 
-      }), {
-        status: 403,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
+    // Verify reCAPTCHA first
+    
 
     if (!description) {
       return new Response(JSON.stringify({ message: "Video description is required" }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
@@ -86,7 +82,7 @@ export default async function handler(req) {
         message: "Creativity level is required and must be a number between 0 and 100" 
       }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
@@ -119,7 +115,7 @@ export default async function handler(req) {
 
     return new Response(JSON.stringify({ titles }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
 
   } catch (error) {
@@ -133,7 +129,7 @@ export default async function handler(req) {
       error: errorMessage
     }), {
       status,
-      headers: { 'Content-Type': 'application/json' }
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
 }

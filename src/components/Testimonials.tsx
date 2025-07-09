@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -110,6 +110,7 @@ const Testimonials = () => {
                       src={`/assets/${testimonial.name}.jpg`}
                       alt={testimonial.name} 
                       className="w-full h-full object-cover rounded-full"
+                      loading="lazy"
                     />
                   </div>
                   <div>
@@ -134,4 +135,4 @@ const Testimonials = () => {
   );
 };
 
-export default Testimonials;
+export default React.memo(Testimonials);

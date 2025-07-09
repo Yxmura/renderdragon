@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -94,10 +93,10 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
     }
   };
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  const handleFavoriteClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
     toggleFavorite(String(resource.id));
-  };
+  }, [toggleFavorite, resource.id]);
 
   const renderPreview = () => {
     const previewUrl = getPreviewUrl(resource);
@@ -215,4 +214,4 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
   );
 };
 
-export default ResourceCard;
+export default React.memo(ResourceCard);

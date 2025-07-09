@@ -1,4 +1,8 @@
 /* Custom scrollbar */
+html {
+  scroll-behavior: smooth;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -102,11 +106,11 @@ body::-webkit-scrollbar-thumb:hover {
 }
 
 .animate-accordion-down {
-  animation: accordion-down 0.3s ease-out;
+  animation: accordion-down 0.4s ease-in-out;
 }
 
 .animate-accordion-up {
-  animation: accordion-up 0.3s ease-out;
+  animation: accordion-up 0.4s ease-in-out;
 }
 
 /* Grid background */
@@ -138,7 +142,7 @@ body::-webkit-scrollbar-thumb:hover {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
   }
 }
 
@@ -218,9 +222,9 @@ body::-webkit-scrollbar-thumb:hover {
 /* Add pixel animation */
 @keyframes pixel-spin {
   0% { transform: rotate(0deg); }
-  25% { transform: rotate(1deg); }
+  25% { transform: rotate(0.5deg); }
   50% { transform: rotate(0deg); }
-  75% { transform: rotate(-1deg); }
+  75% { transform: rotate(-0.5deg); }
   100% { transform: rotate(0deg); }
 }
 
@@ -231,7 +235,7 @@ body::-webkit-scrollbar-thumb:hover {
 /* Float vertical animation */
 @keyframes float-vertical {
   0%, 100% { transform: translateY(0) rotate(45deg); }
-  50% { transform: translateY(-10px) rotate(45deg); }
+  50% { transform: translateY(-5px) rotate(45deg); }
 }
 
 .animate-float-vertical {
@@ -293,7 +297,7 @@ body.countdown-active {
 @keyframes slide-in {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -308,14 +312,14 @@ body.countdown-active {
   }
   to {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
 }
 
 .scroll-button-enter {
-  animation: slide-in 0.3s ease forwards;
+  animation: slide-in 0.4s ease-in-out forwards;
 }
 
 .scroll-button-exit {
-  animation: slide-out 0.3s ease forwards;
+  animation: slide-out 0.4s ease-in-out forwards;
 }

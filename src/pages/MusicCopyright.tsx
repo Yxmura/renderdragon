@@ -10,9 +10,10 @@ import { toast } from 'sonner';
 import { checkCopyrightStatus, extractYouTubeID } from '@/utils/copyrightChecker';
 import { CopyrightResult } from '@/types/copyright';
 import ResultsDisplay from '@/components/ResultsDisplay';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { useAuth } from '@/hooks/useAuth';
 import AuthDialog from '@/components/auth/AuthDialog';
+import ResultsDisplaySkeleton from '@/components/skeletons/ResultsDisplaySkeleton';
 
 const MusicCopyright = () => {
   const [activeTab, setActiveTab] = useState('song');
@@ -229,16 +230,7 @@ const MusicCopyright = () => {
               </Button>
             </div>
             
-            {isLoading && (
-              <div className="text-center py-12 animate-pulse">
-                <RefreshCcw className="h-12 w-12 mx-auto mb-4 animate-spin text-cow-purple" />
-                <p className="text-lg">
-                  {activeTab === 'youtube' 
-                    ? "Analyzing audio from video..." 
-                    : "Searching music databases..."}
-                </p>
-              </div>
-            )}
+            {isLoading && <ResultsDisplaySkeleton />}
             
             {!isLoading && result && (
               <ResultsDisplay result={result} onReset={handleReset} />

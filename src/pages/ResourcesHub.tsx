@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -9,14 +9,21 @@ import { useDownloadCounts } from '@/hooks/useDownloadCounts';
 import { Resource } from '@/types/resources';
 import ResourceFilters from '@/components/resources/ResourceFilters';
 import ResourcesList from '@/components/resources/ResourcesList';
-import ResourceDetailDialog from '@/components/resources/ResourceDetailDialog';
-import FavoritesTab from '@/components/resources/FavoritesTab';
 import AuthDialog from '@/components/auth/AuthDialog';
 import { Button } from '@/components/ui/button';
 import { ArrowUp, Heart, Grid, Search } from 'lucide-react';
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import DonateButton from '@/components/DonateButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+const ResourceDetailDialog = lazy(() => import('@/components/resources/ResourceDetailDialog'));
+const FavoritesTab = lazy(() => import('@/components/resources/FavoritesTab'));
+
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center p-8">
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cow-purple"></div>
+  </div>
+);
 
 const ResourcesHub = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -42,6 +49,8 @@ const ResourcesHub = () => {
     handleSubcategoryChange,
     handleSearch,
     handleDownload,
+    loadMoreResources,
+    hasMore,
   } = useResources();
 
   const { downloadCounts } = useDownloadCounts();
@@ -140,55 +149,61 @@ const ResourcesHub = () => {
                   </TabsTrigger>
                 </TabsList>
 
-                <AnimatePresence mode="wait">
-                  <TabsContent value="browse" className="mt-0">
-                    <motion.div
-                      key="browse"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <ResourceFilters
-                        searchQuery={searchQuery}
-                        selectedCategory={selectedCategory}
-                        selectedSubcategory={selectedSubcategory}
-                        onSearch={handleSearch}
-                        onClearSearch={handleClearSearch}
-                        onSearchSubmit={handleSearchSubmit}
-                        onCategoryChange={handleCategoryChange}
-                        onSubcategoryChange={handleSubcategoryChange}
-                        isMobile={isMobile}
-                        inputRef={inputRef}
-                      />
+                <div className="mt-6">
+                  <AnimatePresence mode="wait">
+                    {activeTab === 'browse' && (
+                      <motion.div
+                        key="browse"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <ResourceFilters
+                          searchQuery={searchQuery}
+                          selectedCategory={selectedCategory}
+                          selectedSubcategory={selectedSubcategory}
+                          onSearch={handleSearch}
+                          onClearSearch={handleClearSearch}
+                          onSearchSubmit={handleSearchSubmit}
+                          onCategoryChange={handleCategoryChange}
+                          onSubcategoryChange={handleSubcategoryChange}
+                          isMobile={isMobile}
+                          inputRef={inputRef}
+                        />
 
-                      <ResourcesList
-                        resources={resources}
-                        filteredResources={filteredResources}
-                        isLoading={isLoading}
-                        isSearching={isSearching}
-                        selectedCategory={selectedCategory}
-                        searchQuery={searchQuery}
-                        downloadCounts={downloadCounts}
-                        onSelectResource={setSelectedResource}
-                        onClearFilters={handleClearSearch}
-                        hasCategoryResources={hasCategoryResources}
-                      />
-                    </motion.div>
-                  </TabsContent>
+                        <ResourcesList
+                          resources={resources}
+                          filteredResources={filteredResources}
+                          isLoading={isLoading}
+                          isSearching={isSearching}
+                          selectedCategory={selectedCategory}
+                          searchQuery={searchQuery}
+                          downloadCounts={downloadCounts}
+                          onSelectResource={setSelectedResource}
+                          onClearFilters={handleClearSearch}
+                          hasCategoryResources={hasCategoryResources}
+                          loadMoreResources={loadMoreResources}
+                          hasMore={hasMore}
+                        />
+                      </motion.div>
+                    )}
 
-                  <TabsContent value="favorites" className="mt-0">
-                    <motion.div
-                      key="favorites"
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <FavoritesTab />
-                    </motion.div>
-                  </TabsContent>
-                </AnimatePresence>
+                    {activeTab === 'favorites' && (
+                      <motion.div
+                        key="favorites"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <Suspense fallback={<LoadingSpinner />}>
+                          <FavoritesTab />
+                        </Suspense>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </Tabs>
             </motion.div>
           </div>
@@ -198,17 +213,19 @@ const ResourcesHub = () => {
       <Footer />
       <DonateButton />
 
-      <ResourceDetailDialog
-        resource={selectedResource}
-        onClose={() => setSelectedResource(null)}
-        onDownload={onDownload}
-        downloadCount={selectedResource ? downloadCounts[selectedResource.id] || 0 : 0}
-        loadedFonts={loadedFonts}
-        setLoadedFonts={setLoadedFonts}
-        filteredResources={filteredResources}
-        onSelectResource={setSelectedResource}
-        isFavoritesView={activeTab === 'favorites'}
-      />
+      <Suspense fallback={null}>
+        <ResourceDetailDialog
+          resource={selectedResource}
+          onClose={() => setSelectedResource(null)}
+          onDownload={onDownload}
+          downloadCount={selectedResource ? downloadCounts[selectedResource.id] || 0 : 0}
+          loadedFonts={loadedFonts}
+          setLoadedFonts={setLoadedFonts}
+          filteredResources={filteredResources}
+          onSelectResource={setSelectedResource}
+          isFavoritesView={activeTab === 'favorites'}
+        />
+      </Suspense>
 
       <AuthDialog 
         open={authDialogOpen} 

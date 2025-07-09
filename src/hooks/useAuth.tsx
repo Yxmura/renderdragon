@@ -28,6 +28,8 @@ interface AuthContextType {
     captchaToken: string | null,
   ) => Promise<AuthResult>;
   signOut: () => Promise<AuthResult>; // SignOut now returns an AuthResult
+  signInWithGitHub: () => Promise<AuthResult>;
+  signInWithDiscord: () => Promise<AuthResult>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -122,6 +124,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return { success: true };
   };
 
+  const signInWithGitHub = async (): Promise<AuthResult> => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+    if (error) {
+      console.error('GitHub sign in error:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
+  };
+
+  const signInWithDiscord = async (): Promise<AuthResult> => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'discord',
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+    if (error) {
+      console.error('Discord sign in error:', error);
+      return { success: false, error: error.message };
+    }
+    return { success: true };
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -131,6 +161,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         signUp,
         signIn,
         signOut,
+        signInWithGitHub,
+        signInWithDiscord,
       }}
     >
       {children}

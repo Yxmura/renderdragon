@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Copy, RefreshCw, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import DonateButton from '@/components/DonateButton';
 import confetti from 'canvas-confetti';
+import PlayerRenderSkeleton from '@/components/skeletons/PlayerRenderSkeleton';
 
 interface PlayerData {
   id: string;
@@ -242,8 +243,11 @@ const PlayerRenderer = () => {
               </motion.div>
             )}
 
-
-            {playerData && (
+            {isFetching ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[...Array(4)].map((_, i) => <PlayerRenderSkeleton key={i} />)}
+              </div>
+            ) : playerData && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -258,6 +262,7 @@ const PlayerRenderer = () => {
                         src={renderUrls.mineatar.full(playerData.id)}
                         alt={`${playerData.username}'s full body`}
                         className="w-full h-full object-contain"
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-4 flex gap-2 mt-auto">
@@ -286,6 +291,7 @@ const PlayerRenderer = () => {
                         src={renderUrls.nmsr.face(playerData.id)}
                         alt={`${playerData.username}'s head`}
                         className="w-full h-full object-contain"
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-4 flex gap-2 mt-auto">
@@ -315,6 +321,7 @@ const PlayerRenderer = () => {
                         src={renderUrls.nmsr.bust(playerData.id)}
                         alt={`${playerData.username}'s full render`}
                         className="w-full h-full object-contain"
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-4 flex gap-2 mt-auto">
@@ -344,6 +351,7 @@ const PlayerRenderer = () => {
                         src={renderUrls.nmsr.fullbody(playerData.id)}
                         alt={`${playerData.username}'s full body view`}
                         className="w-full h-full object-contain"
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-4 flex gap-2 mt-auto">

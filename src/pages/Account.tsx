@@ -13,7 +13,8 @@ import Footer from '@/components/Footer';
 import { toast } from 'sonner';
 import { User, Mail, Calendar, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
+import AccountPageSkeleton from '@/components/skeletons/AccountPageSkeleton';
 
 const Account = () => {
   const { user, loading, signOut } = useAuth();
@@ -34,8 +35,14 @@ const Account = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cow-purple"></div>
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow pt-24 pb-16 cow-grid-bg">
+          <div className="container mx-auto px-4">
+            <AccountPageSkeleton />
+          </div>
+        </main>
+        <Footer />
       </div>
     );
   }

@@ -4,10 +4,11 @@ import Footer from '@/components/Footer';
 import { BookOpen, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import DonateButton from '@/components/DonateButton';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import confetti from 'canvas-confetti';
+import GuideCardSkeleton from '@/components/skeletons/GuideCardSkeleton';
 
 interface Guide {
   id: number;
@@ -76,8 +77,12 @@ const GuidesPage = () => {
   const [markdownContent, setMarkdownContent] = useState<string>('');
 
   useEffect(() => {
-    setGuides(Guides);
-    setIsLoading(false);
+    const timer = setTimeout(() => {
+      setGuides(Guides);
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const handleOpenGuide = async (guide: Guide) => {
@@ -142,10 +147,8 @@ const GuidesPage = () => {
             </p>
 
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-card rounded-md h-64"></div>
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, i) => <GuideCardSkeleton key={i} />)}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

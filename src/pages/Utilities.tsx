@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 interface Utility {
   name: string;
@@ -226,6 +226,7 @@ const Utils = () => {
                       variants={itemVariants}
                       onMouseEnter={() => setHoveredCard(item.name)}
                       onMouseLeave={() => setHoveredCard(null)}
+                      whileHover={{ y: -5, transition: { duration: 0.2 } }}
                     >
                       <a
                         href={item.url}

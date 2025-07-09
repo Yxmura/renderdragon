@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { Resource } from '@/types/resources';
 import ResourceCard from './ResourceCard';
 import { FolderX, X } from 'lucide-react';
@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { useUserFavorites } from '@/hooks/useUserFavorites';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import ResourceCardSkeleton from './ResourceCardSkeleton';
 
 interface ResourcesListProps {
   resources: Resource[];
-  filteredResources: Resource[];
   isLoading: boolean;
   isSearching: boolean;
   selectedCategory: string | null;
@@ -18,11 +18,13 @@ interface ResourcesListProps {
   onSelectResource: (resource: Resource) => void;
   onClearFilters: () => void;
   hasCategoryResources: boolean;
+  loadMoreResources: () => void;
+  hasMore: boolean;
+  filteredResources: Resource[];
 }
 
 const ResourcesList = ({
   resources,
-  filteredResources,
   isLoading,
   isSearching,
   selectedCategory,
@@ -31,47 +33,22 @@ const ResourcesList = ({
   onSelectResource,
   onClearFilters,
   hasCategoryResources,
+  loadMoreResources,
+  hasMore,
+  filteredResources,
 }: ResourcesListProps) => {
-  const { favorites } = useUserFavorites();
-  const [sortOption, setSortOption] = useState('default');
-
-  const sortedResources = [...filteredResources].sort((a, b) => {
-    if (sortOption === 'downloads') {
-      return (downloadCounts[b.id] || 0) - (downloadCounts[a.id] || 0);
-    } else if (sortOption === 'alphabetical-az') {
-      return a.title.localeCompare(b.title);
-    } else if (sortOption === 'alphabetical-za') {
-      return b.title.localeCompare(a.title);
-    }
-    return 0;
-  });
-
-  const displayedResources = selectedCategory === 'favorites'
-    ? sortedResources.filter(resource => favorites.includes(String(resource.id)))
-    : sortedResources.filter(resource => 
-        resource.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-
-  if (isLoading) {
+  if (isLoading && resources.length === 0) {
     return (
-      <motion.div 
-        className="text-center py-16"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"
-        />
-        <p className="text-xl text-muted-foreground">Loading resources...</p>
-      </motion.div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {Array.from({ length: 9 }).map((_, index) => (
+          <ResourceCardSkeleton key={index} />
+        ))}
+      </div>
     );
   }
 
   const shouldShowNoResourcesMessage =
-    (displayedResources.length === 0) ||
+    (filteredResources.length === 0 && !isLoading) ||
     (selectedCategory && selectedCategory !== 'favorites' && !hasCategoryResources);
 
   if (shouldShowNoResourcesMessage) {
@@ -148,34 +125,12 @@ const ResourcesList = ({
       transition={{ duration: 0.5 }}
     >
       <motion.div 
-        className="mb-4"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        <label htmlFor="sort" className="block text-sm font-medium text-muted-foreground">
-          Sort by:
-        </label>
-        <select
-          id="sort"
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
-          className="pixel-corners border border-input bg-background text-foreground px-3 py-2"
-        >
-          <option value="default">Default</option>
-          <option value="downloads">Most Downloads</option>
-          <option value="alphabetical-az">Alphabetical (A-Z)</option>
-          <option value="alphabetical-za">Alphabetical (Z-A)</option>
-        </select>
-      </motion.div>
-
-      <motion.div 
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
       >
-        {displayedResources.map((resource, index) => (
+        {filteredResources.map((resource, index) => (
           <motion.div
             key={`resource-${resource.id}`}
             initial={{ opacity: 0, y: 20 }}
@@ -190,8 +145,15 @@ const ResourcesList = ({
           </motion.div>
         ))}
       </motion.div>
+      {hasMore && (
+        <div className="flex justify-center mt-8">
+          <Button onClick={loadMoreResources} disabled={isLoading}>
+            {isLoading ? 'Loading...' : 'Load More'}
+          </Button>
+        </div>
+      )}
     </motion.div>
   );
 };
 
-export default ResourcesList;
+export default React.memo(ResourcesList);

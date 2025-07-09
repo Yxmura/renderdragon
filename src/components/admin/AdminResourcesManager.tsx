@@ -12,6 +12,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import AdminResourceDialog from './AdminResourceDialog';
 import ResourceMigration from './ResourceMigration';
+import AdminResourcesManagerSkeleton from '../skeletons/AdminResourcesManagerSkeleton';
+
+const RESOURCES_PER_PAGE = 15;
 
 const AdminResourcesManager = () => {
   const [resources, setResources] = useState<Resource[]>([]);
@@ -24,23 +27,46 @@ const AdminResourcesManager = () => {
     open: false,
     resource: null,
   });
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   const categories = ['all', 'music', 'sfx', 'images', 'animations', 'fonts', 'presets'];
 
-  useEffect(() => {
-    fetchResources();
-  }, []);
-
-  const fetchResources = async () => {
+  const fetchResources = async (isNewSearch = false) => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      const from = isNewSearch ? 0 : page * RESOURCES_PER_PAGE;
+      const to = from + RESOURCES_PER_PAGE - 1;
+
+      let query = supabase
         .from('resources')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+      if (searchTerm) {
+        query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,credit.ilike.%${searchTerm}%`);
+      }
+      if (selectedCategory !== 'all') {
+        query = query.eq('category', selectedCategory);
+      }
+
+      const { data, error, count } = await query;
 
       if (error) throw error;
-      setResources(data || []);
+      
+      setResources(prev => isNewSearch ? data || [] : [...prev, ...(data || [])]);
+
+      if (count !== null) {
+        setHasMore(count > (isNewSearch ? 0 : page) * RESOURCES_PER_PAGE + (data?.length || 0));
+      } else {
+        setHasMore((data?.length || 0) === RESOURCES_PER_PAGE);
+      }
+
+      if (isNewSearch) {
+        setPage(1);
+      }
+
     } catch (error) {
       console.error('Error fetching resources:', error);
       toast.error('Failed to fetch resources');
@@ -48,6 +74,22 @@ const AdminResourcesManager = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchResources(true);
+  }, [searchTerm, selectedCategory]);
+
+  const loadMore = () => {
+    if (loading || !hasMore) return;
+    setPage(prev => prev + 1);
+  };
+
+  useEffect(() => {
+    if (page > 0) {
+      fetchResources();
+    }
+  }, [page]);
+
 
   const handleDelete = async (resource: Resource) => {
     try {
@@ -59,7 +101,7 @@ const AdminResourcesManager = () => {
       if (error) throw error;
       
       toast.success('Resource deleted successfully');
-      fetchResources();
+      fetchResources(true);
       setDeleteDialog({ open: false, resource: null });
     } catch (error) {
       console.error('Error deleting resource:', error);
@@ -67,13 +109,7 @@ const AdminResourcesManager = () => {
     }
   };
 
-  const filteredResources = resources.filter((resource) => {
-    const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resource.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resource.credit?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || resource.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredResources = resources;
 
   const getResourceStats = () => {
     const stats = categories.slice(1).map(category => ({
@@ -83,12 +119,8 @@ const AdminResourcesManager = () => {
     return stats;
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cow-purple"></div>
-      </div>
-    );
+  if (loading && page === 0) {
+    return <AdminResourcesManagerSkeleton />;
   }
 
   return (
@@ -242,12 +274,20 @@ const AdminResourcesManager = () => {
         </div>
       )}
 
+      <div className="flex justify-center mt-6">
+        {hasMore && (
+          <Button onClick={loadMore} disabled={loading}>
+            {loading ? 'Loading...' : 'Load More'}
+          </Button>
+        )}
+      </div>
+
       {/* Dialogs */}
       <AdminResourceDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         resource={editingResource}
-        onSave={fetchResources}
+        onSave={() => fetchResources(true)}
       />
 
       <AlertDialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ open, resource: null })}>

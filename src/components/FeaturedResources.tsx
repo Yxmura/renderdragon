@@ -1,10 +1,10 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Resource } from '@/types/resources';
 import ResourceCard from '@/components/resources/ResourceCard';
+import ResourceCardSkeleton from './resources/ResourceCardSkeleton';
 
 const FeaturedResources = () => {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
@@ -84,8 +84,10 @@ const FeaturedResources = () => {
         </motion.div>
 
         {isLoading ? (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">Loading featured resources...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <ResourceCardSkeleton key={index} />
+            ))}
           </div>
         ) : (
           <motion.div 
@@ -137,4 +139,4 @@ const FeaturedResources = () => {
   );
 };
 
-export default FeaturedResources;
+export default React.memo(FeaturedResources);

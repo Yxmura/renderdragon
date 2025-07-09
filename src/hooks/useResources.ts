@@ -1,8 +1,10 @@
-
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Resource } from '@/types/resources';
 import { useDownloadCounts } from '@/hooks/useDownloadCounts';
 import { supabase } from '@/integrations/supabase/client';
+
+type Category = Resource['category'];
+type Subcategory = Resource['subcategory'];
 
 // Utility to normalize numbers and words
 const numberWordMap: Record<string, string> = {
@@ -32,80 +34,126 @@ export const useResources = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const { downloadCounts: externalDownloadCounts, incrementDownload } = useDownloadCounts();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null | 'favorites'>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [downloadCounts, setDownloadCounts] = useState<Record<number, number>>({});
   const [lastAction, setLastAction] = useState<string>('');
   const [loadedFonts, setLoadedFonts] = useState<string[]>([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const RESOURCES_PER_PAGE = 20;
 
-  const fetchResources = useCallback(async () => {
+  const fetchResources = useCallback(async (isNewSearch = false) => {
     try {
       setIsLoading(true);
-      const { data, error } = await supabase
+
+      if (!hasMore && !isNewSearch) {
+        setIsLoading(false);
+        return;
+      }
+
+      const from = isNewSearch ? 0 : page * RESOURCES_PER_PAGE;
+      const to = from + RESOURCES_PER_PAGE - 1;
+
+      let query = supabase
         .from('resources')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+      if (searchQuery) {
+        query = query.ilike('title', `%${searchQuery}%`);
+      }
+      if (selectedCategory && selectedCategory !== 'favorites') {
+        query = query.eq('category', selectedCategory);
+      }
+      if (selectedSubcategory) {
+        query = query.eq('subcategory', selectedSubcategory);
+      }
+      
+      const { data, error, count } = await query;
 
       if (error) {
         console.error('Supabase error:', error);
         throw error;
       }
 
-      const allResources: Resource[] = (data || []).map(resource => ({
+      const newResources: Resource[] = (data || []).map(resource => ({
         ...resource,
         downloads: 0 // Set all resources to have 0 downloads by default
       }));
+      
+      setResources(prevResources => isNewSearch ? newResources : [...prevResources, ...newResources]);
+      
+      if (isNewSearch) {
+        setPage(1);
+      }
 
-      setResources(allResources);
-      
-      // Initialize download counts
-      const counts: Record<number, number> = {};
-      allResources.forEach(resource => {
-        counts[resource.id] = 0; // Set all resources to have 0 downloads initially
-      });
-      setDownloadCounts(counts);
-      
-      setIsLoading(false);
+      if (count !== null) {
+        setHasMore(count > (isNewSearch ? 0 : page) * RESOURCES_PER_PAGE + newResources.length);
+      } else {
+        setHasMore(newResources.length === RESOURCES_PER_PAGE);
+      }
+
     } catch (error) {
       console.error('Error fetching resources:', error);
+    } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [page, hasMore, searchQuery, selectedCategory, selectedSubcategory]);
 
   useEffect(() => {
-    fetchResources();
-  }, [fetchResources]);
-
-  const handleSearchSubmit = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    setIsSearching(true);
-    setLastAction('search');
+    fetchResources(true);
+  }, [searchQuery, selectedCategory, selectedSubcategory]);
+  
+  const loadMoreResources = () => {
+    if (isLoading || !hasMore) return;
+    setPage(prevPage => prevPage + 1);
   };
 
-  const handleClearSearch = () => {
+  useEffect(() => {
+    if (page > 0) {
+      fetchResources();
+    }
+  }, [page]);
+
+
+  const handleSearchSubmit = useCallback((e?: React.FormEvent) => {
+    e?.preventDefault();
+    setIsLoading(true);
+    setIsSearching(true);
+    setLastAction('search');
+    setTimeout(() => setIsLoading(false), 300);
+  }, []);
+
+  const handleClearSearch = useCallback(() => {
     setSearchQuery('');
     setIsSearching(false);
     setLastAction('clear');
-  };
+  }, []);
 
-  const handleCategoryChange = (category: string | null) => {
+  const handleCategoryChange = useCallback((category: Category | null | 'favorites') => {
+    setIsLoading(true);
     setSelectedCategory(category);
     // When changing category, reset subcategory unless we're selecting 'presets'
     if (category !== 'presets') {
       setSelectedSubcategory(null);
     }
     setLastAction('category');
-  };
+    setTimeout(() => setIsLoading(false), 300);
+  }, []);
 
-  const handleSubcategoryChange = (subcategory: string | null) => {
+  const handleSubcategoryChange = useCallback((subcategory: Subcategory | null) => {
+    setIsLoading(true);
     setSelectedSubcategory(subcategory);
     setLastAction('subcategory');
-  };
+    setTimeout(() => setIsLoading(false), 300);
+  }, []);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     setLastAction('search');
     
@@ -114,7 +162,7 @@ export const useResources = () => {
     } else {
       setIsSearching(true);
     }
-  };
+  }, []);
 
   // Check if we have resources in the current selected category
   const hasCategoryResources = useMemo(() => {
@@ -124,29 +172,13 @@ export const useResources = () => {
 
   // Determine which resources to display based on filters
   const filteredResources = useMemo(() => {
-    const normalizedQuery = normalizeText(searchQuery);
-    return resources.filter((resource) => {
-      const titleNorm = normalizeText(resource.title || '');
-      const categoryNorm = normalizeText(resource.category || '');
-      const subcategoryNorm = normalizeText(resource.subcategory || '');
-      const matchesSearch = !isSearching || 
-        titleNorm.includes(normalizedQuery) ||
-        categoryNorm.includes(normalizedQuery) ||
-        subcategoryNorm.includes(normalizedQuery);
-      
-      // Don't apply category filter for favorites
-      const matchesCategory = selectedCategory === 'favorites' || !selectedCategory || resource.category === selectedCategory;
-      
-      const matchesSubcategory = 
-        !selectedSubcategory || 
-        (selectedCategory !== 'presets' ? true : resource.subcategory === selectedSubcategory);
-      
-      return matchesSearch && matchesCategory && matchesSubcategory;
-    });
-  }, [resources, selectedCategory, selectedSubcategory, searchQuery, isSearching]);
+    // With backend filtering, resources are already filtered.
+    // We might still need client side filtering for some cases, but for now this is simpler.
+    return resources;
+  }, [resources]);
 
-  const handleDownload = async (resource: Resource) => {
-    if (!resource) return;
+  const handleDownload = useCallback(async (resource: Resource): Promise<boolean> => {
+    if (!resource) return false;
 
     // Use the download_url from the database if available, otherwise construct it
     let fileUrl = resource.download_url;
@@ -165,6 +197,8 @@ export const useResources = () => {
         fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}.${filetype}`;
       }
     }
+
+    if (!fileUrl) return false;
 
     const filename = `${resource.title}.${resource.filetype || 'file'}`;
     const shouldForceDownload = ['presets', 'images'].includes(resource.category);
@@ -193,10 +227,12 @@ export const useResources = () => {
       }
 
       incrementDownload(resource.id);
+      return true;
     } catch (err) {
       console.error('Download failed', err);
+      return false;
     }
-  };   
+  }, [incrementDownload]);   
 
   return {
     resources,
@@ -219,5 +255,7 @@ export const useResources = () => {
     handleSubcategoryChange,
     handleSearch,
     handleDownload,
+    loadMoreResources,
+    hasMore,
   };
 };

@@ -1,6 +1,5 @@
-
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { useEffect, useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useDownloadCounts = () => {
   const [downloadCounts, setDownloadCounts] = useState<Record<number, number>>({});
@@ -34,7 +33,7 @@ export const useDownloadCounts = () => {
     fetchCounts();
   }, []);
 
-  const incrementDownload = async (resourceId: number) => {
+  const incrementDownload = useCallback(async (resourceId: number) => {
     try {
       const currentCount = downloadCounts[resourceId] || 0;
       const newCount = currentCount + 1;
@@ -60,7 +59,7 @@ export const useDownloadCounts = () => {
     } catch (err) {
       console.error('Unexpected error incrementing download count:', err);
     }
-  };
+  }, [downloadCounts]);
 
   return { downloadCounts, incrementDownload };
 };

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Github, Twitter, Youtube, MessageSquare, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
@@ -79,7 +79,7 @@ const Footer = () => {
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                 aria-label="Discord"
               >
-                <img className="w-6 h-6" src="/assets/discord_icon.png" alt="Discord" />
+                <img className="w-6 h-6" src="/assets/discord_icon.png" alt="Discord" loading="lazy" />
               </a>
               
               <a 
@@ -89,7 +89,7 @@ const Footer = () => {
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                 aria-label="Twitter"
               >
-                <img className="w-6 h-6" src="/assets/twitter_icon.png" alt="Twitter" />
+                <img className="w-6 h-6" src="/assets/twitter_icon.png" alt="Twitter" loading="lazy" />
               </a>
               
               <a 
@@ -99,7 +99,7 @@ const Footer = () => {
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                 aria-label="YouTube"
               >
-                <img className="w-6 h-6" src="/assets/youtube_icon.png" alt="YouTube" />
+                <img className="w-6 h-6" src="/assets/youtube_icon.png" alt="YouTube" loading="lazy" />
               </a>
               
               <a 
@@ -109,7 +109,7 @@ const Footer = () => {
                 className="p-2 bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                 aria-label="GitHub"
               >
-                <img className="w-6 h-6" src="/assets/github_icon.png" alt="GitHub" />
+                <img className="w-6 h-6" src="/assets/github_icon.png" alt="GitHub" loading="lazy" />
               </a>
             </div>
           </div>
@@ -156,11 +156,6 @@ const Footer = () => {
               <li>
                 <Link to="/gappa" className="text-white/70 hover:text-white transition-colors">
                   Music Copyright Checker
-                </Link>
-              </li>
-              <li>
-                <Link to="/ai-title-helper" className="text-white/70 hover:text-white transition-colors">
-                  AI Title Helper
                 </Link>
               </li>
               <li>
@@ -238,4 +233,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default React.memo(Footer);

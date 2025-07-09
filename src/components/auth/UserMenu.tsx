@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
@@ -73,4 +73,4 @@ const UserMenu = ({ onShowFavorites }: UserMenuProps) => {
   );
 };
 
-export default UserMenu;
+export default React.memo(UserMenu);
