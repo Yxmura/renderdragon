@@ -261,6 +261,7 @@ const Navbar = () => {
                             <Link 
                               to={subLink.path} 
                               className={`flex items-center px-2 py-2 cursor-pointer font-vt323 text-xl pixel-corners ${isLinkActive(subLink.path) ? 'text-primary bg-accent/50' : ''}`}
+                              onClick={() => setActiveDropdown(null)}
                             >
                               {/* fuck the desktop icons */}
                               <span>{subLink.name}</span>

@@ -144,6 +144,13 @@ const ResourcesList = ({
             />
           </motion.div>
         ))}
+
+        {/* Skeleton loaders while fetching additional resources */}
+        {isLoading && resources.length > 0 && (
+          Array.from({ length: 6 }).map((_, idx) => (
+            <ResourceCardSkeleton key={`loader-skeleton-${idx}`} />
+          ))
+        )}
       </motion.div>
       {hasMore && (
         <div className="flex justify-center mt-8">

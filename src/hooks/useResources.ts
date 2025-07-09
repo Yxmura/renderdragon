@@ -86,7 +86,16 @@ export const useResources = () => {
         downloads: 0 // Set all resources to have 0 downloads by default
       }));
       
-      setResources(prevResources => isNewSearch ? newResources : [...prevResources, ...newResources]);
+      // Merge new resources with previous ones while ensuring uniqueness by `id`
+      setResources(prevResources => {
+        const combined = isNewSearch ? newResources : [...prevResources, ...newResources];
+        const seenIds = new Set<number>();
+        return combined.filter(res => {
+          if (seenIds.has(res.id)) return false;
+          seenIds.add(res.id);
+          return true;
+        });
+      });
       
       if (isNewSearch) {
         setPage(1);
