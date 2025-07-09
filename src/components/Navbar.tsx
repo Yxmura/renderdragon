@@ -118,6 +118,7 @@ const Navbar = () => {
   useEffect(() => {
     setMobileMenuOpen(false); // Close old mobile menu state on location change
     setIsDrawerOpen(false); // Close drawer on location change
+    setActiveDropdown(null); // Close desktop dropdowns on page change
   }, [location]);
 
   // Handle favorites visibility
