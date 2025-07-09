@@ -22,7 +22,7 @@ ffmpeg.setFfmpegPath(resolvedFfmpegPath);
 
 export const config = {
   runtime: 'nodejs',
-  maxDuration: 300,
+  maxDuration: 60,
 };
 
 const corsHeaders = {
