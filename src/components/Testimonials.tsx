@@ -1,6 +1,7 @@
 import React from 'react';
 import { Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface Testimonial {
   id: number;
@@ -9,34 +10,36 @@ interface Testimonial {
   content: string;
 }
 
-const testimonials: Testimonial[] = [
-  {
-    id: 1,
-    name: "yFury",
-    role: "Minecraft YouTuber & Streamer",
-    content: "I love the assets cause they are harddd to find",
-    },
-  {
-    id: 2,
-    name: "Jkingnick",
-    role: "Minecraft Youtuber",
-    content: "Website looks very professional and seems to be a really cool idea for content creators like myself",
-    },
-  {
-    id: 3,
-    name: "AlphaReturns",
-     role: "Minecraft Youtuber and Thumbnail Designer",
-     content: "Renderdragon is a really good tool with great assets that can be useful for pretty much any YouTuber (small or big)",
-     },
-  {
-    id: 4,
-    name: "ItsProger",
-    role: "Minecraft YouTuber and Thumbnail Designer",
-    content: "I really like renderdragon, it's one of the only and best websites for Minecraft content creators. I really like the style, assets, tools and the whole team working on this amazing project. I'll use it for every single video that I make in the future"
-  }
-];
-
 const Testimonials = () => {
+  const { t } = useTranslation();
+
+  const testimonialsData: Testimonial[] = [
+    {
+      id: 1,
+      name: "yFury",
+      role: t('testimonials.yFuryRole'),
+      content: t('testimonials.yFuryContent'),
+    },
+    {
+      id: 2,
+      name: "Jkingnick",
+      role: t('testimonials.jkingnickRole'),
+      content: t('testimonials.jkingnickContent'),
+    },
+    {
+      id: 3,
+      name: "AlphaReturns",
+      role: t('testimonials.alphaReturnsRole'),
+      content: t('testimonials.alphaReturnsContent'),
+    },
+    {
+      id: 4,
+      name: "ItsProger",
+      role: t('testimonials.itsProgerRole'),
+      content: t('testimonials.itsProgerContent'),
+    }
+  ];
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -76,7 +79,9 @@ const Testimonials = () => {
           transition={{ duration: 0.5 }}
           className="text-3xl md:text-4xl font-bold text-center mb-2 animate-glow font-vt323"
         >
-          What <span className="text-cow-purple">Creators</span> Say About Us
+          <Trans i18nKey="testimonials.whatCreatorsSay">
+            What <span className="text-cow-purple">Creators</span> Say About Us
+          </Trans>
         </motion.h2>
         
         <motion.p 
@@ -86,7 +91,7 @@ const Testimonials = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-center text-muted-foreground mb-12 max-w-xl mx-auto"
         >
-          Don't just take our word for it - hear from the content creators who use our tools every day
+          {t('testimonials.dontTakeOurWord')}
         </motion.p>
         
         <motion.div 
@@ -96,7 +101,7 @@ const Testimonials = () => {
           viewport={{ once: true }}
           className="grid grid-cols-1 sm:grid-cols-2 gap-8"
         >
-          {testimonials.map((testimonial, index) => (
+          {testimonialsData.map((testimonial) => (
             <motion.div 
               key={testimonial.id}
               variants={item}

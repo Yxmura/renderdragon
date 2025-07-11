@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { 
@@ -9,8 +9,7 @@ import {
   Video, 
   FileText,
   X,
-  Search,
-  Heart
+  Search
 } from 'lucide-react';
 import {
   Select,
@@ -20,39 +19,47 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import SortSelector from './SortSelector';
+import { useTranslation } from 'react-i18next';
 
 interface ResourceFiltersProps {
   searchQuery: string;
   selectedCategory: string | null;
   selectedSubcategory: string | null;
+  sortOrder: string;
   onSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClearSearch: () => void;
   onSearchSubmit: (e?: React.FormEvent) => void;
   onCategoryChange: (category: string | null) => void;
   onSubcategoryChange: (subcategory: string | null) => void;
+  onSortOrderChange: (order: string) => void;
   isMobile: boolean;
   inputRef: React.RefObject<HTMLInputElement>;
 }
 
 const ResourceFilters = ({
+  t,
+
   searchQuery,
   selectedCategory,
   selectedSubcategory,
+  sortOrder,
   onSearch,
   onClearSearch,
   onSearchSubmit,
   onCategoryChange,
   onSubcategoryChange,
+  onSortOrderChange,
   isMobile,
   inputRef
-}: ResourceFiltersProps) => {
+}: ResourceFiltersProps & { t: (key: string) => string }) => {
   return (
     <div className="mb-8 flex flex-col md:flex-row gap-4">
       <div className="relative flex-grow">
         <form onSubmit={(e) => onSearchSubmit(e)} className="relative w-full">
           <Input
             ref={inputRef}
-            placeholder="Search resources..."
+            placeholder={t('resourceFilters.searchPlaceholder')}
             value={searchQuery}
             onChange={onSearch}
             onClick={(e) => {
@@ -70,64 +77,76 @@ const ResourceFilters = ({
               onClick={onClearSearch}
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Clear search</span>
+              <span className="sr-only">{t('resourceFilters.clearSearch')}</span>
             </Button>
           )}
           
-          <Button type="submit" className="sr-only">Search</Button>
+          <Button type="submit" className="sr-only">{t('resourceFilters.searchPlaceholder')}</Button>
         </form>
       </div>
 
       {isMobile ? (
-        <MobileFilters 
+        <MobileFilters
+          t={t} 
           selectedCategory={selectedCategory}
           selectedSubcategory={selectedSubcategory}
           onCategoryChange={onCategoryChange}
           onSubcategoryChange={onSubcategoryChange}
+          sortOrder={sortOrder}
+          onSortOrderChange={onSortOrderChange}
         />
       ) : (
-        <DesktopFilters 
+        <DesktopFilters
+          t={t} 
           selectedCategory={selectedCategory}
           selectedSubcategory={selectedSubcategory}
           onCategoryChange={onCategoryChange}
           onSubcategoryChange={onSubcategoryChange}
+          sortOrder={sortOrder}
+          onSortOrderChange={onSortOrderChange}
         />
       )}
     </div>
   );
 };
 
-const MobileFilters = ({ 
-  selectedCategory, 
-  selectedSubcategory,
-  onCategoryChange,
-  onSubcategoryChange
-}: {
+interface MobileFiltersProps {
   selectedCategory: string | null;
   selectedSubcategory: string | null;
   onCategoryChange: (category: string | null) => void;
   onSubcategoryChange: (subcategory: string | null) => void;
-}) => {
+  sortOrder: string;
+  onSortOrderChange: (order: string) => void;
+}
+
+const MobileFilters = ({
+  t,
+ 
+  selectedCategory, 
+  selectedSubcategory,
+  onCategoryChange,
+  onSubcategoryChange,
+  sortOrder,
+  onSortOrderChange
+}: MobileFiltersProps & { t: (key: string) => string }) => {
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button size="icon" className="pixel-corners">
           <Filter className="h-4 w-4" />
-          <span className="sr-only">Filter</span>
+          <span className="sr-only">{t('resourceFilters.filterTitleMobile')}</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="h-[80vh] pixel-corners">
         <div className="h-full py-4 space-y-4">
-          <h3 className="text-lg font-vt323 mb-2">
-            Filter by Category
-          </h3>
+          <h3 className="text-lg font-vt323 mb-2">{t('resourceFilters.filterByCategory')}</h3>
           <div className="flex flex-col gap-2">
             <Button
               variant={selectedCategory === null ? 'default' : 'outline'}
               onClick={() => onCategoryChange(null)}
               className="justify-start pixel-corners"
             >
-              All
+              {t('resourceFilters.all')}
             </Button>
             <Button
               variant={selectedCategory === 'music' ? 'default' : 'outline'}
@@ -135,7 +154,7 @@ const MobileFilters = ({
               className="justify-start pixel-corners"
             >
               <Music className="h-4 w-4 mr-2" />
-              Music
+              {t('resourceFilters.music')}
             </Button>
             <Button
               variant={selectedCategory === 'sfx' ? 'default' : 'outline'}
@@ -143,7 +162,7 @@ const MobileFilters = ({
               className="justify-start pixel-corners"
             >
               <FileAudio className="h-4 w-4 mr-2" />
-              SFX
+              {t('resourceFilters.sfx')}
             </Button>
             <Button
               variant={selectedCategory === 'images' ? 'default' : 'outline'}
@@ -151,7 +170,7 @@ const MobileFilters = ({
               className="justify-start pixel-corners"
             >
               <Image className="h-4 w-4 mr-2" />
-              Images
+              {t('resourceFilters.images')}
             </Button>
             <Button
               variant={selectedCategory === 'animations' ? 'default' : 'outline'}
@@ -159,7 +178,7 @@ const MobileFilters = ({
               className="justify-start pixel-corners"
             >
               <Video className="h-4 w-4 mr-2" />
-              Animations
+              {t('resourceFilters.animations')}
             </Button>
             <Button
               variant={selectedCategory === 'fonts' ? 'default' : 'outline'}
@@ -167,7 +186,7 @@ const MobileFilters = ({
               className="justify-start pixel-corners"
             >
               <FileText className="h-4 w-4 mr-2" />
-              Fonts
+              {t('resourceFilters.fonts')}
             </Button>
             <Button
               variant={selectedCategory === 'presets' ? 'default' : 'outline'}
@@ -175,60 +194,60 @@ const MobileFilters = ({
               className="justify-start pixel-corners"
             >
               <FileText className="h-4 w-4 mr-2" />
-              Presets
-            </Button>
-            <Button
-              variant={selectedCategory === 'favorites' ? 'default' : 'outline'}
-              onClick={() => onCategoryChange('favorites')}
-              className="justify-start pixel-corners"
-            >
-              <Heart className="h-4 w-4 mr-2" />
-              Favorites
+              {t('resourceFilters.presets')}
             </Button>
             {selectedCategory === 'presets' && (
               <div className="mt-2 ml-2">
-                <Select
-                  value={selectedSubcategory || "all"}
-                  onValueChange={(value) => onSubcategoryChange(value === "all" ? null : value)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select preset type" />
+                <Select onValueChange={onSubcategoryChange} value={selectedSubcategory || 'all'}>
+                  <SelectTrigger className="w-full pixel-corners">
+                    <SelectValue placeholder={t('select_preset_type')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Presets</SelectItem>
-                    <SelectItem value="davinci">Davinci Resolve</SelectItem>
-                    <SelectItem value="adobe">Premiere Pro & AE</SelectItem>
+                    <SelectItem value="all">{t('all_presets')}</SelectItem>
+                    <SelectItem value="davinci">{t('davinci_presets')}</SelectItem>
+                    <SelectItem value="adobe">{t('adobe_presets')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             )}
           </div>
+
+          <h3 className="text-lg font-vt323 mb-2 pt-4 border-t border-gray-700">{t('resourceFilters.sortBy')}</h3>
+          <SortSelector sortOrder={sortOrder} onSortOrderChange={onSortOrderChange} />
         </div>
       </SheetContent>
     </Sheet>
   );
 };
 
-const DesktopFilters = ({ 
-  selectedCategory, 
-  selectedSubcategory,
-  onCategoryChange,
-  onSubcategoryChange
-}: {
+interface DesktopFiltersProps {
   selectedCategory: string | null;
   selectedSubcategory: string | null;
   onCategoryChange: (category: string | null) => void;
   onSubcategoryChange: (subcategory: string | null) => void;
-}) => {
+  sortOrder: string;
+  onSortOrderChange: (order: string) => void;
+}
+
+const DesktopFilters = ({
+  t,
+ 
+  selectedCategory, 
+  selectedSubcategory,
+  onCategoryChange,
+  onSubcategoryChange,
+  sortOrder,
+  onSortOrderChange
+}: DesktopFiltersProps & { t: (key: string) => string }) => {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       <Button
         variant={selectedCategory === null ? 'default' : 'outline'}
         size="sm"
         onClick={() => onCategoryChange(null)}
         className="h-10 pixel-corners"
       >
-        All
+        {t('resourceFilters.all')}
       </Button>
       <Button
         variant={selectedCategory === 'music' ? 'default' : 'outline'}
@@ -236,7 +255,7 @@ const DesktopFilters = ({
         onClick={() => onCategoryChange('music')}
         className="h-10 pixel-corners"
       >
-        Music
+        {t('resourceFilters.music')}
       </Button>
       <Button
         variant={selectedCategory === 'sfx' ? 'default' : 'outline'}
@@ -244,7 +263,7 @@ const DesktopFilters = ({
         onClick={() => onCategoryChange('sfx')}
         className="h-10 pixel-corners"
       >
-        SFX
+        {t('resourceFilters.sfx')}
       </Button>
       <Button
         variant={selectedCategory === 'images' ? 'default' : 'outline'}
@@ -252,7 +271,7 @@ const DesktopFilters = ({
         onClick={() => onCategoryChange('images')}
         className="h-10 pixel-corners"
       >
-        Images
+        {t('resourceFilters.images')}
       </Button>
       <Button
         variant={selectedCategory === 'animations' ? 'default' : 'outline'}
@@ -260,7 +279,7 @@ const DesktopFilters = ({
         onClick={() => onCategoryChange('animations')}
         className="h-10 pixel-corners"
       >
-        Animations
+        {t('resourceFilters.animations')}
       </Button>
       <Button
         variant={selectedCategory === 'fonts' ? 'default' : 'outline'}
@@ -268,7 +287,7 @@ const DesktopFilters = ({
         onClick={() => onCategoryChange('fonts')}
         className="h-10 pixel-corners"
       >
-        Fonts
+        {t('resourceFilters.fonts')}
       </Button>
       <Button
         variant={selectedCategory === 'presets' ? 'default' : 'outline'}
@@ -276,29 +295,18 @@ const DesktopFilters = ({
         onClick={() => onCategoryChange('presets')}
         className="h-10 pixel-corners"
       >
-        Presets
+        {t('resourceFilters.presets')}
       </Button>
-      <Button
-        variant={selectedCategory === 'favorites' ? 'default' : 'outline'}
-        size="sm"
-        onClick={() => onCategoryChange('favorites')}
-        className="h-10 pixel-corners bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-white hover:opacity-90"
-      >
-        <Heart className="h-4 w-4 mr-2" />
-        Favorites
-      </Button>
+      <SortSelector sortOrder={sortOrder} onSortOrderChange={onSortOrderChange} />
       {selectedCategory === 'presets' && (
-        <Select
-          value={selectedSubcategory || "all"}
-          onValueChange={(value) => onSubcategoryChange(value === "all" ? null : value)}
-        >
-          <SelectTrigger className="h-10 w-[180px] pixel-corners">
-            <SelectValue placeholder="Select preset type" />
+        <Select onValueChange={onSubcategoryChange} value={selectedSubcategory || 'all'}>
+          <SelectTrigger className="w-[180px] pixel-corners">
+            <SelectValue placeholder={t('resourceFilters.selectPreset')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Presets</SelectItem>
-            <SelectItem value="davinci">Davinci Resolve</SelectItem>
-            <SelectItem value="adobe">Adobe Products</SelectItem>
+            <SelectItem value="all">{t('resourceFilters.allPresets')}</SelectItem>
+            <SelectItem value="davinci">{t('resourceFilters.davinciPresets')}</SelectItem>
+            <SelectItem value="adobe">{t('resourceFilters.adobePresets')}</SelectItem>
           </SelectContent>
         </Select>
       )}

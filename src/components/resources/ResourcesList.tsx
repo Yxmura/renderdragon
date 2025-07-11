@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useUserFavorites } from '@/hooks/useUserFavorites';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import ResourceCardSkeleton from './ResourceCardSkeleton';
 
 interface ResourcesListProps {
@@ -23,7 +24,7 @@ interface ResourcesListProps {
   filteredResources: Resource[];
 }
 
-const ResourcesList = ({
+const ResourcesList = ({ 
   resources,
   isLoading,
   isSearching,
@@ -37,6 +38,8 @@ const ResourcesList = ({
   hasMore,
   filteredResources,
 }: ResourcesListProps) => {
+  const { t } = useTranslation();
+
   if (isLoading && resources.length === 0) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -63,55 +66,44 @@ const ResourcesList = ({
           className="flex justify-center mb-4"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
         >
           <FolderX className="h-12 w-12 text-yellow-500" />
         </motion.div>
-        <motion.h3 
-          className="text-2xl font-semibold"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          No resources found
-        </motion.h3>
+        <h3 className="text-2xl font-bold font-vt323 tracking-wider text-white">{t('no_resources_found')}</h3>
         <motion.p 
           className="text-muted-foreground max-w-md mx-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.2 }}
         >
           {isSearching
-            ? `No resources match your search for "${searchQuery}"`
+            ? t('no_resources_match', { query: searchQuery })
             : selectedCategory === 'favorites'
-            ? 'You have no favorited resources yet'
+            ? t('no_favorites_message')
             : selectedCategory
-            ? `No resources found in the "${selectedCategory}" category`
-            : 'No resources found with the current filters'}
+            ? t('no_resources_in_category', { category: t(`${selectedCategory}_category`) })
+            : t('no_resources_found')}
         </motion.p>
         <motion.div 
           className="flex flex-col sm:flex-row justify-center gap-4 mt-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+          transition={{ delay: 0.25 }}
         >
           <Button onClick={onClearFilters} variant="outline" className="pixel-corners">
             <X className="mr-2 h-4 w-4" />
-            Clear Filters
+            {t('clear_filters')}
           </Button>
           <Button
             className="pixel-corners bg-cow-purple hover:bg-cow-purple/80"
             onClick={() => window.open('https://discord.renderdragon.org', '_blank')}
           >
             <img src="/assets/discord_icon.png" alt="Discord" className="h-4 w-4 mr-2" />
-            Contribute Resources
+            {t('contribute_resources')}
           </Button>
-          <Button
-            className="pixel-corners bg-cow-purple hover:bg-cow-purple/80"
-            onClick={() => window.open('https://creatoronwheels.netlify.app/resources', '_blank')}
-          >
-            <img src="/assets/domain_icon.png" alt="Old site" className="h-4 w-4 mr-2" />
-            Check our Old Site
+          <Button asChild className="mt-4 pixel-corners">
+            <a href="https://renderdragon.com">{t('check_old_site')}</a>
           </Button>
         </motion.div>
       </motion.div>
@@ -128,14 +120,14 @@ const ResourcesList = ({
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.1 }}
       >
         {filteredResources.map((resource, index) => (
           <motion.div
             key={`resource-${resource.id}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05, duration: 0.3 }}
+            transition={{ delay: index * 0.03, duration: 0.3 }}
           >
             <ResourceCard
               resource={resource}
@@ -155,7 +147,7 @@ const ResourcesList = ({
       {hasMore && (
         <div className="flex justify-center mt-8">
           <Button onClick={loadMoreResources} disabled={isLoading}>
-            {isLoading ? 'Loading...' : 'Load More'}
+            {isLoading ? t('loading') : t('load_more')}
           </Button>
         </div>
       )}

@@ -1,27 +1,7 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-
-const partners = [
-  {
-    name: "Creators' Kingdom",
-    description: "A community built on creativity and teamwork.",
-    logo: "https://cdn.bsky.app/img/avatar/plain/did:plc:2v6n63ayh4zfevupgxrkufx4/bafkreibufdbu2k76p5mdnwo64bmptl6g2wnl6imd3wxm3nvkstoqgjkz2q@jpeg",
-    url: "https://bsky.app/profile/creatorskingdom.bsky.social",
-  },
-  {
-    name: "Proger's Kitchen",
-    description: "A vibrant community for creators to give and get feedback.",
-    logo: "/assets/progerskitchen.webp",
-    url: "https://discord.gg/wXhHe5bVgz",
-  },
-  {
-    name: "Decour SMP",
-    description: "A non-economy based Lifesteal SMP with useful plugins.",
-    logo: "/assets/Decour.jpg",
-    url: "https://dsc.gg/decoursmp",
-  },
-];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const cardVariants: any = {
@@ -38,6 +18,28 @@ const cardVariants: any = {
 };
 
 const Partnership = () => {
+  const { t } = useTranslation();
+
+  const partners = [
+    {
+      name: t('partnership.partners.creatorsKingdom.name'),
+      description: t('partnership.partners.creatorsKingdom.description'),
+      logo: "https://cdn.bsky.app/img/avatar/plain/did:plc:2v6n63ayh4zfevupgxrkufx4/bafkreibufdbu2k76p5mdnwo64bmptl6g2wnl6imd3wxm3nvkstoqgjkz2q@jpeg",
+      url: "https://bsky.app/profile/creatorskingdom.bsky.social",
+    },
+    {
+      name: t('partnership.partners.progersKitchen.name'),
+      description: t('partnership.partners.progersKitchen.description'),
+      logo: "/assets/progerskitchen.webp",
+      url: "https://discord.gg/wXhHe5bVgz",
+    },
+    {
+      name: t('partnership.partners.decourSmp.name'),
+      description: t('partnership.partners.decourSmp.description'),
+      logo: "/assets/Decour.jpg",
+      url: "https://dsc.gg/decoursmp",
+    },
+  ];
   return (
     <section className="py-24 bg-background dark:bg-black/20 cow-grid-bg">
       <div className="container mx-auto px-4">
@@ -49,10 +51,10 @@ const Partnership = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-vt323 mb-4 tracking-wider">
-            Proudly Partnered With
+            {t('partnership.title')}
           </h2>
           <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
-            We collaborate with innovative communities and projects that share our passion for creativity and growth.
+            {t('partnership.description')}
           </p>
         </motion.div>
 
@@ -106,7 +108,7 @@ const Partnership = () => {
                 href="/contact"
                 className="font-vt323 inline-block bg-transparent border-2 border-cow-purple text-cow-purple font-bold text-lg py-3 px-8 rounded-lg hover:bg-cow-purple hover:text-white transition-all duration-300 transform hover:scale-105"
             >
-                Become a Partner
+                {t('partnership.becomePartner')}
             </a>
         </motion.div>
       </div>

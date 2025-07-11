@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 interface ResourceDetailDialogProps {
   resource: Resource | null;
@@ -33,9 +35,9 @@ interface ResourceDetailDialogProps {
   downloadCount: number;
   loadedFonts: string[];
   setLoadedFonts: (fonts: string[]) => void;
-  filteredResources: Resource[]; // Add this prop
-  onSelectResource: (resource: Resource) => void; // Add this prop
-  isFavoritesView?: boolean; // Added prop to indicate favorites view
+  filteredResources: Resource[]; 
+  onSelectResource: (resource: Resource) => void; 
+  isFavoritesView?: boolean; 
 }
 
 const ResourceDetailDialog = ({ 
@@ -47,8 +49,9 @@ const ResourceDetailDialog = ({
   setLoadedFonts,
   filteredResources,
   onSelectResource,
-  isFavoritesView = false // Added prop to indicate favorites view
+  isFavoritesView = false
 }: ResourceDetailDialogProps) => {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const isMobile = useIsMobile();
 
@@ -83,7 +86,6 @@ const ResourceDetailDialog = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [resource, hasPrevious, hasNext, handlePrevious, handleNext, isFavoritesView]);
 
-  // Update the font URL logic to append '__{creditName}' for resources with credit
   useEffect(() => {
     if (resource?.category === 'fonts' && resource.title && !loadedFonts.includes(resource.title)) {
       const titleLowered = resource.title
@@ -151,10 +153,10 @@ const ResourceDetailDialog = ({
   const copyCredit = () => {
     if (!resource?.credit) return;
 
-    const creditText = `Music by ${resource.credit}`;
+    const creditText = t('credit_text', { author: resource.credit });
     navigator.clipboard.writeText(creditText);
     setCopied(true);
-    toast.success('Credit copied to clipboard!');
+    toast.success(t('credit_copied'));
 
     setTimeout(() => {
       setCopied(false);
@@ -195,7 +197,7 @@ const ResourceDetailDialog = ({
               
               <Badge variant="outline" className="bg-blue-500/10 text-blue-500">
                 <Download className="h-3 w-3 mr-1" />
-                {downloadCount || 0} downloads
+                {downloadCount || 0} {t('downloads')}
               </Badge>
             </div>
           </DialogDescription>
@@ -203,18 +205,18 @@ const ResourceDetailDialog = ({
 
         <div className="space-y-5 py-2">
           <div className="border border-border rounded-md p-4">
-            <h4 className="font-vt323 text-lg mb-1">Attribution</h4>
+            <h4 className="font-vt323 text-lg mb-1">{t('attribution')}</h4>
 
             {resource.credit ? (
               <div className="space-y-2">
                 <p className="text-sm text-orange-500 flex items-center">
                   <span className="mr-2">⚠️</span>
-                  Please credit this author in your description:
+                  {t('credit_warning')}
                 </p>
 
                 <div className="flex items-center">
                   <code className="bg-muted px-2 py-1 rounded text-sm flex-grow">
-                    Credit: {resource.credit}
+                    {t('credit_text', { author: resource.credit })}
                   </code>
 
                   <Button
@@ -226,12 +228,12 @@ const ResourceDetailDialog = ({
                     {copied ? (
                       <>
                         <Check className="h-3.5 w-3.5" />
-                        <span>Copied</span>
+                        <span>{t('copied')}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3.5 w-3.5" />
-                        <span>Copy</span>
+                        <span>{t('copy')}</span>
                       </>
                     )}
                   </Button>
@@ -240,10 +242,7 @@ const ResourceDetailDialog = ({
             ) : (
               <div className="flex items-center text-green-500">
                 <Check className="h-5 w-5 mr-2" />
-                <span>
-                  No attribution required! You're free to use this resource
-                  without crediting.
-                </span>
+                <span>{t('no_attribution_required')}</span>
               </div>
             )}
           </div>
@@ -259,8 +258,8 @@ const ResourceDetailDialog = ({
                 disabled={!hasPrevious}
               >
                 <ChevronLeft className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:inline">Previous</span>
-                <span className="sr-only">Previous resource</span>
+                <span className="hidden md:inline">{t('previous')}</span>
+                <span className="sr-only">{t('previous_resource')}</span>
               </Button>
 
               <Button
@@ -268,7 +267,7 @@ const ResourceDetailDialog = ({
                 className="pixel-btn-primary flex items-center justify-center gap-2"
               >
                 <Download className="h-5 w-5" />
-                <span>Download Resource</span>
+                <span>{t('download_resource')}</span>
               </Button>
 
               <Button
@@ -277,16 +276,15 @@ const ResourceDetailDialog = ({
                 onClick={handleNext}
                 disabled={!hasNext}
               >
-                <span className="hidden md:inline">Next</span>
+                <span className="hidden md:inline">{t('next')}</span>
                 <ChevronRight className="h-4 w-4 md:ml-2" />
-                <span className="sr-only">Next resource</span>
+                <span className="sr-only">{t('next_resource')}</span>
               </Button>
             </div>
           )}
 
           <p className="text-xs text-center text-muted-foreground">
-            By downloading, you agree to our terms of use. Crediting
-            "Renderdragon" is optional but appreciated!
+            {t('download_agreement')}
           </p>
         </div>
       </DialogContent>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Download, Music, Bot, Image, PersonStanding } from 'lucide-react';
@@ -13,42 +14,43 @@ interface Tool {
   color: string;
 }
 
-const tools: Tool[] = [
-  {
-    id: 1,
-    title: 'Music Copyright Checker',
-    description: 'Check if music tracks are safe to use in your videos',
-    icon: Music,
-    path: '/gappa',
-    color: 'from-blue-500/80 to-blue-600/80'
-  },
-  {
-    id: 2,
-    title: 'AI Title Helper',
-    description: 'Generate catchy titles for your YouTube videos',
-    icon: Bot,
-    path: '/ai-title-helper',
-    color: 'from-purple-500/80 to-purple-600/80'
-  },
-  {
-    id: 3,
-    title: 'Background Generator',
-    description: 'Create unique backgrounds for your videos and streams',
-    icon: Image,
-    path: '/background-generator',
-    color: 'from-green-500/80 to-green-600/80'
-  },
-  {
-    id: 4,
-    title: 'Player Renderer',
-    description: 'Get your Minecraft skin rendered in 3D for thumbnails or videos',
-    icon: PersonStanding,
-    path: '/player-renderer',
-    color: 'from-red-500/80 to-red-600/80'
-  }
-];
-
 const PopularTools = () => {
+  const { t } = useTranslation();
+
+  const tools: Tool[] = [
+    {
+      id: 1,
+      title: t('popularTools.tools.musicCopyright.title'),
+      description: t('popularTools.tools.musicCopyright.description'),
+      icon: Music,
+      path: '/gappa',
+      color: 'from-blue-500/80 to-blue-600/80'
+    },
+    {
+      id: 2,
+      title: t('popularTools.tools.aiTitle.title'),
+      description: t('popularTools.tools.aiTitle.description'),
+      icon: Bot,
+      path: '/ai-title-helper',
+      color: 'from-purple-500/80 to-purple-600/80'
+    },
+    {
+      id: 3,
+      title: t('popularTools.tools.backgroundGenerator.title'),
+      description: t('popularTools.tools.backgroundGenerator.description'),
+      icon: Image,
+      path: '/background-generator',
+      color: 'from-green-500/80 to-green-600/80'
+    },
+    {
+      id: 4,
+      title: t('popularTools.tools.playerRenderer.title'),
+      description: t('popularTools.tools.playerRenderer.description'),
+      icon: PersonStanding,
+      path: '/player-renderer',
+      color: 'from-red-500/80 to-red-600/80'
+    }
+  ];
   const [hoveredId, setHoveredId] = useState<number | null>(null);
 
   const containerVariants = {
@@ -84,10 +86,10 @@ const PopularTools = () => {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl md:text-4xl font-vt323 mb-4">
-            Popular <span className="text-cow-purple">Tools</span>
+            {t('popularTools.title')} <span className="text-cow-purple">{t('popularTools.titleHighlight')}</span>
           </h2>
           <p className=" max-w-2xl mx-auto">
-            Free tools to streamline your content creation workflow
+            {t('popularTools.description')}
           </p>
         </motion.div>
 
@@ -139,7 +141,7 @@ const PopularTools = () => {
                     )}
                     whileHover={{ x: 5 }}
                   >
-                    Try it now →
+                    {t('popularTools.tryItNow')}
                   </motion.div>
                 </div>
               </Link>

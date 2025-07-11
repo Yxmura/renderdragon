@@ -8,6 +8,7 @@ import { useResources } from '@/hooks/useResources';
 import { useDownloadCounts } from '@/hooks/useDownloadCounts';
 import { Resource } from '@/types/resources';
 import ResourceFilters from '@/components/resources/ResourceFilters';
+import SortSelector from '@/components/resources/SortSelector';
 import ResourcesList from '@/components/resources/ResourcesList';
 import AuthDialog from '@/components/auth/AuthDialog';
 import { Button } from '@/components/ui/button';
@@ -15,9 +16,13 @@ import { ArrowUp, Heart, Grid, Search } from 'lucide-react';
 import { Helmet } from "react-helmet-async";
 import DonateButton from '@/components/DonateButton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import DiscordPopup from '@/components/resources/DiscordPopup';
+import FavoritesTab from '@/components/resources/FavoritesTab';
+import { useDiscordPopup } from '@/hooks/useDiscordPopup';
+import { useTranslation } from 'react-i18next';
 
 const ResourceDetailDialog = lazy(() => import('@/components/resources/ResourceDetailDialog'));
-const FavoritesTab = lazy(() => import('@/components/resources/FavoritesTab'));
+
 
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center p-8">
@@ -26,6 +31,8 @@ const LoadingSpinner = () => (
 );
 
 const ResourcesHub = () => {
+  const { t } = useTranslation();
+  const { isPopupOpen, closePopup, neverShowPopupAgain } = useDiscordPopup();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('browse');
@@ -47,6 +54,8 @@ const ResourcesHub = () => {
     handleClearSearch,
     handleCategoryChange,
     handleSubcategoryChange,
+    sortOrder,
+    handleSortOrderChange,
     handleSearch,
     handleDownload,
     loadMoreResources,
@@ -95,26 +104,26 @@ const ResourcesHub = () => {
   const onDownload = (resource: Resource) => {
     const success = handleDownload(resource);
     if (success) {
-      toast.info('Starting download...', {
-        description: 'Crediting Renderdragon is optional but appreciated!',
+      toast.info(t('resourcesHub.toasts.downloadStarting.title'), {
+        description: t('resourcesHub.toasts.downloadStarting.description'),
         duration: 3000,
       });
     } else {
-      toast.error('Download URL not available.');
+      toast.error(t('resourcesHub.toasts.downloadError'));
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col relative">
       <Helmet>
-        <title>Resources Hub - Renderdragon</title>
-        <meta name="description" content="Browse and download free Minecraft content creation resources including thumbnails, overlays, sound effects, and more." />
-        <meta property="og:title" content="Resources Hub - Renderdragon" />
-        <meta property="og:description" content="Browse and download free Minecraft content creation resources including thumbnails, overlays, sound effects, and more." />
+        <title>{t('resourcesHub.meta.title')}</title>
+        <meta name="description" content={t('resourcesHub.meta.description')} />
+        <meta property="og:title" content={t('resourcesHub.meta.title')} />
+        <meta property="og:description" content={t('resourcesHub.meta.description')} />
         <meta property="og:image" content="https://renderdragon.org/ogimg/resources.png" />
         <meta property="og:url" content="https://renderdragon.org/resources" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Resources Hub - Renderdragon" />
+        <meta name="twitter:title" content={t('resourcesHub.meta.title')} />
         <meta name="twitter:image" content="https://renderdragon.org/ogimg/resources.png" />
       </Helmet>
       <Navbar />
@@ -127,9 +136,8 @@ const ResourcesHub = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
-                <span className="text-cow-purple">Resources</span> Hub
-              </h1>
+              <h1 className="text-4xl md:text-5xl font-vt323 font-bold mb-2 text-center">{t('resourcesHub.title')}</h1>
+              <p className="text-lg text-muted-foreground text-center max-w-2xl mx-auto">{t('resourcesHub.description')}</p>
             </motion.div>
 
             <motion.div
@@ -138,20 +146,20 @@ const ResourcesHub = () => {
               transition={{ delay: 0.1, duration: 0.5 }}
             >
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6 pixel-corners">
+                <TabsList className="grid w-full grid-cols-1 mb-6 pixel-corners">
                   <TabsTrigger value="browse" className="flex items-center gap-2">
                     <Grid className="h-4 w-4" />
-                    Browse Resources
+                    {t('resourcesHub.tabs.browse')}
                   </TabsTrigger>
                   <TabsTrigger value="favorites" className="flex items-center gap-2">
                     <Heart className="h-4 w-4" />
-                    My Favorites
+                    {t('resourcesHub.tabs.favorites')}
                   </TabsTrigger>
                 </TabsList>
 
-                <div className="mt-6">
+                <TabsContent value="browse" className="mt-6">
                   <AnimatePresence mode="wait">
-                    {activeTab === 'browse' && (
+                    {
                       <motion.div
                         key="browse"
                         initial={{ opacity: 0, x: -20 }}
@@ -160,6 +168,7 @@ const ResourcesHub = () => {
                         transition={{ duration: 0.3 }}
                       >
                         <ResourceFilters
+                t={t}
                           searchQuery={searchQuery}
                           selectedCategory={selectedCategory}
                           selectedSubcategory={selectedSubcategory}
@@ -168,6 +177,8 @@ const ResourcesHub = () => {
                           onSearchSubmit={handleSearchSubmit}
                           onCategoryChange={handleCategoryChange}
                           onSubcategoryChange={handleSubcategoryChange}
+                          sortOrder={sortOrder}
+                          onSortOrderChange={handleSortOrderChange}
                           isMobile={isMobile}
                           inputRef={inputRef}
                         />
@@ -187,23 +198,14 @@ const ResourcesHub = () => {
                           hasMore={hasMore}
                         />
                       </motion.div>
-                    )}
-
-                    {activeTab === 'favorites' && (
-                      <motion.div
-                        key="favorites"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <Suspense fallback={<LoadingSpinner />}>
-                          <FavoritesTab />
-                        </Suspense>
-                      </motion.div>
-                    )}
+                    }
                   </AnimatePresence>
-                </div>
+                </TabsContent>
+                <TabsContent value="favorites" className="mt-6">
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <FavoritesTab />
+                  </Suspense>
+                </TabsContent>
               </Tabs>
             </motion.div>
           </div>
@@ -215,7 +217,7 @@ const ResourcesHub = () => {
 
       <Suspense fallback={null}>
         <ResourceDetailDialog
-          resource={selectedResource}
+            resource={selectedResource}
           onClose={() => setSelectedResource(null)}
           onDownload={onDownload}
           downloadCount={selectedResource ? downloadCounts[selectedResource.id] || 0 : 0}
@@ -232,6 +234,12 @@ const ResourcesHub = () => {
         onOpenChange={setAuthDialogOpen} 
       />
 
+      <DiscordPopup 
+        isOpen={isPopupOpen}
+        onClose={closePopup}
+        onNeverShowAgain={neverShowPopupAgain}
+      />
+
       <AnimatePresence>
         {showScrollTop && (
           <motion.div
@@ -244,7 +252,7 @@ const ResourcesHub = () => {
               onClick={scrollToTop}
               className="fixed bottom-8 right-8 z-[9999] h-12 w-12 rounded-full shadow-lg bg-cow-purple hover:bg-cow-purple-dark transition-all duration-300 opacity-90 hover:opacity-100 text-white border-2 border-white/10"
               size="icon"
-              aria-label="Scroll to top"
+              aria-label={t('resourcesHub.scrollToTop')}
             >
               <ArrowUp className="h-5 w-5" />
             </Button>

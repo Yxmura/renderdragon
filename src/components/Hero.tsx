@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import { ArrowRight, Music } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import * as motion from "motion/react-client"
 
 const Hero = () => {
+  const { t } = useTranslation();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const isMobile = useIsMobile()
 
@@ -184,7 +186,7 @@ const Hero = () => {
           variants={titleVariants}
         >
           <motion.span className="inline-block" variants={itemVariants}>
-            UNLOCK YOUR <br />
+            {t('hero.unlockYour')} <br />
           </motion.span>
           <motion.span
             className="text-cow-purple inline-block"
@@ -198,7 +200,7 @@ const Hero = () => {
               transition: { duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" },
             }}
           >
-            CREATION POTENTIAL
+            {t('hero.creationPotential')}
           </motion.span>
         </motion.h1>
 
@@ -206,7 +208,7 @@ const Hero = () => {
           className="text-lg md:text-xl text-foreground/80 dark:text-white/80 max-w-2xl mx-auto mb-10"
           variants={itemVariants}
         >
-          Tools, textures, sounds, inspiration, and everything in between — handcrafted for Minecraft creators.
+          {t('hero.description')}
         </motion.p>
 
         <motion.div className="flex flex-col sm:flex-row gap-4 justify-center items-center" variants={itemVariants}>
@@ -227,7 +229,7 @@ const Hero = () => {
               >
                 <ArrowRight className="w-4 h-4" />
               </motion.span>
-              Browse Resources
+              {t('hero.browseResources')}
             </Link>
           </motion.div>
 
@@ -248,7 +250,7 @@ const Hero = () => {
               >
                 <Music className="w-4 h-4" />
               </motion.span>
-              Check Music Copyright
+              {t('hero.checkMusicCopyright')}
             </Link>
           </motion.div>
         </motion.div>
@@ -260,7 +262,7 @@ const Hero = () => {
             initial="hidden"
             animate={["visible", "pulse"]}
           >
-            100% Free. No strings attached.
+            {t('hero.freeBadge')}
           </motion.span>
         </motion.div>
       </motion.div>

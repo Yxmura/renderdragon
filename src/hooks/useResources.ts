@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Resource } from '@/types/resources';
 import { useDownloadCounts } from '@/hooks/useDownloadCounts';
 import { supabase } from '@/integrations/supabase/client';
@@ -35,7 +35,8 @@ export const useResources = () => {
   const { downloadCounts: externalDownloadCounts, incrementDownload } = useDownloadCounts();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category | null | 'favorites'>(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState<Subcategory | null>(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState('newest');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -61,7 +62,6 @@ export const useResources = () => {
       let query = supabase
         .from('resources')
         .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
         .range(from, to);
 
       if (searchQuery) {
@@ -70,10 +70,27 @@ export const useResources = () => {
       if (selectedCategory && selectedCategory !== 'favorites') {
         query = query.eq('category', selectedCategory);
       }
+      // Use ilike for partial & case-insensitive match so that values like "davinci resolve" are supported
       if (selectedSubcategory) {
-        query = query.eq('subcategory', selectedSubcategory);
+        query = query.ilike('subcategory', `%${selectedSubcategory}%`);
       }
-      
+
+      switch (sortOrder) {
+        case 'popular':
+          query = query.order('downloads', { ascending: false });
+          break;
+        case 'a-z':
+          query = query.order('title', { ascending: true });
+          break;
+        case 'z-a':
+          query = query.order('title', { ascending: false });
+          break;
+        case 'newest':
+        default:
+          query = query.order('created_at', { ascending: false });
+          break;
+      }
+
       const { data, error, count } = await query;
 
       if (error) {
@@ -112,11 +129,11 @@ export const useResources = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, hasMore, searchQuery, selectedCategory, selectedSubcategory]);
+  }, [page, hasMore, searchQuery, selectedCategory, selectedSubcategory, sortOrder]);
 
   useEffect(() => {
     fetchResources(true);
-  }, [searchQuery, selectedCategory, selectedSubcategory]);
+  }, [searchQuery, selectedCategory, selectedSubcategory, sortOrder]);
   
   const loadMoreResources = () => {
     if (isLoading || !hasMore) return;
@@ -262,6 +279,8 @@ export const useResources = () => {
     handleClearSearch,
     handleCategoryChange,
     handleSubcategoryChange,
+    sortOrder,
+    handleSortOrderChange: setSortOrder,
     handleSearch,
     handleDownload,
     loadMoreResources,

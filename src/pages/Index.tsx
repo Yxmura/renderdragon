@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
@@ -11,6 +12,7 @@ import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
 
 const Index = () => {
+  const { t } = useTranslation();
   useEffect(() => {    
     const fontLinks = [
       {
@@ -48,14 +50,14 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Renderdragon - Tools & Resources for Minecraft Content Creators</title>
-        <meta name="description" content="Your ultimate toolkit for creating Minecraft YouTube content. Get free tools, assets, music, and guides—all ad-free." />
-        <meta property="og:title" content="Renderdragon - Ad-free Tools & Resources for Minecraft Content Creators" />
-        <meta property="og:description" content="Your ultimate toolkit for creating Minecraft YouTube content. Get free tools, assets, music, and guides—all ad-free." />
+        <title>{t('home.title')}</title>
+        <meta name="description" content={t('home.description')} />
+        <meta property="og:title" content={t('home.ogTitle')} />
+        <meta property="og:description" content={t('home.ogDescription')} />
         <meta property="og:image" content="https://renderdragon.org/ogimg.png" />
         <meta property="og:url" content="https://renderdragon.org" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Renderdragon - Tools & Resources for Minecraft Content Creators" />
+        <meta name="twitter:title" content={t('home.twitterTitle')} />
         <meta name="twitter:image" content="https://renderdragon.org/ogimg.png" />
       </Helmet>
       <Navbar />

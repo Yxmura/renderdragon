@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Github, Twitter, Youtube, MessageSquare, Sparkles } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { ShoppingCart } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
 import Logo from './Logo';
 import HyperpingBadge from '@/components/ui/StatusBadge';
 
 const Footer = () => {
+  const { t } = useTranslation();
   const [cartClicked, setCartClicked] = useState(false);
   const cartButtonRef = useRef<HTMLButtonElement>(null);
   const currentYear = new Date().getFullYear();
@@ -38,8 +40,8 @@ const Footer = () => {
       document.body.removeChild(canvas);
     }, 3000);
     
-    toast("Website made by Team Wheels", {
-      description: "Thanks for visiting Renderdragon!",
+    toast(t('footer.madeByToastTitle'), {
+      description: t('footer.madeByToastDescription'),
       position: "bottom-center",
       duration: 3000,
     });
@@ -67,8 +69,7 @@ const Footer = () => {
             </Link>
             
             <p className="text-white/70 mb-6 max-w-md">
-              Empowering Minecraft content creators with free resources, tools, and guides.
-              100% free, no strings attached.
+              {t('footer.description')}
             </p>
             
             <div className="flex space-x-4 mb-3">
@@ -115,78 +116,87 @@ const Footer = () => {
           </div>
           
           <div>
-            <h3 className="text-lg font-vt323 mb-4">Quick Links</h3>
+            <h3 className="text-lg font-vt323 mb-4">{t('footer.legal')}</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/tos" className="text-white/70 hover:text-white transition-colors">
+                  {t('footer.termsOfService')}
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="text-white/70 hover:text-white transition-colors">
+                  {t('footer.privacyPolicy')}
+                </Link>
+              </li>
+            </ul>
+            
+            <h3 className="text-lg font-vt323 mb-4 mt-6">{t('footer.navigate')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-white/70 hover:text-white transition-colors">
-                  Home
+                  {t('footer.home')}
                 </Link>
               </li>
               <li>
                 <Link to="/resources" className="text-white/70 hover:text-white transition-colors">
-                  Resources Hub
-                </Link>
-              </li>
-              <li>
-                <Link to="/community" className="text-white/70 hover:text-white transition-colors">
-                  Community
+                  {t('footer.resourcesHub')}
                 </Link>
               </li>
               <li>
                 <Link to="/guides" className="text-white/70 hover:text-white transition-colors">
-                  Guides
+                  {t('footer.guides')}
                 </Link>
               </li>
               <li>
                 <Link to="/utilities" className="text-white/70 hover:text-white transition-colors">
-                  Utilities
+                  {t('footer.utilities')}
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="text-white/70 hover:text-white transition-colors">
-                  Contact
+                  {t('footer.contact')}
                 </Link>
               </li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-lg font-vt323 mb-4">Tools</h3>
+            <h3 className="text-lg font-vt323 mb-4">{t('footer.tools')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/gappa" className="text-white/70 hover:text-white transition-colors">
-                  Music Copyright Checker
+                  {t('footer.musicCopyrightChecker')}
                 </Link>
               </li>
               <li>
                 <Link to="/background-generator" className="text-white/70 hover:text-white transition-colors">
-                  Background Generator
+                  {t('footer.backgroundGenerator')}
                 </Link>
               </li>
               <li>
                 <Link to="/player-renderer" className="text-white/70 hover:text-white transition-colors">
-                  Player Renderer
+                  {t('footer.playerRenderer')}
                 </Link>
               </li>
               <li>
                 <Link to="/renderbot" className="text-white/70 hover:text-white transition-colors">
-                  Renderbot
+                  {t('footer.renderbot')}
                 </Link>
               </li>
               <li>
                 <Link to="/text-generator" className="text-white/70 hover:text-white transition-colors">
-                  Text Generator
+                  {t('footer.textGenerator')}
                 </Link>
               </li>
               <li>
                 <Link to="/generators" className="text-white/70 hover:text-white transition-colors">
-                  Content Generators
+                  {t('footer.contentGenerators')}
                 </Link>
               </li>
               <li>
                 <Link to="/youtube-downloader" className="text-white/70 hover:text-white transition-colors flex items-center">
-                  <span>YouTube Downloader</span>
-                  <span className="ml-1 px-1.5 py-0.5 bg-cow-purple text-white text-[10px] rounded align-middle">NEW</span>
+                  <span>{t('footer.youtubeDownloader')}</span>
+                  <span className="ml-1 px-1.5 py-0.5 bg-cow-purple text-white text-[10px] rounded align-middle">{t('footer.newTag')}</span>
                 </Link>
               </li>
             </ul>
@@ -196,32 +206,32 @@ const Footer = () => {
         <div className="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
             <Link to="/faq" className="text-white/70 hover:text-white transition-colors text-sm relative">
-              FAQ
+              {t('footer.faq')}
             </Link>
             
             <Link to="/tos" className="text-white/70 hover:text-white transition-colors text-sm">
-              Terms
+              {t('footer.terms')}
             </Link>
             
             <Link to="/privacy" className="text-white/70 hover:text-white transition-colors text-sm">
-              Privacy
+              {t('footer.privacy')}
             </Link>
 
             <Link to="/renderbot" className="text-white/70 hover:text-white transition-colors text-sm">
-              Renderbot
+              {t('footer.renderbot')}
             </Link>
 
             <HyperpingBadge status="online" />
 
             <div className="text-white/70 text-sm">
-              <span className="mr-4">Not associated with Mojang or Microsoft</span>
-              <a href="https://www.flaticon.com/free-icons/pixel" title="pixel icons" className="hover:text-white transition-colors">Flaticon</a>
+              <span className="mr-4">{t('footer.notAssociated')}</span>
+              <a href="https://www.flaticon.com/free-icons/pixel" title="pixel icons" className="hover:text-white transition-colors">{t('footer.iconCredit')}</a>
             </div>
           </div>
 
           <div className="flex items-center">
             <p className="text-white/70 text-sm">
-              &copy; {currentYear} Renderdragon
+              {t('footer.copyright', { year: currentYear })}
             </p>
             
             <button 

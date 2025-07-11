@@ -4,10 +4,13 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { I18nextProvider } from 'react-i18next';
+import i18n from '@/i18n';
 import VercelAnalytics from "@/components/VercelAnalytics";
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { AuthProvider } from "@/hooks/useAuth";
 import { HelmetProvider } from "react-helmet-async";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const Index = lazy(() => import("@/pages/Index"));
 const ResourcesHub = lazy(() => import("@/pages/ResourcesHub"));
@@ -41,44 +44,48 @@ const LoadingFallback = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <HelmetProvider>
-        <TooltipProvider>
-          <VercelAnalytics />
-          <SpeedInsights />
-          <Toaster />
-          <Sonner position="bottom-right" />
-          <BrowserRouter>
-            <Suspense fallback={<LoadingFallback />}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/resources" element={<ResourcesHub />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/guides" element={<Guides />} />
-                <Route path="/community" element={<Community />} />
-                <Route path="/gappa" element={<MusicCopyright />} />
-                <Route path="/music-copyright" element={<Navigate to="/gappa" replace />} />
-                <Route path="/ai-title-helper" element={<AiTitleHelper />} />
-                <Route path="/background-generator" element={<BackgroundGenerator />} />
-                <Route path="/utilities" element={<Utils />} />
-                <Route path="/player-renderer" element={<PlayerRenderer />} />
-                <Route path="/renderbot" element={<Renderbot />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/tos" element={<TOS />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/construction" element={<Construction />} />
-                <Route path="/text-generator" element={<TextGenerator />} />
-                <Route path="/generators" element={<Generators />} />
-                <Route path="/youtube-downloader" element={<YouTubeDownloader />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </HelmetProvider>
-    </AuthProvider>
+    <I18nextProvider i18n={i18n}>
+      <AuthProvider>
+        <HelmetProvider>
+          <TooltipProvider>
+            <VercelAnalytics />
+            <SpeedInsights />
+            <Toaster />
+            <Sonner position="bottom-right" />
+            <ErrorBoundary>
+              <BrowserRouter>
+              <Suspense fallback={<LoadingFallback />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/resources" element={<ResourcesHub />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/guides" element={<Guides />} />
+                  <Route path="/community" element={<Community />} />
+                  <Route path="/gappa" element={<MusicCopyright />} />
+                  <Route path="/music-copyright" element={<Navigate to="/gappa" replace />} />
+                  <Route path="/ai-title-helper" element={<AiTitleHelper />} />
+                  <Route path="/background-generator" element={<BackgroundGenerator />} />
+                  <Route path="/utilities" element={<Utils />} />
+                  <Route path="/player-renderer" element={<PlayerRenderer />} />
+                  <Route path="/renderbot" element={<Renderbot />} />
+                  <Route path="/account" element={<Account />} />
+                  <Route path="/admin" element={<Admin />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="/tos" element={<TOS />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/construction" element={<Construction />} />
+                  <Route path="/text-generator" element={<TextGenerator />} />
+                  <Route path="/generators" element={<Generators />} />
+                  <Route path="/youtube-downloader" element={<YouTubeDownloader />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </ErrorBoundary>
+          </TooltipProvider>
+        </HelmetProvider>
+      </AuthProvider>
+    </I18nextProvider>
   </QueryClientProvider>
 );
 

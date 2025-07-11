@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,6 +12,7 @@ import { Coffee, Sparkles } from 'lucide-react';
 import SupportersList from './SupportersList';
 
 const DonateButton = () => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [iframeLoading, setIframeLoading] = useState(true);
 
@@ -19,13 +21,13 @@ const DonateButton = () => {
       <Button 
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 left-6 rounded-full w-14 h-14 shadow-lg z-40 bg-cow-purple hover:bg-cow-purple-dark transition-all duration-300 group motion-scale-in-[0.5] motion-opacity-in-[0%] motion-duration-[250ms] motion-ease-spring-bouncier"
-        aria-label="Donate"
+        aria-label={t('donateButton.donate')}
       >
         <div className="absolute inset-0 rounded-full bg-cow-purple-dark/30 group-hover:bg-cow-purple-dark/50 animate-ping opacity-75"></div>
         <div className="relative flex items-center justify-center">
           <img src="/assets/heart.png" alt="donate" className="w-11 h-11 object-contain scale-150" loading="lazy" />
         </div>
-        <span className="sr-only">Donate</span>
+        <span className="sr-only">{t('donateButton.donate')}</span>
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -33,10 +35,10 @@ const DonateButton = () => {
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex items-center gap-2">
               <Coffee className="h-6 w-6 text-cow-purple" />
-              <span>Support Renderdragon</span>
+              <span>{t('donateButton.support')}</span>
             </DialogTitle>
             <DialogDescription>
-              Donations are our only source of income
+              {t('donateButton.description')}
             </DialogDescription>
           </DialogHeader>
           
@@ -45,19 +47,19 @@ const DonateButton = () => {
             
             <div className="space-y-4 w-full">
               <div className="flex flex-col space-y-2">
-                <h3 className="font-semibold">Why Donate?</h3>
+                <h3 className="font-semibold">{t('donateButton.whyDonate')}</h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-cow-purple" />
-                    <span>Keep all resources 100% free for everyone</span>
+                    <span>{t('donateButton.reasons.free')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-cow-purple" />
-                    <span>Help us develop more tools and assets</span>
+                    <span>{t('donateButton.reasons.develop')}</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-cow-purple" />
-                    <span>Support the Minecraft creator community</span>
+                    <span>{t('donateButton.reasons.community')}</span>
                   </li>
                 </ul>
               </div>
