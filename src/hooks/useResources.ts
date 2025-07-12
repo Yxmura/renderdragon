@@ -17,6 +17,8 @@ const numberWordMap: Record<string, string> = {
 const digitWordMap: Record<string, string> = Object.fromEntries(
   Object.entries(numberWordMap).map(([k, v]) => [v, k])
 );
+const normalize = (str: string) => str.replace(/ /g, '%20');
+
 function normalizeText(text: string): string {
   let normalized = text.toLowerCase();
   // Replace number words with digits
@@ -211,12 +213,17 @@ export const useResources = () => {
     
     if (!fileUrl) {
       // Fallback to the old URL construction method
-      const titleLowered = encodeURIComponent(resource.title.toLowerCase());
+            const titleLowered = normalize(resource.title.toLowerCase());
       const creditName = resource.credit ? encodeURIComponent(resource.credit) : '';
       const filetype = resource.filetype;
 
-      if (resource.category === 'presets' && resource.subcategory) {
-        fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${resource.subcategory}/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
+            if (resource.category === 'presets') {
+        const subcategory = resource.subcategory?.toLowerCase() === 'davinci resolve' ? 'davinci' : resource.subcategory?.toLowerCase();
+        if (subcategory) {
+          fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/presets/${subcategory}/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
+        } else {
+          fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/presets/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
+        }
       } else if (resource.credit) {
         fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${creditName}.${filetype}`;
       } else {

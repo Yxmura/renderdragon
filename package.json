@@ -16,6 +16,8 @@
     "@distube/ytdl-core": "^4.16.12",
     "@google/genai": "^0.13.0",
     "@hcaptcha/react-hcaptcha": "^1.12.0",
+    "@headlessui/react": "^2.2.4",
+    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.10",
     "@radix-ui/react-alert-dialog": "^1.1.13",

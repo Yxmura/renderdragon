@@ -28,10 +28,10 @@ const PopularTools = () => {
     },
     {
       id: 2,
-      title: t('popularTools.tools.aiTitle.title'),
-      description: t('popularTools.tools.aiTitle.description'),
-      icon: Bot,
-      path: '/ai-title-helper',
+      title: t('popularTools.tools.videoDownloader.title'),
+      description: t('popularTools.tools.videoDownloader.description'),
+      icon: Download,
+      path: '/youtube-downloader',
       color: 'from-purple-500/80 to-purple-600/80'
     },
     {

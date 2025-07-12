@@ -26,7 +26,6 @@ import {
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useTranslation } from 'react-i18next';
-import { useTranslation } from 'react-i18next';
 
 interface ResourceDetailDialogProps {
   resource: Resource | null;

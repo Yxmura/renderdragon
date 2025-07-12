@@ -1,14 +1,23 @@
-import React, { useState, useRef } from 'react';
+import React, { Fragment, useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, ChevronDown, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
+import { Menu, Transition } from '@headlessui/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Logo from './Logo';
 import HyperpingBadge from '@/components/ui/StatusBadge';
 
+const languageOptions = [
+  { code: 'en', name: 'English', flag: '🇬🇧' },
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷' },
+  { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
+];
+
 const Footer = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [cartClicked, setCartClicked] = useState(false);
   const cartButtonRef = useRef<HTMLButtonElement>(null);
   const currentYear = new Date().getFullYear();
@@ -229,11 +238,70 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             <p className="text-white/70 text-sm">
               {t('footer.copyright', { year: currentYear })}
             </p>
-            
+
+            {/* Language Switcher Dropdown */}
+            <Menu as="div" className="relative ml-4">
+              {({ open }) => (
+                <>
+                  <Menu.Button 
+                    className="flex items-center justify-between px-3 py-1.5 text-sm rounded-md bg-white/10 text-white/90 hover:bg-white/20 transition-colors border border-white/20 focus:outline-none focus:ring-2 focus:ring-cow-purple focus:ring-offset-2 focus:ring-offset-cow-dark min-w-[120px]"
+                    aria-label="Select language"
+                  >
+                    <span className="flex items-center">
+                      <span className="mr-2">
+                        {languageOptions.find(lang => lang.code === i18n.language)?.flag}
+                      </span>
+                      <span className="truncate">
+                        {languageOptions.find(lang => lang.code === i18n.language)?.name}
+                      </span>
+                    </span>
+                    <ChevronDown 
+                      className={`ml-2 h-4 w-4 transition-transform duration-200 ${open ? 'transform rotate-180' : ''}`} 
+                      aria-hidden="true"
+                    />
+                  </Menu.Button>
+                  <AnimatePresence>
+                    {open && (
+                      <Menu.Items 
+                        as={motion.div}
+                        static
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
+                        className="absolute bottom-full mb-2 left-0 w-full rounded-md bg-gray-800 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 overflow-hidden"
+                      >
+                        <div className="py-1">
+                          {languageOptions.map((language) => (
+                            <Menu.Item key={language.code}>
+                              {({ active }) => (
+                                <button
+                                  onClick={() => i18n.changeLanguage(language.code)}
+                                  className={`flex items-center w-full px-4 py-2 text-sm text-left ${
+                                    active ? 'bg-cow-purple/20 text-white' : 'text-white/90'
+                                  } ${i18n.language === language.code ? 'bg-cow-purple/10' : ''}`}
+                                >
+                                  <span className="mr-2">{language.flag}</span>
+                                  <span className="flex-1">{language.name}</span>
+                                  {i18n.language === language.code && (
+                                    <Check className="h-4 w-4 text-cow-purple" />
+                                  )}
+                                </button>
+                              )}
+                            </Menu.Item>
+                          ))}
+                        </div>
+                      </Menu.Items>
+                    )}
+                  </AnimatePresence>
+                </>
+              )}
+            </Menu>
+
             <button 
               ref={cartButtonRef}
               onClick={handleCartClick}
