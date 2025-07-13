@@ -272,7 +272,7 @@ const Footer = () => {
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
+                        transition={{ duration: 0.15, ease: "easeInOut" }}
                         className="absolute bottom-full mb-2 left-0 w-full rounded-md bg-gray-800 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 overflow-hidden"
                       >
                         <div className="py-1">

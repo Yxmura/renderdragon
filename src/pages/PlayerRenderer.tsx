@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Download, Copy, RefreshCw, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,8 @@ const PlayerRenderer = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [playerData, setPlayerData] = useState<PlayerData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [technobladeMessage, setTechnobladeMessage] = useState<string | null>(null); // New state for Technoblade message
+  const [technobladeMessage, setTechnobladeMessage] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const fetchPlayerData = async (username: string) => {
     setIsFetching(true);
@@ -31,7 +33,8 @@ const PlayerRenderer = () => {
 
     // Easter egg for "technoblade"
     if (username.toLowerCase() === 'technoblade') {
-      setTechnobladeMessage('Technoblade never dies!'); // Set Technoblade message
+      const message = t('playerRenderer.technobladeMessage');
+      setTechnobladeMessage(message);
       setPlayerData({
         id: 'b876ec32e396476ba1158438d83c67d4', // Placeholder for Technoblade's skin ID
         username: 'Technoblade',
@@ -49,7 +52,7 @@ const PlayerRenderer = () => {
       });
 
       // Show toast notification
-      toast.success('Technoblade never dies!');
+      toast.success(message);
 
       setIsFetching(false);
       return;
@@ -61,6 +64,7 @@ const PlayerRenderer = () => {
       setTimeout(() => {
         document.body.style.transform = '';
       }, 5000);
+      toast.success(t('playerRenderer.jebMessage'));
       setPlayerData({
         id: '853c80ef3c3749fdaa49938b674adae6', // Placeholder for Jeb's skin ID
         username: 'jeb_',
@@ -72,7 +76,7 @@ const PlayerRenderer = () => {
       const data = await response.json();
 
       if (!data.success || data.code !== 'player.found') {
-        setError('Player not found. Please check the username and try again.');
+        setError(t('playerRenderer.playerNotFound'));
         setPlayerData(null);
         return;
       }
@@ -82,7 +86,7 @@ const PlayerRenderer = () => {
         username: data.data.player.username,
       });
     } catch (error) {
-      setError('Failed to fetch player data. Please try again later.');
+      setError(t('playerRenderer.fetchError'));
       setPlayerData(null);
     } finally {
       setIsFetching(false);
@@ -99,7 +103,7 @@ const PlayerRenderer = () => {
     setIsLoading(true);
     try {
       const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to download image');
+      if (!response.ok) throw new Error(t('playerRenderer.downloadError'));
 
       const blob = await response.blob();
       const downloadUrl = window.URL.createObjectURL(blob);
@@ -110,9 +114,9 @@ const PlayerRenderer = () => {
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(downloadUrl);
-      toast.success('Downloaded successfully!');
+      toast.success(t('playerRenderer.downloadSuccess'));
     } catch (error) {
-      toast.error('Failed to download image');
+      toast.error(t('playerRenderer.downloadError'));
     } finally {
       setIsLoading(false);
     }
@@ -120,7 +124,7 @@ const PlayerRenderer = () => {
 
   const copyUrl = (url: string) => {
     navigator.clipboard.writeText(url);
-    toast.success('URL copied to clipboard!');
+    toast.success(t('playerRenderer.copySuccess'));
   };
 
   const renderUrls = {
@@ -131,8 +135,8 @@ const PlayerRenderer = () => {
       full: (id: string) => `https://api.mineatar.io/body/front/${id}?scale=8&overlay=true`,
     },
     vzge: {
-        full: (id: string) => `https://vzge.me/frontfull/${id}`,
-        face: (id: string) => `https://vzge.me/face/1024/${username}`,
+      full: (id: string) => `https://vzge.me/frontfull/${id}`,
+      face: (id: string) => `https://vzge.me/face/1024/${username}`,
     },
     nmsr: {
       front: (id: string) => `https://nmsr.nickac.dev/profile/${id}/front`,
@@ -146,14 +150,14 @@ const PlayerRenderer = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Player Renderer - Renderdragon</title>
-        <meta name="description" content="Generate and download Minecraft player renders using different rendering services." />
-        <meta property="og:title" content="Player Renderer - Renderdragon" />
-        <meta property="og:description" content="Generate and download Minecraft player renders using different rendering services." />
+        <title>{t('playerRenderer.pageTitle')} - Renderdragon</title>
+        <meta name="description" content={t('playerRenderer.pageDescription')} />
+        <meta property="og:title" content={`${t('playerRenderer.pageTitle')} - Renderdragon`} />
+        <meta property="og:description" content={t('playerRenderer.pageDescription')} />
         <meta property="og:image" content="https://renderdragon.org/ogimg/player.png" />
         <meta property="og:url" content="https://renderdragon.org/player-renderer" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Player Renderer - Renderdragon" />
+        <meta name="twitter:title" content={`${t('playerRenderer.pageTitle')} - Renderdragon`} />
         <meta name="twitter:image" content="https://renderdragon.org/ogimg/player.png" />
       </Helmet>
 
@@ -169,10 +173,10 @@ const PlayerRenderer = () => {
               className="text-center mb-8"
             >
               <h1 className="text-4xl md:text-5xl font-vt323 mb-4">
-                Player <span className="text-cow-purple">Renderer</span>
+                {t('playerRenderer.pageTitle').split(' ')[0]} <span className="text-cow-purple">{t('playerRenderer.pageTitle').split(' ').slice(1).join(' ')}</span>
               </h1>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Generate and download Minecraft player renders using different rendering services
+                {t('playerRenderer.pageDescription')}
               </p>
             </motion.div>
 
@@ -185,7 +189,7 @@ const PlayerRenderer = () => {
               <form onSubmit={handleSubmit} className="flex gap-4">
                 <Input
                   type="text"
-                  placeholder="Enter Minecraft username"
+                  placeholder={t('playerRenderer.inputPlaceholder')}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="pixel-corners"
@@ -200,7 +204,7 @@ const PlayerRenderer = () => {
                   {isFetching ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    'Generate'
+                    t('playerRenderer.generateButton')
                   )}
                 </Button>
                 <Button
@@ -211,9 +215,10 @@ const PlayerRenderer = () => {
                     setUsername('');
                     setPlayerData(null);
                     setError(null);
-                    setTechnobladeMessage(null); // Clear Technoblade message on reset
+                    setTechnobladeMessage(null);
                   }}
                   disabled={isFetching}
+                  title={t('playerRenderer.resetButton')}
                 >
                   <RefreshCw className="h-4 w-4" />
                 </Button>
@@ -237,7 +242,7 @@ const PlayerRenderer = () => {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-                className="bg-pink-600 text-white px-4 py-3 rounded-md mb-8 text-center font-bold text-xl pixel-corners" // Added pixel-corners class
+                className="bg-pink-600 text-white px-4 py-3 rounded-md mb-8 text-center font-bold text-xl pixel-corners"
               >
                 {technobladeMessage}
               </motion.div>
@@ -256,7 +261,7 @@ const PlayerRenderer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Mineatar Renders */}
                   <div className="pixel-card flex flex-col">
-                    <h1 className='text-center'>Body</h1>
+                    <h1 className='text-center'>{t('playerRenderer.renderTypes.body')}</h1>
                     <div className="aspect-square relative">
                       <img
                         src={renderUrls.mineatar.full(playerData.id)}
@@ -273,11 +278,12 @@ const PlayerRenderer = () => {
                         disabled={isLoading}
                       >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
-                        Save
+                        {t('playerRenderer.renderTypes.save')}
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => copyUrl(renderUrls.mineatar.full(playerData.id))}
+                        title={t('playerRenderer.renderTypes.copy')}
                       >
                         <Copy className="h-4 w-4" />
                       </Button>
@@ -285,7 +291,7 @@ const PlayerRenderer = () => {
                   </div>
 
                   <div className="pixel-card flex flex-col">
-                    <h1 className='text-center'>Head</h1>
+                    <h1 className='text-center'>{t('playerRenderer.renderTypes.head')}</h1>
                     <div className="aspect-square relative">
                       <img
                         src={renderUrls.nmsr.face(playerData.id)}
@@ -302,7 +308,7 @@ const PlayerRenderer = () => {
                         disabled={isLoading}
                       >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
-                        Save
+                        {t('playerRenderer.renderTypes.save')}
                       </Button>
                       <Button
                         variant="outline"
@@ -315,7 +321,7 @@ const PlayerRenderer = () => {
 
                   {/* VZGE Render */}
                   <div className="pixel-card flex flex-col">
-                    <h1 className='text-center'>Bust (isometric)</h1>
+                    <h1 className='text-center'>{t('playerRenderer.renderTypes.bust')}</h1>
                     <div className="aspect-square relative">
                       <img
                         src={renderUrls.nmsr.bust(playerData.id)}
@@ -332,7 +338,7 @@ const PlayerRenderer = () => {
                         disabled={isLoading}
                       >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
-                        Save
+                        {t('playerRenderer.renderTypes.save')}
                       </Button>
                       <Button
                         variant="outline"
@@ -345,7 +351,7 @@ const PlayerRenderer = () => {
 
                   {/* NMSR Renders */}
                   <div className="pixel-card flex flex-col">
-                    <h2 className='text-center'>Full Render (isometric)</h2>
+                    <h2 className='text-center'>{t('playerRenderer.renderTypes.fullRender')}</h2>
                     <div className="aspect-square relative">
                       <img
                         src={renderUrls.nmsr.fullbody(playerData.id)}
@@ -362,7 +368,7 @@ const PlayerRenderer = () => {
                         disabled={isLoading}
                       >
                         {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4 mr-2" />}
-                        Save
+                        {t('playerRenderer.renderTypes.save')}
                       </Button>
                       <Button
                         variant="outline"

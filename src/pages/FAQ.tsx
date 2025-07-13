@@ -1,22 +1,24 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
 import { Helmet } from 'react-helmet-async';
 
 const FAQ = () => {
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>FAQ - Renderdragon</title>
-        <meta name="description" content="Find answers to frequently asked questions about Renderdragon's tools, services, and resources for Minecraft content creators." />
-        <meta property="og:title" content="FAQ - Renderdragon" />
-        <meta property="og:description" content="Find answers to frequently asked questions about Renderdragon's tools, services, and resources for Minecraft content creators." />
+        <title>{t('faq.meta.title')}</title>
+        <meta name="description" content={t('faq.meta.description')} />
+        <meta property="og:title" content={t('faq.meta.ogTitle')} />
+        <meta property="og:description" content={t('faq.meta.ogDescription')} />
         <meta property="og:image" content="https://renderdragon.org/ogimg/faq.png" />
         <meta property="og:url" content="https://renderdragon.org/faq" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="FAQ - Renderdragon" />
+        <meta name="twitter:title" content={t('faq.meta.twitterTitle')} />
         <meta name="twitter:image" content="https://renderdragon.org/ogimg/faq.png" />
       </Helmet>
       
@@ -26,34 +28,34 @@ const FAQ = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
-              Frequently Asked <span className="text-cow-purple">Questions</span>
+              {t('faq.title.part1')} <span className="text-cow-purple">{t('faq.title.part2')}</span>
             </h1>
 
             <div className="pixel-card space-y-6">
               <div className="space-y-8 text-muted-foreground">
                 <div>
-                  <h2 className="text-2xl font-vt323 text-foreground mb-4">General Questions</h2>
+                  <h2 className="text-2xl font-vt323 text-foreground mb-4">{t('faq.sections.general')}</h2>
                   
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-medium text-foreground mb-2">Is everything on Renderdragon really free?</h3>
-                      <p>Yes! All resources, tools, and guides on Renderdragon are 100% free to use. We believe in making content creation accessible to everyone.</p>
+                      <h3 className="text-lg font-medium text-foreground mb-2">{t('faq.questions.free.title')}</h3>
+                      <p>{t('faq.questions.free.answer')}</p>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-medium text-foreground mb-2">Do I need to credit Renderdragon when using resources?</h3>
-                      <p>While crediting is not required, it's always appreciated! A simple mention helps spread the word and supports our mission to help more creators.</p>
+                      <h3 className="text-lg font-medium text-foreground mb-2">{t('faq.questions.credit.title')}</h3>
+                      <p>{t('faq.questions.credit.answer')}</p>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-medium text-foreground mb-2">Can I use resources for commercial projects?</h3>
-                      <p>Yes, you can use our resources in your commercial projects unless specifically stated otherwise on the resource page.</p>
+                      <h3 className="text-lg font-medium text-foreground mb-2">{t('faq.questions.commercial.title')}</h3>
+                      <p>{t('faq.questions.commercial.answer')}</p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h2 className="text-2xl font-vt323 text-foreground mb-4">Technical Questions</h2>
+                  <h2 className="text-2xl font-vt323 text-foreground mb-4">{t('faq.sections.technical')}</h2>
                   
                   <div className="space-y-6">
                     <div>

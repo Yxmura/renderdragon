@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
@@ -242,6 +243,7 @@ const formatMemberCount = (count: number): string => {
 };
 
 const Community = () => {
+  const { t } = useTranslation('community');
   const [videoCategories, setVideoCategories] = useState<VideoCategory[]>([]);
   const [servers, setServers] = useState<DiscordServer[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
@@ -268,21 +270,21 @@ const Community = () => {
   const handleJoinServer = (server: DiscordServer) => {
     window.open(server.inviteUrl, '_blank');
     toast.success(`Opening invite to ${server.name}`, {
-      description: "You'll be redirected to Discord",
+      description: t('toast.description'),
     });
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Helmet>
-        <title>Community - Renderdragon</title>
-        <meta name="description" content="Join our community of Minecraft content creators. Find helpful tutorials, guides, and Discord servers to connect with other creators." />
-        <meta property="og:title" content="Community - Renderdragon" />
-        <meta property="og:description" content="Join our community of Minecraft content creators. Find helpful tutorials, guides, and Discord servers to connect with other creators." />
+        <title>{t('seo.title')} - Renderdragon</title>
+        <meta name="description" content={t('seo.description')} />
+        <meta property="og:title" content={`${t('seo.title')} - Renderdragon`} />
+        <meta property="og:description" content={t('seo.description')} />
         <meta property="og:image" content="https://renderdragon.org/ogimg/community.png" />
         <meta property="og:url" content="https://renderdragon.org/community" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Community - Renderdragon" />
+        <meta name="twitter:title" content={`${t('seo.title')} - Renderdragon`} />
         <meta name="twitter:image" content="https://renderdragon.org/ogimg/community.png" />
       </Helmet>
       
@@ -290,21 +292,19 @@ const Community = () => {
       
       <main className="flex-grow py-24 cow-grid-bg">
         <div className="container mx-auto px-4">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
-                <span className="text-cow-purple">Creator</span> Community
-              </h1>
-              <p className="max-w-2xl mx-auto text-muted-foreground">
-                Connect with other creators, get feedback, and find resources in these active Discord communities.
-              </p>
-            </div>
+          <div className="max-w-6xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-vt323 mb-4 text-center">
+              {t('title.prefix')} <span className="text-cow-purple">{t('title.highlight')}</span>
+            </h1>
+            <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-8">
+              {t('description')}
+            </p>
             
             {isLoading ? <CommunityPageSkeleton /> : (
             <Tabs defaultValue="tutorials" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6 max-w-lg mx-auto pixel-corners">
-                <TabsTrigger value="tutorials">Tutorials</TabsTrigger>
-                <TabsTrigger value="servers">Discord Servers</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8">
+                <TabsTrigger value="tutorials">{t('tabs.tutorials')}</TabsTrigger>
+                <TabsTrigger value="servers">{t('tabs.servers')}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="tutorials">
@@ -315,72 +315,81 @@ const Community = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="space-y-8">
-                    {videoCategories.map(category => (
-                      <Collapsible 
-                        key={category.id} 
-                        open={openCategories.includes(category.id)}
-                        onOpenChange={() => toggleCategory(category.id)}
-                        className="border border-border rounded-md pixel-corners overflow-hidden"
-                      >
-                        <CollapsibleTrigger asChild>
-                          <div className="bg-card p-4 flex justify-between items-center cursor-pointer hover:bg-accent/50 transition-colors">
-                            <div>
-                              <h2 className="text-2xl font-vt323">{category.name}</h2>
-                              <p className="text-muted-foreground text-sm mt-1">
-                                {category.description}
-                              </p>
+                  <div className="space-y-12">
+                    {videoCategories.map((category) => (
+                      <div key={category.id} className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <h2 className="text-2xl font-vt323">{t(`tutorials.${category.id}.name`)}</h2>
+                          <p className="text-sm text-muted-foreground">{t('common.videoCount', { count: category.videos.length })}</p>
+                        </div>
+                        <p className="text-muted-foreground">{t(`tutorials.${category.id}.description`)}</p>
+                        <Collapsible 
+                          key={category.id} 
+                          open={openCategories.includes(category.id)}
+                          onOpenChange={() => toggleCategory(category.id)}
+                          className="border border-border rounded-md pixel-corners overflow-hidden"
+                        >
+                          <CollapsibleTrigger asChild>
+                            <div className="bg-card p-4 flex justify-between items-center cursor-pointer hover:bg-accent/50 transition-colors">
+                              <div>
+                                <h2 className="text-2xl font-vt323">{t(`tutorials.${category.id}.name`)}</h2>
+                                <p className="text-muted-foreground text-sm mt-1">
+                                  {t(`tutorials.${category.id}.description`)}
+                                </p>
+                              </div>
+                              <ChevronRight className={`h-5 w-5 transition-transform duration-200 ${
+                                openCategories.includes(category.id) ? 'transform rotate-90' : ''
+                              }`} />
                             </div>
-                            <ChevronRight className={`h-5 w-5 transition-transform duration-200 ${
-                              openCategories.includes(category.id) ? 'transform rotate-90' : ''
-                            }`} />
-                          </div>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          <div className="p-4 bg-background/80">
-                            <div className="relative">
-                              <div className="flex overflow-x-auto pb-4 space-x-4 custom-scrollbar">
-                                {category.videos.map(video => (
-                                  <div 
-                                    key={video.id}
-                                    className="min-w-[300px] max-w-[300px] pixel-card cursor-pointer hover:border-primary transition-all group"
-                                    onClick={() => setSelectedVideo(video)}
-                                  >
-                                    <div className="relative rounded-md overflow-hidden mb-3">
-                                      <img 
-                                        src={video.thumbnail} 
-                                        alt={video.title}
-                                        className="w-full h-[168px] object-cover"
-                                      />
-                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <Button 
-                                          variant="outline" 
-                                          size="icon" 
-                                          className="rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40"
-                                        >
-                                          <Play className="h-5 w-5 text-white" fill="white" />
-                                          <span className="sr-only">Play</span>
-                                        </Button>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <div className="p-4 bg-background/80">
+                              <div className="relative">
+                                <div className="flex overflow-x-auto pb-4 space-x-4 custom-scrollbar">
+                                  {category.videos.map(video => (
+                                    <div 
+                                      key={video.id}
+                                      className="min-w-[300px] max-w-[300px] pixel-card cursor-pointer hover:border-primary transition-all group"
+                                      onClick={() => setSelectedVideo(video)}
+                                    >
+                                      <div className="relative rounded-md overflow-hidden mb-3">
+                                        <img 
+                                          src={video.thumbnail} 
+                                          alt={video.title}
+                                          className="w-full h-[168px] object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                          <Button 
+                                            variant="outline" 
+                                            size="icon" 
+                                            className="rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/40"
+                                          >
+                                            <Play className="h-5 w-5 text-white" fill="white" />
+                                            <span className="sr-only">{t('common.playVideo')}</span>
+                                          </Button>
+                                        </div>
+                                        <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-xs text-white">
+                                          {video.duration}
+                                        </div>
                                       </div>
-                                      <div className="absolute bottom-2 right-2 bg-black/70 px-2 py-1 rounded text-xs text-white">
-                                        {video.duration}
+                                      
+                                      <div className="flex-1 min-w-0">
+                                        <h3 className="font-medium truncate">{video.title}</h3>
+                                        <p className="text-sm text-muted-foreground">
+                                          {t('common.creator', { creator: video.creator })} • {video.duration}
+                                        </p>
                                       </div>
+                                      <Button variant="ghost" size="icon" className="flex-shrink-0" aria-label={t('common.playVideo')}>
+                                        <Play className="h-4 w-4" />
+                                      </Button>
                                     </div>
-                                    
-                                    <h3 className="font-medium line-clamp-2 mb-2 group-hover:text-primary transition-colors">
-                                      {video.title}
-                                    </h3>
-                                    
-                                    <div className="flex items-center text-sm text-muted-foreground">
-                                      <span>{video.creator}</span>
-                                    </div>
-                                  </div>
-                                ))}
+                                  ))}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -423,13 +432,13 @@ const Community = () => {
                                     variant="secondary" 
                                     className="capitalize"
                                   >
-                                    {category}
+                                    {t(`categories.${category}`)}
                                   </Badge>
                                 ))}
                               </div>
                               <span className="bg-secondary text-secondary-foreground px-2 py-1 rounded-md text-xs flex items-center">
                                 <Users className="h-3 w-3 mr-1" />
-                                {formatMemberCount(server.members)} members
+                                {formatMemberCount(server.members)} {t('common.members')}
                               </span>
                             </div>
                           </div>
@@ -444,7 +453,7 @@ const Community = () => {
                             onClick={() => handleJoinServer(server)}
                             className="w-full pixel-btn-primary flex items-center justify-center"
                           >
-                            Join Server
+                            {t('common.joinServer')}
                             <JoinServerIcon />
                           </Button>
                         </div>
@@ -464,35 +473,37 @@ const Community = () => {
       
       {/* Video Dialog */}
       <Dialog open={!!selectedVideo} onOpenChange={(open) => !open && setSelectedVideo(null)}>
-        <DialogContent className="sm:max-w-4xl pixel-corners overflow-y-auto max-h-[90vh] custom-scrollbar">
+        <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-vt323">{selectedVideo?.title}</DialogTitle>
-            <DialogDescription className="flex items-center gap-2">
-              <Badge variant="secondary">
-                {selectedVideo?.creator}
-              </Badge>
-              <Badge variant="outline">
-                {selectedVideo?.duration}
-              </Badge>
+            <DialogTitle>{selectedVideo?.title}</DialogTitle>
+            <DialogDescription>
+              {t('common.byCreator', { creator: selectedVideo?.creator })} • {selectedVideo?.duration}
             </DialogDescription>
           </DialogHeader>
-          
-          <div className="space-y-6 py-4">
-            <div className="video-player-container">
+          <div className="aspect-video bg-black rounded-lg overflow-hidden">
+            {selectedVideo && (
               <iframe
-                src={selectedVideo?.url.replace('watch?v=', 'embed/')}
-                title={selectedVideo?.title}
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${selectedVideo.id}?autoplay=1`}
+                title={selectedVideo.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-                className="w-full aspect-video rounded-md"
-              ></iframe>
-            </div>
-            
-            <Button 
-              className="w-full pixel-btn-primary"
-              onClick={() => window.open(selectedVideo?.url, '_blank')}
-            >
-              Watch on YouTube
+                className="w-full h-full"
+              />
+            )}
+          </div>
+          <div className="flex justify-end">
+            <Button asChild variant="outline">
+              <a
+                href={selectedVideo?.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2"
+              >
+                {t('common.watchOnYouTube')}
+                <ExternalLink className="h-4 w-4" />
+              </a>
             </Button>
           </div>
         </DialogContent>
@@ -501,4 +512,4 @@ const Community = () => {
   );
 };
 
-export default Community; 
+export default Community;

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
 import { Navigate } from 'react-router-dom';
@@ -17,6 +18,7 @@ import { Helmet } from 'react-helmet-async';
 import AccountPageSkeleton from '@/components/skeletons/AccountPageSkeleton';
 
 const Account = () => {
+  const { t } = useTranslation();
   const { user, loading, signOut } = useAuth();
   const { updateProfile } = useProfile();
   const [displayName, setDisplayName] = useState('');
@@ -63,13 +65,13 @@ const Account = () => {
       });
 
       if (result.success) {
-        toast.success('Profile updated successfully!');
+        toast.success(t('account.notifications.updateSuccess'));
       } else {
-        toast.error('Failed to update profile. Please try again.');
+        toast.error(t('account.notifications.updateError'));
       }
     } catch (error) {
       console.error('Profile update error:', error);
-      toast.error('An error occurred while updating your profile.');
+      toast.error(t('account.notifications.error'));
     } finally {
       setIsUpdating(false);
     }
@@ -79,13 +81,13 @@ const Account = () => {
     try {
       const result = await signOut();
       if (result.success) {
-        toast.success('Signed out successfully');
+        toast.success(t('account.notifications.signOutSuccess'));
       } else {
-        toast.error('Failed to sign out. Please try again.');
+        toast.error(t('account.notifications.signOutError'));
       }
     } catch (error) {
       console.error('Sign out error:', error);
-      toast.error('An error occurred while signing out.');
+      toast.error(t('account.notifications.error'));
     }
   };
 
@@ -101,8 +103,8 @@ const Account = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>My Account - Renderdragon</title>
-        <meta name="description" content="Manage your Renderdragon account settings and profile information." />
+        <title>{t('account.seo.title')}</title>
+        <meta name="description" content={t('account.seo.description')} />
       </Helmet>
       
       <Navbar />
@@ -118,7 +120,7 @@ const Account = () => {
             <div className="flex items-center gap-3 mb-8">
               <User className="h-8 w-8 text-cow-purple" />
               <h1 className="text-4xl md:text-5xl font-vt323">
-                My <span className="text-cow-purple">Account</span>
+                {t('account.pageTitle')}
               </h1>
             </div>
 
@@ -146,38 +148,38 @@ const Account = () => {
               <CardContent className="pt-6">
                 <form onSubmit={handleUpdateProfile} className="space-y-6">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-vt323 text-cow-purple">Profile Information</h3>
+                    <h3 className="text-lg font-vt323 text-cow-purple">{t('account.profileInfo')}</h3>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="displayName">Display Name</Label>
+                      <Label htmlFor="displayName">{t('account.displayName')}</Label>
                       <Input
                         id="displayName"
                         value={displayName}
                         onChange={(e) => setDisplayName(e.target.value)}
-                        placeholder="How others will see you"
+                        placeholder={t('account.displayNamePlaceholder')}
                         className="pixel-corners"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
+                        <Label htmlFor="firstName">{t('account.firstName')}</Label>
                         <Input
                           id="firstName"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
-                          placeholder="Your first name"
+                          placeholder={t('account.firstNamePlaceholder')}
                           className="pixel-corners"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
+                        <Label htmlFor="lastName">{t('account.lastName')}</Label>
                         <Input
                           id="lastName"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
-                          placeholder="Your last name"
+                          placeholder={t('account.lastNamePlaceholder')}
                           className="pixel-corners"
                         />
                       </div>
@@ -187,19 +189,19 @@ const Account = () => {
                   <Separator />
 
                   <div className="space-y-4">
-                    <h3 className="text-lg font-vt323 text-cow-purple">Account Details</h3>
+                    <h3 className="text-lg font-vt323 text-cow-purple">{t('account.accountDetails')}</h3>
                     
                     <div className="space-y-3 text-sm">
                       <div className="flex items-center gap-2">
                         <Mail className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">Email:</span>
+                        <span className="font-medium">{t('account.email')}:</span>
                         <span>{user.email}</span>
                       </div>
                       
                       {user.created_at && (
                         <div className="flex items-center gap-2">
                           <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span className="font-medium">Member since:</span>
+                          <span className="font-medium">{t('account.memberSince')}:</span>
                           <span>{new Date(user.created_at).toLocaleDateString()}</span>
                         </div>
                       )}
@@ -212,7 +214,7 @@ const Account = () => {
                       disabled={isUpdating}
                       className="pixel-btn-primary"
                     >
-                      {isUpdating ? 'Updating...' : 'Update Profile'}
+                      {isUpdating ? t('account.updating') : t('account.updateButton')}
                     </Button>
 
                     <Button
@@ -222,7 +224,7 @@ const Account = () => {
                       className="pixel-corners border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
                     >
                       <LogOut className="h-4 w-4 mr-2" />
-                      Sign Out
+                      {t('account.signOut')}
                     </Button>
                   </div>
                 </form>

@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,10 +8,11 @@ import { Checkbox } from '@/components/ui/checkbox';
 import html2canvas from 'html2canvas';
 
 const YouTubeCommentGenerator = () => {
+  const { t } = useTranslation();
   const [avatarUrl, setAvatarUrl] = useState('https://preview.redd.it/guys-gimme-a-good-femboy-pfp-the-most-up-voted-wins-image-v0-82657ojk9krd1.jpeg?width=640&crop=smart&auto=webp&s=08de7a1c960292cd603849514cbb0ca8f3c940cf');
-  const [userName, setUserName] = useState('Yamura');
-  const [commentText, setCommentText] = useState('Sigma first!! 0:32 was the best part.');
-  const [timeStamp, setTimeStamp] = useState('2 hours ago');
+  const [userName, setUserName] = useState(t('youtubeCommentGenerator.defaultValues.userName', { defaultValue: 'Yamura' }));
+  const [commentText, setCommentText] = useState(t('youtubeCommentGenerator.defaultValues.commentText', { defaultValue: 'Sigma first!! 0:32 was the best part.' }));
+  const [timeStamp, setTimeStamp] = useState(t('youtubeCommentGenerator.defaultValues.timeStamp', { defaultValue: '2 hours ago' }));
   const [isVerified, setIsVerified] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const commentCardRef = useRef<HTMLDivElement>(null);
@@ -43,45 +45,45 @@ const YouTubeCommentGenerator = () => {
       <div className="space-y-6">
         <div className="space-y-4">
           <div>
-            <Label htmlFor="avatarUrl">Avatar URL</Label>
+            <Label htmlFor="avatarUrl">{t('youtubeCommentGenerator.labels.avatarUrl')}</Label>
             <Input
               id="avatarUrl"
               value={avatarUrl}
               onChange={(e) => setAvatarUrl(e.target.value)}
-              placeholder="Enter avatar URL"
+              placeholder={t('youtubeCommentGenerator.placeholders.avatarUrl')}
               className="pixel-corners"
             />
           </div>
 
           <div>
-            <Label htmlFor="userName">User Name</Label>
+            <Label htmlFor="userName">{t('youtubeCommentGenerator.labels.userName')}</Label>
             <Input
               id="userName"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
-              placeholder="Enter user name"
+              placeholder={t('youtubeCommentGenerator.placeholders.userName')}
               className="pixel-corners"
             />
           </div>
 
           <div>
-            <Label htmlFor="commentText">Comment</Label>
+            <Label htmlFor="commentText">{t('youtubeCommentGenerator.labels.commentText')}</Label>
             <Input
               id="commentText"
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Enter comment"
+              placeholder={t('youtubeCommentGenerator.placeholders.commentText')}
               className="pixel-corners"
             />
           </div>
 
           <div>
-            <Label htmlFor="timeStamp">Time</Label>
+            <Label htmlFor="timeStamp">{t('youtubeCommentGenerator.labels.timeStamp')}</Label>
             <Input
               id="timeStamp"
               value={timeStamp}
               onChange={(e) => setTimeStamp(e.target.value)}
-              placeholder="e.g., 2 hours ago"
+              placeholder={t('youtubeCommentGenerator.placeholders.timeStamp')}
               className="pixel-corners"
             />
           </div>
@@ -92,22 +94,22 @@ const YouTubeCommentGenerator = () => {
               checked={isVerified}
               onCheckedChange={(checked) => setIsVerified(checked as boolean)}
             />
-            <Label htmlFor="verifiedToggle">Verified checkmark</Label>
+            <Label htmlFor="verifiedToggle">{t('youtubeCommentGenerator.labels.verifiedCheckmark')}</Label>
           </div>
 
           <div className="flex gap-4">
             <Button onClick={() => setIsDarkMode(!isDarkMode)} className="flex-1 pixel-btn-primary">
-              Toggle Theme
+              {t('youtubeCommentGenerator.buttons.toggleTheme')}
             </Button>
             <Button onClick={exportAsPNG} className="flex-1 pixel-btn-primary">
-              Export as PNG
+              {t('youtubeCommentGenerator.buttons.exportPng')}
             </Button>
           </div>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-vt323">YouTube Comment Preview</h2>
+        <h2 className="text-xl font-vt323">{t('youtubeCommentGenerator.preview.title')}</h2>
         <div
           ref={commentCardRef}
           className="w-full max-w-xl"
@@ -116,7 +118,7 @@ const YouTubeCommentGenerator = () => {
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
             <img
               src={avatarUrl}
-              alt="Avatar"
+              alt={t('youtubeCommentGenerator.preview.alt.avatar')}
               style={{ width: 40, height: 40, borderRadius: '50%' }}
             />
             <div style={{ flex: 1 }}>
@@ -125,7 +127,7 @@ const YouTubeCommentGenerator = () => {
                 {isVerified && (
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/YT_Official_Verified_Checkmark_Circle.svg/120px-YT_Official_Verified_Checkmark_Circle.svg.png?20241125171005"
-                    alt="Verified"
+                    alt={t('youtubeCommentGenerator.preview.alt.verified')}
                     style={{ 
                       width: 16, 
                       height: 16, 
@@ -156,17 +158,17 @@ const YouTubeCommentGenerator = () => {
                     </svg>
                   </span>
                 </div>
-                <span style={{ cursor: 'pointer' }}>Reply</span>
+                <span style={{ cursor: 'pointer' }}>{t('youtubeCommentGenerator.buttons.reply')}</span>
               </div>
             </div>
           </div>
         </div>
         <div className="flex gap-4 mt-4">
           <Button onClick={() => setIsDarkMode(!isDarkMode)} className="flex-1 pixel-btn-primary">
-            Toggle Theme
+            {t('youtubeCommentGenerator.buttons.toggleTheme')}
           </Button>
           <Button onClick={exportAsPNG} className="flex-1 pixel-btn-primary">
-            Export as PNG
+            {t('youtubeCommentGenerator.buttons.exportPng')}
           </Button>
         </div>
       </div>

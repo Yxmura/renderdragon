@@ -3,6 +3,7 @@ import React from 'react';
 interface PixelSvgIconProps {
   name: string;
   className?: string;
+  size?: number;
 }
 
 const icons: Record<string, JSX.Element> = {

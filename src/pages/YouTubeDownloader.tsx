@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
@@ -35,13 +36,14 @@ interface VideoInfo {
 }
 
 const YouTubeDownloader: React.FC = () => {
+  const { t } = useTranslation('youtubeDownloader');
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [selectedOptionId, setSelectedOptionId] = useState('');
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
   const [isLoadingInfo, setIsLoadingInfo] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [urlError, setUrlError] = useState(false);
-  const [downloadType, setDownloadType] = useState<'video' | 'audio'>('video');
+  const [downloadType, setDownloadType] = useState<'video' | 'audio'>(t('defaults.downloadType', { returnObjects: true }));
   const [filteredOptions, setFilteredOptions] = useState<DownloadOption[]>([]);
   const [isDownloadingThumb, setIsDownloadingThumb] = useState(false);
 
@@ -78,7 +80,7 @@ const YouTubeDownloader: React.FC = () => {
 
   const handleFetchInfo = async () => {
     if (!youtubeUrl || !isValidYoutubeUrl(youtubeUrl)) {
-      toast.error('Please enter a valid YouTube URL');
+      toast.error(t('errors.invalidUrl'));
       setUrlError(true);
       return;
     }
@@ -109,7 +111,7 @@ const YouTubeDownloader: React.FC = () => {
       setVideoInfo(data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`Failed to fetch video info: ${msg}`);
+      toast.error(`${t('errors.fetchFailed')}: ${msg}`);
       console.error(err);
     } finally {
       setIsLoadingInfo(false);
@@ -119,7 +121,7 @@ const YouTubeDownloader: React.FC = () => {
   const handleDownloadThumbnail = async () => {
     if (!videoInfo) return;
     setIsDownloadingThumb(true);
-    toast.info('Preparing thumbnail download...');
+    toast.info(t('messages.preparingThumbnailDownload'));
     try {
       const title = encodeURIComponent(videoInfo.title);
       const thumbnailUrl = encodeURIComponent(videoInfo.thumbnail);
@@ -151,10 +153,10 @@ const YouTubeDownloader: React.FC = () => {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(blobUrl);
-      toast.success('Thumbnail download started!');
+      toast.success(t('messages.thumbnailDownloadStarted'));
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`Thumbnail download failed: ${msg}`);
+      toast.error(`${t('errors.thumbnailDownloadFailed')}: ${msg}`);
       console.error(err);
     } finally {
       setIsDownloadingThumb(false);
@@ -163,18 +165,18 @@ const YouTubeDownloader: React.FC = () => {
 
   const handleDownload = async () => {
     if (!videoInfo || !selectedOptionId) {
-      toast.error('Please select a format first');
+      toast.error(t('errors.selectFormat'));
       return;
     }
 
     const selectedOption = videoInfo.options.find(o => o.id === selectedOptionId);
     if (!selectedOption) {
-      toast.error('Selected format not found');
+      toast.error(t('errors.formatNotFound'));
       return;
     }
 
     setIsDownloading(true);
-    toast.info('Preparing download...', { duration: 5000 });
+    toast.info(t('messages.preparingDownload'), { duration: 5000 });
 
     try {
       const title = encodeURIComponent(videoInfo.title);
@@ -205,10 +207,10 @@ const YouTubeDownloader: React.FC = () => {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(blobUrl);
-      toast.success('Download started!', { description: `Downloading ${selectedOption.label}` });
+      toast.success(t('messages.downloadStarted'), { description: `Downloading ${selectedOption.label}` });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`Download failed: ${msg}`);
+      toast.error(`${t('errors.downloadFailed')}: ${msg}`);
       console.error(err);
     } finally {
       setIsDownloading(false);
@@ -218,39 +220,42 @@ const YouTubeDownloader: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>YouTube Downloader - Renderdragon</title>
-        <meta
-          name="description"
-          content="Download YouTube videos for fair use and educational purposes. Our tool helps Minecraft content creators learn from and reference other creators' work."
-        />
+        <title>{t('seo.title')} - Renderdragon</title>
+        <meta name="description" content={t('seo.description')} />
+        <meta property="og:title" content={`${t('seo.title')} - Renderdragon`} />
+        <meta property="og:description" content={t('seo.description')} />
+        <meta property="og:image" content="https://renderdragon.org/ogimg/youtube-downloader.png" />
+        <meta property="og:url" content="https://renderdragon.org/youtube-downloader" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${t('seo.title')} - Renderdragon`} />
+        <meta name="twitter:image" content="https://renderdragon.org/ogimg/youtube-downloader.png" />
       </Helmet>
+      
       <Navbar />
-
-      <main className="flex-grow pt-24 pb-16 cow-grid-bg">
+      
+      <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
-              <span className="text-cow-purple">YouTube</span> Downloader
+              <span className="text-cow-purple">{t('title')}</span> {t('subtitle')}
             </h1>
-
+            
             <p className="text-center text-muted-foreground mb-8 max-w-xl mx-auto">
-              Download YouTube videos and thumbnails for content creation purposes. Always respect copyright laws and only download videos
-              you have permission to use.
+              {t('description')}
             </p>
 
             <Alert className="mb-8 pixel-corners">
               <Info className="h-4 w-4" />
-              <AlertTitle>Important Notice</AlertTitle>
+              <AlertTitle>{t('alerts.note')}</AlertTitle>
               <AlertDescription>
-                This tool is for educational purposes only. You are responsible for ensuring you have the right to download
-                and use any content.
+                {t('alerts.noteDescription')}
               </AlertDescription>
             </Alert>
 
             <div className="pixel-card mb-8">
               <div className="flex flex-col md:flex-row gap-4">
                 <Input
-                  placeholder="Paste YouTube URL here"
+                  placeholder={t('placeholders.url')}
                   value={youtubeUrl}
                   onChange={handleUrlChange}
                   className={`pixel-corners flex-grow ${urlError ? 'border-red-500' : ''}`}
@@ -258,18 +263,18 @@ const YouTubeDownloader: React.FC = () => {
                 <Button onClick={handleFetchInfo} disabled={isLoadingInfo} className="pixel-btn-primary flex items-center">
                   {isLoadingInfo ? (
                     <>
-                      <RefreshCcw className="h-4 w-4 mr-2 animate-spin" /> <span>Processing...</span>
+                      <RefreshCcw className="h-4 w-4 mr-2 animate-spin" /> <span>{t('buttons.loading')}</span>
                     </>
                   ) : (
                     <>
-                      <Youtube className="h-4 w-4 mr-2" /> <span>Fetch Video Info</span>
+                      <Youtube className="h-4 w-4 mr-2" /> <span>{t('buttons.getVideoInfo')}</span>
                     </>
                   )}
                 </Button>
               </div>
               {urlError && (
                 <p className="text-red-500 text-xs mt-2 flex items-center">
-                  <AlertCircle className="h-3 w-3 mr-1" /> Please enter a valid YouTube URL
+                  <AlertCircle className="h-3 w-3 mr-1" /> {t('errors.invalidUrl')}
                 </p>
               )}
             </div>
@@ -279,39 +284,39 @@ const YouTubeDownloader: React.FC = () => {
             {videoInfo && !isLoadingInfo && (
               <Tabs defaultValue="download" className="w-full">
                 <TabsList className="pixel-card mb-4">
-                  <TabsTrigger value="download">Video / Audio</TabsTrigger>
-                  <TabsTrigger value="thumbnail">Thumbnail</TabsTrigger>
+                  <TabsTrigger value="download">{t('tabs.video')}</TabsTrigger>
+                  <TabsTrigger value="thumbnail">{t('tabs.thumbnail')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="download">
                   <div className="pixel-card space-y-6">
                     <div className="flex flex-col md:flex-row gap-6">
                       <div className="w-full md:w-2/5">
-                        <img src={videoInfo.thumbnail} alt={videoInfo.title} className="rounded-md w-full h-auto" />
+                        <img src={videoInfo.thumbnail} alt={t('alts.thumbnail')} className="rounded-md w-full h-auto" />
                       </div>
                       <div className="w-full md:w-3/5">
                         <h2 className="text-xl font-vt323 mb-2">{videoInfo.title}</h2>
                         <div className="flex flex-wrap gap-3 mb-4">
                           <div className="bg-accent text-accent-foreground px-2 py-1 rounded-md text-xs flex items-center">
-                            <span className="mr-1">Duration:</span> {videoInfo.duration}
+                            <span className="mr-1">{t('labels.duration')}:</span> {videoInfo.duration}
                           </div>
                           <div className="bg-accent text-accent-foreground px-2 py-1 rounded-md text-xs flex items-center">
-                            <span className="mr-1">Channel:</span> {videoInfo.author}
+                            <span className="mr-1">{t('labels.channel')}:</span> {videoInfo.author}
                           </div>
                         </div>
                         
                         <RadioGroup value={downloadType} onValueChange={v => setDownloadType(v as 'video' | 'audio')} className="flex gap-4 mb-4">
                            <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="video" id="video" /> <Label htmlFor="video">Video</Label>
+                            <RadioGroupItem value="video" id="video" /> <Label htmlFor="video">{t('labels.video')}</Label>
                            </div>
                            <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="audio" id="audio" /> <Label htmlFor="audio">Audio only</Label>
+                            <RadioGroupItem value="audio" id="audio" /> <Label htmlFor="audio">{t('labels.audioOnly')}</Label>
                            </div>
                          </RadioGroup>
 
                         <Select value={selectedOptionId} onValueChange={setSelectedOptionId}>
                           <SelectTrigger className="pixel-corners">
-                            <SelectValue placeholder="Select format & quality" />
+                            <SelectValue placeholder={t('placeholders.selectFormat')} />
                           </SelectTrigger>
                           <SelectContent>
                             {filteredOptions.map((opt, index) => (
@@ -327,11 +332,11 @@ const YouTubeDownloader: React.FC = () => {
                     <Button onClick={handleDownload} disabled={!selectedOptionId || isDownloading} className="w-full pixel-btn-primary flex items-center justify-center">
                       {isDownloading ? (
                         <>
-                          <RefreshCcw className="h-5 w-5 mr-2 animate-spin" /> <span>Downloading...</span>
+                          <RefreshCcw className="h-5 w-5 mr-2 animate-spin" /> <span>{t('buttons.downloading')}</span>
                         </>
                       ) : (
                         <>
-                          <Download className="h-5 w-5 mr-2" /> <span>Download {downloadType === 'video' ? 'Video' : 'Audio'}</span>
+                          <Download className="h-5 w-5 mr-2" /> <span>{downloadType === 'video' ? t('buttons.downloadVideo') : t('buttons.downloadAudio')}</span>
                         </>
                       )}
                     </Button>
@@ -340,15 +345,15 @@ const YouTubeDownloader: React.FC = () => {
 
                 <TabsContent value="thumbnail">
                   <div className="pixel-card space-y-6">
-                    <img src={videoInfo.thumbnail} alt={videoInfo.title} className="rounded-md w-full h-auto" />
+                    <img src={videoInfo.thumbnail} alt={t('alts.thumbnail')} className="rounded-md w-full h-auto" />
                     <Button onClick={handleDownloadThumbnail} disabled={isDownloadingThumb} className="w-full pixel-btn-primary flex items-center justify-center">
                       {isDownloadingThumb ? (
                         <>
-                          <RefreshCcw className="h-5 w-5 mr-2 animate-spin" /> <span>Downloading...</span>
+                          <RefreshCcw className="h-5 w-5 mr-2 animate-spin" /> <span>{t('buttons.downloadingThumbnail')}</span>
                         </>
                       ) : (
                         <>
-                          <Download className="h-5 w-5 mr-2" /> <span>Download Thumbnail</span>
+                          <Download className="h-5 w-5 mr-2" /> <span>{t('buttons.downloadThumbnail')}</span>
                         </>
                       )}
                     </Button>
