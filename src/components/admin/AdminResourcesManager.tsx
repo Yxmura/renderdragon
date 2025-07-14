@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +17,6 @@ import AdminResourcesManagerSkeleton from '../skeletons/AdminResourcesManagerSke
 const RESOURCES_PER_PAGE = 15;
 
 const AdminResourcesManager = () => {
-  const { t } = useTranslation();
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,10 +30,7 @@ const AdminResourcesManager = () => {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
-  const categories = ['all', 'music', 'sfx', 'images', 'animations', 'fonts', 'presets'].map(category => ({
-    id: category,
-    label: t(`admin.resourcesManager.categories.${category}`)
-  }));
+  const categories = ['all', 'music', 'sfx', 'images', 'animations', 'fonts', 'presets'];
 
   const fetchResources = async (isNewSearch = false) => {
     try {
@@ -53,19 +48,28 @@ const AdminResourcesManager = () => {
         query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,credit.ilike.%${searchTerm}%`);
       }
       if (selectedCategory !== 'all') {
-        query = query.eq('category', selectedCategory);
+        query = query.eq('category', selectedCategory as 'music' | 'sfx' | 'images' | 'animations' | 'fonts' | 'presets');
       }
 
       const { data, error, count } = await query;
 
       if (error) throw error;
       
-      setResources(isNewSearch ? data || [] : [...resources, ...(data || [])]);
-      setHasMore((data?.length || 0) === RESOURCES_PER_PAGE);
-      if (isNewSearch) setPage(0);
+      setResources(prev => isNewSearch ? data || [] : [...prev, ...(data || [])]);
+
+      if (count !== null) {
+        setHasMore(count > (isNewSearch ? 0 : page) * RESOURCES_PER_PAGE + (data?.length || 0));
+      } else {
+        setHasMore((data?.length || 0) === RESOURCES_PER_PAGE);
+      }
+
+      if (isNewSearch) {
+        setPage(1);
+      }
+
     } catch (error) {
       console.error('Error fetching resources:', error);
-      toast.error(t('admin.resourcesManager.dialogs.error.fetch'));
+      toast.error('Failed to fetch resources');
     } finally {
       setLoading(false);
     }
@@ -86,23 +90,22 @@ const AdminResourcesManager = () => {
     }
   }, [page]);
 
-  const handleDelete = async () => {
-    if (!deleteDialog.resource) return;
 
+  const handleDelete = async (resource: Resource) => {
     try {
       const { error } = await supabase
         .from('resources')
         .delete()
-        .eq('id', deleteDialog.resource.id);
+        .eq('id', resource.id);
 
       if (error) throw error;
-
-      setResources(resources.filter((r) => r.id !== deleteDialog.resource?.id));
+      
+      toast.success('Resource deleted successfully');
+      fetchResources(true);
       setDeleteDialog({ open: false, resource: null });
-      toast.success(t('admin.resourcesManager.dialogs.success.deleted'));
     } catch (error) {
       console.error('Error deleting resource:', error);
-      toast.error(t('admin.resourcesManager.dialogs.error.delete'));
+      toast.error('Failed to delete resource');
     }
   };
 
@@ -122,93 +125,152 @@ const AdminResourcesManager = () => {
 
   return (
     <div className="space-y-6">
+      {/* Migration Section */}
+      <div className="mb-8">
+        <h3 className="text-lg font-vt323 mb-4">Data Migration</h3>
+        <ResourceMigration />
+      </div>
+
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={t('admin.resourcesManager.searchPlaceholder')}
-            className="pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-vt323 mb-2">Resources Manager</h2>
+          <p className="text-muted-foreground">
+            Manage all resources in your database. Total: {resources.length} resources
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => setDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            {t('admin.resourcesManager.actions.add')}
-          </Button>
-          <ResourceMigration onMigrate={() => fetchResources(true)} />
-        </div>
+        <Button
+          onClick={() => {
+            setEditingResource(undefined);
+            setDialogOpen(true);
+          }}
+          className="pixel-btn-primary"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Resource
+        </Button>
       </div>
 
       {/* Stats Cards */}
-      <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 sm:grid-cols-7">
-          {categories.map((category) => (
-            <TabsTrigger key={category.id} value={category.id}>
-              {category.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-      </Tabs>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {getResourceStats().map(({ category, count }) => (
+          <Card key={category} className="pixel-corners">
+            <CardContent className="p-4 text-center">
+              <p className="text-2xl font-bold text-cow-purple">{count}</p>
+              <p className="text-sm text-muted-foreground capitalize">{category}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Search and Filter */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search resources..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-full sm:w-auto">
+          <TabsList className="grid grid-cols-4 lg:grid-cols-7 w-full">
+            {categories.map((category) => (
+              <TabsTrigger key={category} value={category} className="capitalize text-xs">
+                {category}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
 
       {/* Resources Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {resources.map((resource) => (
-          <Card key={resource.id} className="relative overflow-hidden">
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-lg font-medium line-clamp-1">
-                  {resource.title}
-                </CardTitle>
-                <Badge variant="outline" className="ml-2">
-                  {t(`admin.resourcesManager.categories.${resource.category}`, resource.category)}
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {resource.credit} • {new Date(resource.created_at).toLocaleDateString()}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                {resource.description}
-              </p>
-              <div className="flex justify-between items-center">
-                <div className="flex items-center text-sm text-muted-foreground">
-                  <Download className="h-4 w-4 mr-1" />
-                  <span>{resource.downloads || 0}</span>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredResources.map((resource) => (
+          <Card key={resource.id} className="pixel-corners overflow-hidden">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-lg font-vt323 mb-1">{resource.title}</CardTitle>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Badge variant="secondary" className="text-xs">
+                      {resource.category}
+                    </Badge>
+                    {resource.subcategory && (
+                      <Badge variant="outline" className="text-xs">
+                        {resource.subcategory}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-1">
                   <Button
-                    variant="outline"
                     size="sm"
+                    variant="outline"
                     onClick={() => {
                       setEditingResource(resource);
                       setDialogOpen(true);
                     }}
                   >
-                    <Edit className="h-4 w-4 mr-1" />
-                    {t('admin.resourcesManager.actions.edit')}
+                    <Edit className="h-3 w-3" />
                   </Button>
                   <Button
-                    variant="outline"
                     size="sm"
+                    variant="outline"
                     onClick={() => setDeleteDialog({ open: true, resource })}
+                    className="text-red-600 hover:text-red-700"
                   >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    {t('admin.resourcesManager.actions.delete')}
+                    <Trash2 className="h-3 w-3" />
                   </Button>
                 </div>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {resource.image_url && (
+                <div className="mb-3 aspect-video bg-muted rounded overflow-hidden">
+                  <img
+                    src={resource.image_url}
+                    alt={resource.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              
+              {resource.description && (
+                <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                  {resource.description}
+                </p>
+              )}
+              
+              <div className="space-y-2 text-xs text-muted-foreground">
+                {resource.credit && (
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">Credit:</span>
+                    <span>{resource.credit}</span>
+                  </div>
+                )}
+                {resource.filetype && (
+                  <div className="flex items-center gap-1">
+                    <span className="font-medium">Type:</span>
+                    <span>{resource.filetype}</span>
+                  </div>
+                )}
+                {resource.created_at && (
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3" />
+                    <span>{new Date(resource.created_at).toLocaleDateString()}</span>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {resources.length === 0 && !loading && (
+      {filteredResources.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-muted-foreground">{t('admin.resourcesManager.pagination.noResults')}</p>
+          <p className="text-muted-foreground">No resources found matching your criteria.</p>
         </div>
       )}
 
@@ -223,30 +285,26 @@ const AdminResourcesManager = () => {
       {/* Dialogs */}
       <AdminResourceDialog
         open={dialogOpen}
-        onOpenChange={(open) => {
-          setDialogOpen(open);
-          if (!open) setEditingResource(undefined);
-        }}
-        onSave={() => fetchResources(true)}
+        onOpenChange={setDialogOpen}
         resource={editingResource}
-        categories={categories}
+        onSave={() => fetchResources(true)}
       />
 
-      <AlertDialog
-        open={deleteDialog.open}
-        onOpenChange={(open) => setDeleteDialog({ ...deleteDialog, open })}
-      >
+      <AlertDialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog({ open, resource: null })}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('admin.resourcesManager.dialogs.deleteTitle')}</AlertDialogTitle>
+            <AlertDialogTitle>Delete Resource</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('admin.resourcesManager.dialogs.deleteMessage')}
+              Are you sure you want to delete "{deleteDialog.resource?.title}"? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('admin.resourcesManager.dialogs.deleteCancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {t('admin.resourcesManager.dialogs.deleteConfirm')}
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteDialog.resource && handleDelete(deleteDialog.resource)}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

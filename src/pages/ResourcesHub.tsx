@@ -19,7 +19,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DiscordPopup from '@/components/resources/DiscordPopup';
 import FavoritesTab from '@/components/resources/FavoritesTab';
 import { useDiscordPopup } from '@/hooks/useDiscordPopup';
-import { useTranslation } from 'react-i18next';
 
 const ResourceDetailDialog = lazy(() => import('@/components/resources/ResourceDetailDialog'));
 
@@ -31,7 +30,6 @@ const LoadingSpinner = () => (
 );
 
 const ResourcesHub = () => {
-  const { t } = useTranslation();
   const { isPopupOpen, closePopup, neverShowPopupAgain } = useDiscordPopup();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
@@ -104,26 +102,26 @@ const ResourcesHub = () => {
   const onDownload = (resource: Resource) => {
     const success = handleDownload(resource);
     if (success) {
-      toast.info(t('resourcesHub.toasts.downloadStarting.title'), {
-        description: t('resourcesHub.toasts.downloadStarting.description'),
+      toast.info('Download starting...', {
+        description: 'Downloading resource...',
         duration: 3000,
       });
     } else {
-      toast.error(t('resourcesHub.toasts.downloadError'));
+      toast.error('Download error');
     }
   };
 
   return (
     <div className="min-h-screen flex flex-col relative">
       <Helmet>
-        <title>{t('resourcesHub.meta.title')}</title>
-        <meta name="description" content={t('resourcesHub.meta.description')} />
-        <meta property="og:title" content={t('resourcesHub.meta.title')} />
-        <meta property="og:description" content={t('resourcesHub.meta.description')} />
+        <title>Resources Hub</title>
+        <meta name="description" content="Explore a vast collection of resources for RenderDragon." />
+        <meta property="og:title" content="Resources Hub" />
+        <meta property="og:description" content="Explore a vast collection of resources for RenderDragon." />
         <meta property="og:image" content="https://renderdragon.org/ogimg/resources.png" />
         <meta property="og:url" content="https://renderdragon.org/resources" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={t('resourcesHub.meta.title')} />
+        <meta name="twitter:title" content="Resources Hub" />
         <meta name="twitter:image" content="https://renderdragon.org/ogimg/resources.png" />
       </Helmet>
       <Navbar />
@@ -136,8 +134,8 @@ const ResourcesHub = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <h1 className="text-4xl md:text-5xl font-vt323 font-bold mb-2 text-center">{t('resourcesHub.title')}</h1>
-              <p className="text-lg text-muted-foreground text-center max-w-2xl mx-auto">{t('resourcesHub.description')}</p>
+              <h1 className="text-4xl md:text-5xl font-vt323 font-bold mb-2 text-center">Resources Hub</h1>
+              <p className="text-lg text-muted-foreground text-center max-w-2xl mx-auto">Discover and download a wide range of resources to enhance your RenderDragon experience.</p>
             </motion.div>
 
             <motion.div
@@ -149,11 +147,11 @@ const ResourcesHub = () => {
                 <TabsList className="grid w-full grid-cols-1 mb-6 pixel-corners">
                   <TabsTrigger value="browse" className="flex items-center gap-2">
                     <Grid className="h-4 w-4" />
-                    {t('resourcesHub.tabs.browse')}
+                    Browse Resources
                   </TabsTrigger>
                   <TabsTrigger value="favorites" className="flex items-center gap-2">
                     <Heart className="h-4 w-4" />
-                    {t('resourcesHub.tabs.favorites')}
+                    Favorites
                   </TabsTrigger>
                 </TabsList>
 
@@ -168,7 +166,6 @@ const ResourcesHub = () => {
                         transition={{ duration: 0.3 }}
                       >
                         <ResourceFilters
-                t={t}
                           searchQuery={searchQuery}
                           selectedCategory={selectedCategory}
                           selectedSubcategory={selectedSubcategory}
@@ -252,7 +249,7 @@ const ResourcesHub = () => {
               onClick={scrollToTop}
               className="fixed bottom-8 right-8 z-[9999] h-12 w-12 rounded-full shadow-lg bg-cow-purple hover:bg-cow-purple-dark transition-all duration-300 opacity-90 hover:opacity-100 text-white border-2 border-white/10"
               size="icon"
-              aria-label={t('resourcesHub.scrollToTop')}
+              aria-label="Scroll to top"
             >
               <ArrowUp className="h-5 w-5" />
             </Button>

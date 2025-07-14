@@ -1,5 +1,4 @@
-import { lazy, Suspense } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -12,7 +11,6 @@ import AdminPageSkeleton from '@/components/skeletons/AdminPageSkeleton';
 const AdminResourcesManager = lazy(() => import('@/components/admin/AdminResourcesManager'));
 
 const Admin = () => {
-  const { t } = useTranslation();
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -41,9 +39,8 @@ const Admin = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>{t('admin.seo.title')}</title>
-        <meta name="description" content={t('admin.seo.description')} />
-        <meta name="robots" content={t('admin.seo.noIndex')} />
+        <title>Admin Panel - Renderdragon</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       
       <Navbar />
@@ -59,7 +56,7 @@ const Admin = () => {
             <div className="flex items-center gap-3 mb-8">
               <Shield className="h-8 w-8 text-cow-purple" />
               <h1 className="text-4xl md:text-5xl font-vt323">
-                {t('admin.pageTitle')}
+                Admin <span className="text-cow-purple">Panel</span>
               </h1>
             </div>
             

@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
-import { ChevronRight, Play, Users, Search } from 'lucide-react';
+import { ChevronRight, Play, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -46,11 +45,11 @@ interface DiscordServer {
 }
 
 // Data
-const getServersData = (t: any): DiscordServer[] => [
+const SERVERS_DATA: DiscordServer[] = [
   {
     id: 1,
-    name: t('community.serverList.creatorCoaster.name'),
-    description: t('community.serverList.creatorCoaster.description'),
+    name: 'Creator Coaster',
+    description: "Creator Coaster server will be your best friend through out your content creation journey, varying from assets up to professional editors & artists that are willing to help you no matter what! No matter what you need help in, we're down to help you by having active staff & helpers that would be pleased to help!",
     members: 12500,
     inviteUrl: 'https://discord.gg/uvWYV82f8J',
     image: 'https://cdn.discordapp.com/icons/1075932452842909806/a_40d64cc9e3aabcd7b42a6027a399d2e6.webp?size=100&quality=lossless',
@@ -58,8 +57,8 @@ const getServersData = (t: any): DiscordServer[] => [
   },
   {
     id: 2,
-    name: t('community.serverList.minecraftDesignHub.name'),
-    description: t('community.serverList.minecraftDesignHub.description'),
+    name: 'Minecraft Design Hub',
+    description: 'The Minecraft Design Hub is run by qualified designers with an extensive background in the GFX industry. We enjoy making designs, playing games and helping the community. In this community, you can purchase designs from our top notch designers.',
     members: 6000,
     inviteUrl: 'https://discord.gg/vYprQ9sK4v',
     image: 'https://cdn.discordapp.com/icons/972091816004444170/f4457c7980f91b0bbbc2ecb7af0f0ecf.webp?size=100&quality=lossless',
@@ -67,8 +66,8 @@ const getServersData = (t: any): DiscordServer[] => [
   },
   {
     id: 3,
-    name: t('community.serverList.thumbnailers.name'),
-    description: t('community.serverList.thumbnailers.description'),
+    name: 'Thumbnailers',
+    description: "Thumbnailers is a thriving community for Minecraft thumbnail designers. Whether you're a beginner or a pro, you'll find resources, feedback, and help to improve your skills and showcase your work. Join us to elevate your designs!",
     members: 2500,
     inviteUrl: 'https://discord.gg/4Q8MwTaSyh',
     image: 'https://cdn.discordapp.com/icons/1102968474894082081/1f868f37cb129b50e27497984a7b020d.png?size=4096',
@@ -76,8 +75,8 @@ const getServersData = (t: any): DiscordServer[] => [
   },
   {
     id: 4,
-    name: t('community.serverList.edithub.name'),
-    description: t('community.serverList.edithub.description'),
+    name: 'EditHub',
+    description: "EditHub is the ultimate content creation hub for editors, designers, and creators looking to grow and improve. Whether you're searching for high-quality presets, assets, or expert advice, this server has everything you need in one place. Connect with like-minded individuals who are passionate about editing, content creation, and digital media.",
     members: 1500,
     inviteUrl: 'https://discord.gg/rrFFMAut3r',
     image: 'https://cdn.discordapp.com/icons/1014715191075811328/a_609aa97aad2f2726480ffe8b5b15567c.webp',
@@ -85,8 +84,8 @@ const getServersData = (t: any): DiscordServer[] => [
   },
   {
     id: 5,
-    name: t('community.serverList.renderdragon.name'),
-    description: t('community.serverList.renderdragon.description'),
+    name: 'Renderdragon',
+    description: "Our official Discord server where you can suggest assets, contact us for questions or suggestions and more. We live by our community and we'd love to hear your feedback!", 
     members: 100,
     inviteUrl: 'https://discord.gg/d9zxkkdBWV',
     image: '/renderdragon.png',
@@ -105,11 +104,11 @@ const generateVideoData = (id: string, title: string, creator: string, duration:
   };
 };
 
-const getDefaultVideoCategories = (t: any): VideoCategory[] => [
+const defaultVideoCategories: VideoCategory[] = [
   {
     id: 1,
-    name: t('community.tutorialCategories.thumbnails'),
-    description: t('community.tutorialDescriptions.thumbnails'),
+    name: 'How to Make Thumbnails',
+    description: 'Learn how to create eye-catching Minecraft thumbnails that get clicks',
     videos: [
       generateVideoData(
         '9QkyhxA38NU',
@@ -157,8 +156,8 @@ const getDefaultVideoCategories = (t: any): VideoCategory[] => [
   },
   {
     id: 2,
-    name: t('community.tutorialCategories.premierePro'),
-    description: t('community.tutorialDescriptions.premierePro'),
+    name: 'How to Edit in Premiere Pro',
+    description: 'Tutorials for editing Minecraft videos in Adobe Premiere Pro & After Effects',
     videos: [
       generateVideoData(
         'yO52Tx60Keg',
@@ -200,8 +199,8 @@ const getDefaultVideoCategories = (t: any): VideoCategory[] => [
   },
   {
     id: 3,
-    name: t('community.tutorialCategories.davinciResolve'),
-    description: t('community.tutorialDescriptions.davinciResolve'),
+    name: 'How to Edit in DaVinci Resolve',
+    description: 'Tutorials for editing Minecraft videos in DaVinci Resolve',
     videos: [
       generateVideoData(
         'qDHnCFMZ9HA',
@@ -245,25 +244,22 @@ const formatMemberCount = (count: number): string => {
 };
 
 const Community = () => {
-  const { t } = useTranslation();
   const [videoCategories, setVideoCategories] = useState<VideoCategory[]>([]);
   const [servers, setServers] = useState<DiscordServer[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
   const [openCategories, setOpenCategories] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setVideoCategories(getDefaultVideoCategories(t));
-      setServers(getServersData(t));
+      setVideoCategories(defaultVideoCategories);
+      setServers(SERVERS_DATA);
       setOpenCategories([1]);
       setIsLoading(false);
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [t]);
+  }, []);
 
   const toggleCategory = (categoryId: number) => {
     setOpenCategories(prev => 
@@ -275,18 +271,14 @@ const Community = () => {
 
   const handleJoinServer = (server: DiscordServer) => {
     window.open(server.inviteUrl, '_blank');
-    toast.success(t('community.serverJoinToast.success', { server: server.name }), {
-      description: t('community.serverJoinToast.description'),
+    toast.success(`Opening invite to ${server.name}`, {
+      description: "You'll be redirected to Discord",
     });
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>{t('community.title')}</title>
-        <meta name="description" content={t('community.description')} />
-        <meta property="og:title" content={t('community.title')} />
-        <meta property="og:description" content={t('community.description')} />
         <title>Community - Renderdragon</title>
         <meta name="description" content="Join our community of Minecraft content creators. Find helpful tutorials, guides, and Discord servers to connect with other creators." />
         <meta property="og:title" content="Community - Renderdragon" />

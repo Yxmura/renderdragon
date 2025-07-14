@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -9,14 +9,11 @@ import {
   FileAudio,
   Check,
   Heart,
-  Play,
-  Pause,
 } from 'lucide-react';
 import { Resource } from '@/types/resources';
 import { cn } from '@/lib/utils';
 import { useUserFavorites } from '@/hooks/useUserFavorites';
 import { useAuth } from '@/hooks/useAuth';
-import { useTranslation } from 'react-i18next';
 
 interface ResourceCardProps {
   resource: Resource;
@@ -25,9 +22,6 @@ interface ResourceCardProps {
 }
 
 const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) => {
-  const { t } = useTranslation();
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { user } = useAuth();
   const { toggleFavorite, isFavorited } = useUserFavorites();
@@ -61,22 +55,6 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
         console.error(`Failed to load font "${resource.title}":`, err);
       });
   }, [resource]);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const onPlay = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-
-    audio.addEventListener('play', onPlay);
-    audio.addEventListener('pause', onPause);
-
-    return () => {
-      audio.removeEventListener('play', onPlay);
-      audio.removeEventListener('pause', onPause);
-    };
-  }, [audioRef]);
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
@@ -114,17 +92,6 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
         return 'bg-gray-500/10 text-gray-500';
     }
   };
-
-  const handlePlayPause = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!audioRef.current) return;
-
-    if (audioRef.current.paused) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
-    }
-  }, []);
 
   const handleFavoriteClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
@@ -164,25 +131,6 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             >
               Aa Bb Cc
             </div>
-          </div>
-        );
-      case 'music':
-      case 'sfx':
-        return (
-          <div className="relative aspect-video bg-muted/20 rounded-md overflow-hidden mb-3 flex items-center justify-center">
-            <audio
-              ref={audioRef}
-              src={previewUrl}
-              preload="metadata"
-              className="hidden"
-            />
-            <button
-              onClick={handlePlayPause}
-              className="z-10 p-2 bg-black/50 rounded-full text-white hover:bg-black/75 transition-colors"
-              aria-label={isPlaying ? t('resourceFilters.pause_preview') : t('resourceFilters.play_preview')}
-            >
-              {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
-            </button>
           </div>
         );
       default:
@@ -250,7 +198,7 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             className="text-xs bg-orange-500/10 text-orange-500 px-2 py-1 rounded-md inline-flex items-center"
             whileHover={{ scale: 1.05 }}
           >
-            <span>{t('resourceFilters.credit_required')}</span>
+            <span>Credit required</span>
           </motion.div>
         ) : (
           <motion.div 
@@ -258,7 +206,7 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             whileHover={{ scale: 1.05 }}
           >
             <Check className="h-3 w-3 mr-1" />
-            <span>{t('resourceFilters.no_credit_needed')}</span>
+            <span>No credit needed</span>
           </motion.div>
         )}
       </div>

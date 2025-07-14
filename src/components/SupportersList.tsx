@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Heart } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 interface Supporter {
   name: string;
@@ -41,9 +40,7 @@ const SupportersList = () => {
   return (
     <div className="w-full py-3 overflow-hidden bg-accent/30 rounded-lg">
       <div className="flex flex-col items-center space-y-2">
-        <div className="text-sm font-medium text-muted-foreground">
-          {useTranslation().t('supporters.recentSupporters')}
-        </div>
+        <div className="text-sm font-medium text-muted-foreground">Recent Supporters</div>
         
         <div className="relative h-12 w-full">
           {supporters.map((supporter, index) => (

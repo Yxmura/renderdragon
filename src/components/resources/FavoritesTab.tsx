@@ -6,10 +6,8 @@ import { Heart, Download, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useTranslation } from 'react-i18next';
 
 const FavoritesTab = () => {
-  const { t } = useTranslation();
   const { heartedResources, toggleHeart } = useHeartedResources();
   const { resources, isLoading, handleDownload } = useResources();
 
@@ -35,8 +33,10 @@ const FavoritesTab = () => {
         className="text-center py-12"
       >
         <Heart className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-vt323 mb-2">{t('no_favorites')}</h3>
-        <p className="text-muted-foreground">{t('start_exploring')}</p>
+        <h3 className="text-lg font-vt323 mb-2">No favorites yet</h3>
+        <p className="text-muted-foreground">
+          Start exploring resources and add them to your favorites!
+        </p>
       </motion.div>
     );
   }
@@ -60,7 +60,7 @@ const FavoritesTab = () => {
                 />
               ) : (
                 <div className="w-full h-48 bg-muted flex items-center justify-center">
-                  <span className="text-muted-foreground">{t('no_preview')}</span>
+                  <span className="text-muted-foreground">No preview</span>
                 </div>
               )}
               <Button
@@ -104,7 +104,7 @@ const FavoritesTab = () => {
                     size="sm"
                   >
                     <Download className="mr-2 h-3 w-3" />
-                    {t('download_resource')}
+                    Download
                   </Button>
                   
                   {resource.preview_url && (
@@ -121,7 +121,7 @@ const FavoritesTab = () => {
 
                 {resource.download_count && (
                   <p className="text-xs text-muted-foreground">
-                    {resource.download_count.toLocaleString()} {t('downloads')}
+                    {resource.download_count.toLocaleString()} downloads
                   </p>
                 )}
               </div>

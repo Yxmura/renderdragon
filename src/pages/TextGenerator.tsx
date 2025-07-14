@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -18,13 +17,12 @@ import { toast } from 'sonner';
 import TextGeneratorControlsSkeleton from '@/components/skeletons/TextGeneratorControlsSkeleton';
 
 const TextGenerator = () => {
-  const { t } = useTranslation('textGenerator');
   const { resources, isLoading: isLoadingResources } = useResources();
   const [fonts, setFonts] = useState<Resource[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [settings, setSettings] = useState<TextSettings>({
-    text: t('defaults.text'),
-    font: t('defaults.font'),
+    text: 'Renderdragon',
+    font: 'Minecraft',
     fontSize: 21,
     lineHeight: 1.2,
     characterSpacing: 0,
@@ -96,25 +94,18 @@ const TextGenerator = () => {
       // Clean up
       URL.revokeObjectURL(url);
       
-      toast.success(t('downloadSuccess'));
+      toast.success('Text downloaded successfully!');
     } catch (error) {
       console.error('Error downloading text:', error);
-      toast.error(t('downloadError'));
+      toast.error('Failed to download text. Please try again.');
     }
   };
 
   return (
     <>
       <Helmet>
-        <title>{t('seo.title')} - Renderdragon</title>
-        <meta name="description" content={t('seo.description')} />
-        <meta property="og:title" content={`${t('seo.title')} - Renderdragon`} />
-        <meta property="og:description" content={t('seo.description')} />
-        <meta property="og:image" content="https://renderdragon.org/ogimg/text-generator.png" />
-        <meta property="og:url" content="https://renderdragon.org/text-generator" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${t('seo.title')} - Renderdragon`} />
-        <meta name="twitter:image" content="https://renderdragon.org/ogimg/text-generator.png" />
+        <title>Minecraft Text Generator</title>
+        <meta name="description" content="Generate custom Minecraft text with various styles and effects" />
       </Helmet>
 
       <Navbar />
@@ -123,7 +114,7 @@ const TextGenerator = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
-              <span className="text-cow-purple">{t('title')}</span> {t('subtitle')}
+              <span className="text-cow-purple">Minecraft</span> Text Generator
             </h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -137,20 +128,20 @@ const TextGenerator = () => {
               <div className="space-y-6">
                 {/* Text Input */}
                 <div className="space-y-2">
-                  <Label>{t('controls.text')}</Label>
+                  <Label>Text</Label>
                   <Input
                     value={settings.text}
                     onChange={(e) => handleTextChange(e.target.value)}
-                    placeholder={t('placeholders.text')}
+                    placeholder="Enter your text..."
                   />
                 </div>
 
                 {/* Font Selection */}
                 <div className="space-y-2">
-                  <Label>{t('controls.font')}</Label>
+                  <Label>Font</Label>
                   <Select value={settings.font} onValueChange={handleFontChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder={t('placeholders.selectFont')} />
+                      <SelectValue placeholder="Select a font" />
                     </SelectTrigger>
                     <SelectContent>
                       {fonts.map((font) => (
@@ -164,7 +155,7 @@ const TextGenerator = () => {
 
                 {/* Font Size */}
                 <div className="space-y-2">
-                  <Label>{t('controls.fontSize', { size: settings.fontSize })}</Label>
+                  <Label>Font Size: {settings.fontSize}px</Label>
                   <Slider
                     value={[settings.fontSize]}
                     onValueChange={([value]) => setSettings(prev => ({ ...prev, fontSize: value }))}
@@ -176,7 +167,7 @@ const TextGenerator = () => {
 
                 {/* Line Height */}
                 <div className="space-y-2">
-                  <Label>{t('controls.lineHeight', { height: settings.lineHeight })}</Label>
+                  <Label>Line Height: {settings.lineHeight}</Label>
                   <Slider
                     value={[settings.lineHeight]}
                     onValueChange={([value]) => setSettings(prev => ({ ...prev, lineHeight: value }))}
@@ -188,7 +179,7 @@ const TextGenerator = () => {
 
                 {/* Character Spacing */}
                 <div className="space-y-2">
-                  <Label>{t('controls.characterSpacing', { spacing: settings.characterSpacing })}</Label>
+                  <Label>Character Spacing: {settings.characterSpacing}px</Label>
                   <Slider
                     value={[settings.characterSpacing]}
                     onValueChange={([value]) => setSettings(prev => ({ ...prev, characterSpacing: value }))}
@@ -200,7 +191,7 @@ const TextGenerator = () => {
 
                 {/* Rotation */}
                 <div className="space-y-2">
-                  <Label>{t('controls.rotation', { degrees: settings.rotation })}</Label>
+                  <Label>Rotation: {settings.rotation}°</Label>
                   <Slider
                     value={[settings.rotation]}
                     onValueChange={([value]) => setSettings(prev => ({ ...prev, rotation: value }))}
@@ -212,7 +203,7 @@ const TextGenerator = () => {
 
                 {/* Curve */}
                 <div className="space-y-2">
-                  <Label>{t('controls.curve', { degrees: settings.curve })}</Label>
+                  <Label>Curve: {settings.curve}°</Label>
                   <Slider
                     value={[settings.curve]}
                     onValueChange={([value]) => setSettings(prev => ({ ...prev, curve: value }))}
@@ -234,13 +225,13 @@ const TextGenerator = () => {
                         }))
                       }
                     />
-                    <Label>{t('controls.shadow')}</Label>
+                    <Label>Shadow</Label>
                   </div>
 
                   {settings.shadow.enabled && (
                     <div className="space-y-4 pl-6">
                       <div className="space-y-2">
-                        <Label>{t('controls.shadowOffsetX', { offset: settings.shadow.offsetX })}</Label>
+                        <Label>Shadow Offset X: {settings.shadow.offsetX}px</Label>
                         <Slider
                           value={[settings.shadow.offsetX]}
                           onValueChange={([value]) =>
@@ -256,7 +247,7 @@ const TextGenerator = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t('controls.shadowOffsetY', { offset: settings.shadow.offsetY })}</Label>
+                        <Label>Shadow Offset Y: {settings.shadow.offsetY}px</Label>
                         <Slider
                           value={[settings.shadow.offsetY]}
                           onValueChange={([value]) =>
@@ -272,7 +263,7 @@ const TextGenerator = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t('controls.shadowBlur', { blur: settings.shadow.blur })}</Label>
+                        <Label>Shadow Blur: {settings.shadow.blur}px</Label>
                         <Slider
                           value={[settings.shadow.blur]}
                           onValueChange={([value]) =>
@@ -288,7 +279,7 @@ const TextGenerator = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t('controls.shadowColor')}</Label>
+                        <Label>Shadow Color</Label>
                         <Input
                           type="color"
                           value={settings.shadow.color}
@@ -316,13 +307,13 @@ const TextGenerator = () => {
                         }))
                       }
                     />
-                    <Label>{t('controls.outline')}</Label>
+                    <Label>Outline</Label>
                   </div>
 
                   {settings.outline.enabled && (
                     <div className="space-y-4 pl-6">
                       <div className="space-y-2">
-                        <Label>{t('controls.outlineWidth', { width: settings.outline.width })}</Label>
+                        <Label>Outline Width: {settings.outline.width}px</Label>
                         <Slider
                           value={[settings.outline.width]}
                           onValueChange={([value]) =>
@@ -338,7 +329,7 @@ const TextGenerator = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>{t('controls.outlineColor')}</Label>
+                        <Label>Outline Color</Label>
                         <Input
                           type="color"
                           value={settings.outline.color}
@@ -357,24 +348,24 @@ const TextGenerator = () => {
                 {/* Color Controls */}
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label>{t('controls.colorType')}</Label>
+                    <Label>Color Type</Label>
                     <Select
                       value={settings.color.type}
                       onValueChange={(value: 'solid' | 'gradient') => handleColorTypeChange(value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={t('placeholders.selectColorType')} />
+                        <SelectValue placeholder="Select color type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="solid">{t('colorTypes.solid')}</SelectItem>
-                        <SelectItem value="gradient">{t('colorTypes.gradient')}</SelectItem>
+                        <SelectItem value="solid">Solid Color</SelectItem>
+                        <SelectItem value="gradient">Gradient</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   {settings.color.type === 'solid' && (
                     <div className="space-y-2">
-                      <Label>{t('controls.color')}</Label>
+                      <Label>Color</Label>
                       <Input
                         type="color"
                         value={settings.color.value}
@@ -391,7 +382,7 @@ const TextGenerator = () => {
                   {settings.color.type === 'gradient' && (
                     <div className="space-y-4">
                       <div className="flex items-center gap-4">
-                        <Label>{t('controls.gradientType')}</Label>
+                        <Label>Gradient Type</Label>
                         <Select
                           value={settings.color.gradientType || 'linear'}
                           onValueChange={(value) => setSettings(prev => ({
@@ -403,18 +394,18 @@ const TextGenerator = () => {
                           }))}
                         >
                           <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder={t('placeholders.selectGradientType')} />
+                            <SelectValue placeholder="Select gradient type" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="linear">{t('gradientTypes.linear')}</SelectItem>
-                            <SelectItem value="radial">{t('gradientTypes.radial')}</SelectItem>
-                            <SelectItem value="conic">{t('gradientTypes.conic')}</SelectItem>
+                            <SelectItem value="linear">Linear</SelectItem>
+                            <SelectItem value="radial">Radial</SelectItem>
+                            <SelectItem value="conic">Conic</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label>{t('controls.startColor')}</Label>
+                          <Label>Start Color</Label>
                           <div className="flex gap-2">
                             <Input
                               type="color"
@@ -443,7 +434,7 @@ const TextGenerator = () => {
                           </div>
                         </div>
                         <div className="space-y-2">
-                          <Label>{t('controls.endColor')}</Label>
+                          <Label>End Color</Label>
                           <div className="flex gap-2">
                             <Input
                               type="color"
@@ -476,7 +467,7 @@ const TextGenerator = () => {
                   )}
 
                   <div className="space-y-2">
-                    <Label>{t('controls.opacity', { opacity: settings.color.opacity })}</Label>
+                    <Label>Opacity: {settings.color.opacity}</Label>
                     <Slider
                       value={[settings.color.opacity]}
                       onValueChange={([value]) =>
@@ -498,7 +489,7 @@ const TextGenerator = () => {
                   onClick={handleDownload}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  {t('downloadButton')}
+                  Download Text
                 </Button>
               </div>
               )}

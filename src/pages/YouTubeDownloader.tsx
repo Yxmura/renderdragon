@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DonateButton from '@/components/DonateButton';
@@ -36,15 +35,13 @@ interface VideoInfo {
 }
 
 const YouTubeDownloader: React.FC = () => {
-  const { t } = useTranslation('youtubeDownloader');
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [selectedOptionId, setSelectedOptionId] = useState('');
   const [videoInfo, setVideoInfo] = useState<VideoInfo | null>(null);
   const [isLoadingInfo, setIsLoadingInfo] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [urlError, setUrlError] = useState(false);
-  const defaultDownloadType = t('defaults.downloadType') as 'video' | 'audio';
-const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownloadType || 'video');
+  const [downloadType, setDownloadType] = useState<'video' | 'audio'>('video');
   const [filteredOptions, setFilteredOptions] = useState<DownloadOption[]>([]);
   const [isDownloadingThumb, setIsDownloadingThumb] = useState(false);
 
@@ -81,7 +78,7 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
 
   const handleFetchInfo = async () => {
     if (!youtubeUrl || !isValidYoutubeUrl(youtubeUrl)) {
-      toast.error(t('errors.invalidUrl'));
+      toast.error('Please enter a valid YouTube URL');
       setUrlError(true);
       return;
     }
@@ -112,7 +109,7 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
       setVideoInfo(data);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`${t('errors.fetchFailed')}: ${msg}`);
+      toast.error(`Failed to fetch video info: ${msg}`);
       console.error(err);
     } finally {
       setIsLoadingInfo(false);
@@ -122,7 +119,7 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
   const handleDownloadThumbnail = async () => {
     if (!videoInfo) return;
     setIsDownloadingThumb(true);
-    toast.info(t('messages.preparingThumbnailDownload'));
+    toast.info('Preparing thumbnail download...');
     try {
       const title = encodeURIComponent(videoInfo.title);
       const thumbnailUrl = encodeURIComponent(videoInfo.thumbnail);
@@ -154,10 +151,10 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
       a.click();
       a.remove();
       window.URL.revokeObjectURL(blobUrl);
-      toast.success(t('messages.thumbnailDownloadStarted'));
+      toast.success('Thumbnail download started!');
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`${t('errors.thumbnailDownloadFailed')}: ${msg}`);
+      toast.error(`Thumbnail download failed: ${msg}`);
       console.error(err);
     } finally {
       setIsDownloadingThumb(false);
@@ -166,18 +163,18 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
 
   const handleDownload = async () => {
     if (!videoInfo || !selectedOptionId) {
-      toast.error(t('errors.selectFormat'));
+      toast.error('Please select a format first');
       return;
     }
 
     const selectedOption = videoInfo.options.find(o => o.id === selectedOptionId);
     if (!selectedOption) {
-      toast.error(t('errors.formatNotFound'));
+      toast.error('Selected format not found');
       return;
     }
 
     setIsDownloading(true);
-    toast.info(t('messages.preparingDownload'), { duration: 5000 });
+    toast.info('Preparing download...', { duration: 5000 });
 
     try {
       const title = encodeURIComponent(videoInfo.title);
@@ -208,10 +205,10 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
       a.click();
       a.remove();
       window.URL.revokeObjectURL(blobUrl);
-      toast.success(t('messages.downloadStarted'), { description: `Downloading ${selectedOption.label}` });
+      toast.success('Download started!', { description: `Downloading ${selectedOption.label}` });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`${t('errors.downloadFailed')}: ${msg}`);
+      toast.error(`Download failed: ${msg}`);
       console.error(err);
     } finally {
       setIsDownloading(false);
@@ -221,42 +218,39 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>{t('seo.title')} - Renderdragon</title>
-        <meta name="description" content={t('seo.description')} />
-        <meta property="og:title" content={`${t('seo.title')} - Renderdragon`} />
-        <meta property="og:description" content={t('seo.description')} />
-        <meta property="og:image" content="https://renderdragon.org/ogimg/youtube-downloader.png" />
-        <meta property="og:url" content="https://renderdragon.org/youtube-downloader" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${t('seo.title')} - Renderdragon`} />
-        <meta name="twitter:image" content="https://renderdragon.org/ogimg/youtube-downloader.png" />
+        <title>YouTube Downloader - Renderdragon</title>
+        <meta
+          name="description"
+          content="Download YouTube videos for fair use and educational purposes. Our tool helps Minecraft content creators learn from and reference other creators' work."
+        />
       </Helmet>
-      
       <Navbar />
-      
-      <main className="flex-grow pt-24 pb-16">
+
+      <main className="flex-grow pt-24 pb-16 cow-grid-bg">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
-              <span className="text-cow-purple">{t('title')}</span> {t('subtitle')}
+              <span className="text-cow-purple">YouTube</span> Downloader
             </h1>
-            
+
             <p className="text-center text-muted-foreground mb-8 max-w-xl mx-auto">
-              {t('description')}
+              Download YouTube videos and thumbnails for content creation purposes. Always respect copyright laws and only download videos
+              you have permission to use.
             </p>
 
             <Alert className="mb-8 pixel-corners">
               <Info className="h-4 w-4" />
-              <AlertTitle>{t('alerts.note')}</AlertTitle>
+              <AlertTitle>Important Notice</AlertTitle>
               <AlertDescription>
-                {t('alerts.noteDescription')}
+                This tool is for educational purposes only. You are responsible for ensuring you have the right to download
+                and use any content.
               </AlertDescription>
             </Alert>
 
             <div className="pixel-card mb-8">
               <div className="flex flex-col md:flex-row gap-4">
                 <Input
-                  placeholder={t('placeholders.url')}
+                  placeholder="Paste YouTube URL here"
                   value={youtubeUrl}
                   onChange={handleUrlChange}
                   className={`pixel-corners flex-grow ${urlError ? 'border-red-500' : ''}`}
@@ -264,18 +258,18 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
                 <Button onClick={handleFetchInfo} disabled={isLoadingInfo} className="pixel-btn-primary flex items-center">
                   {isLoadingInfo ? (
                     <>
-                      <RefreshCcw className="h-4 w-4 mr-2 animate-spin" /> <span>{t('buttons.loading')}</span>
+                      <RefreshCcw className="h-4 w-4 mr-2 animate-spin" /> <span>Processing...</span>
                     </>
                   ) : (
                     <>
-                      <Youtube className="h-4 w-4 mr-2" /> <span>{t('buttons.getVideoInfo')}</span>
+                      <Youtube className="h-4 w-4 mr-2" /> <span>Fetch Video Info</span>
                     </>
                   )}
                 </Button>
               </div>
               {urlError && (
                 <p className="text-red-500 text-xs mt-2 flex items-center">
-                  <AlertCircle className="h-3 w-3 mr-1" /> {t('errors.invalidUrl')}
+                  <AlertCircle className="h-3 w-3 mr-1" /> Please enter a valid YouTube URL
                 </p>
               )}
             </div>
@@ -285,39 +279,39 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
             {videoInfo && !isLoadingInfo && (
               <Tabs defaultValue="download" className="w-full">
                 <TabsList className="pixel-card mb-4">
-                  <TabsTrigger value="download">{t('tabs.video')}</TabsTrigger>
-                  <TabsTrigger value="thumbnail">{t('tabs.thumbnail')}</TabsTrigger>
+                  <TabsTrigger value="download">Video / Audio</TabsTrigger>
+                  <TabsTrigger value="thumbnail">Thumbnail</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="download">
                   <div className="pixel-card space-y-6">
                     <div className="flex flex-col md:flex-row gap-6">
                       <div className="w-full md:w-2/5">
-                        <img src={videoInfo.thumbnail} alt={t('alts.thumbnail')} className="rounded-md w-full h-auto" />
+                        <img src={videoInfo.thumbnail} alt={videoInfo.title} className="rounded-md w-full h-auto" />
                       </div>
                       <div className="w-full md:w-3/5">
                         <h2 className="text-xl font-vt323 mb-2">{videoInfo.title}</h2>
                         <div className="flex flex-wrap gap-3 mb-4">
                           <div className="bg-accent text-accent-foreground px-2 py-1 rounded-md text-xs flex items-center">
-                            <span className="mr-1">{t('labels.duration')}:</span> {videoInfo.duration}
+                            <span className="mr-1">Duration:</span> {videoInfo.duration}
                           </div>
                           <div className="bg-accent text-accent-foreground px-2 py-1 rounded-md text-xs flex items-center">
-                            <span className="mr-1">{t('labels.channel')}:</span> {videoInfo.author}
+                            <span className="mr-1">Channel:</span> {videoInfo.author}
                           </div>
                         </div>
                         
                         <RadioGroup value={downloadType} onValueChange={v => setDownloadType(v as 'video' | 'audio')} className="flex gap-4 mb-4">
                            <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="video" id="video" /> <Label htmlFor="video">{t('labels.video')}</Label>
+                            <RadioGroupItem value="video" id="video" /> <Label htmlFor="video">Video</Label>
                            </div>
                            <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="audio" id="audio" /> <Label htmlFor="audio">{t('labels.audioOnly')}</Label>
+                            <RadioGroupItem value="audio" id="audio" /> <Label htmlFor="audio">Audio only</Label>
                            </div>
                          </RadioGroup>
 
                         <Select value={selectedOptionId} onValueChange={setSelectedOptionId}>
                           <SelectTrigger className="pixel-corners">
-                            <SelectValue placeholder={t('placeholders.selectFormat')} />
+                            <SelectValue placeholder="Select format & quality" />
                           </SelectTrigger>
                           <SelectContent>
                             {filteredOptions.map((opt, index) => (
@@ -333,11 +327,11 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
                     <Button onClick={handleDownload} disabled={!selectedOptionId || isDownloading} className="w-full pixel-btn-primary flex items-center justify-center">
                       {isDownloading ? (
                         <>
-                          <RefreshCcw className="h-5 w-5 mr-2 animate-spin" /> <span>{t('buttons.downloading')}</span>
+                          <RefreshCcw className="h-5 w-5 mr-2 animate-spin" /> <span>Downloading...</span>
                         </>
                       ) : (
                         <>
-                          <Download className="h-5 w-5 mr-2" /> <span>{downloadType === 'video' ? t('buttons.downloadVideo') : t('buttons.downloadAudio')}</span>
+                          <Download className="h-5 w-5 mr-2" /> <span>Download {downloadType === 'video' ? 'Video' : 'Audio'}</span>
                         </>
                       )}
                     </Button>
@@ -346,15 +340,15 @@ const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownl
 
                 <TabsContent value="thumbnail">
                   <div className="pixel-card space-y-6">
-                    <img src={videoInfo.thumbnail} alt={t('alts.thumbnail')} className="rounded-md w-full h-auto" />
+                    <img src={videoInfo.thumbnail} alt={videoInfo.title} className="rounded-md w-full h-auto" />
                     <Button onClick={handleDownloadThumbnail} disabled={isDownloadingThumb} className="w-full pixel-btn-primary flex items-center justify-center">
                       {isDownloadingThumb ? (
                         <>
-                          <RefreshCcw className="h-5 w-5 mr-2 animate-spin" /> <span>{t('buttons.downloadingThumbnail')}</span>
+                          <RefreshCcw className="h-5 w-5 mr-2 animate-spin" /> <span>Downloading...</span>
                         </>
                       ) : (
                         <>
-                          <Download className="h-5 w-5 mr-2" /> <span>{t('buttons.downloadThumbnail')}</span>
+                          <Download className="h-5 w-5 mr-2" /> <span>Download Thumbnail</span>
                         </>
                       )}
                     </Button>

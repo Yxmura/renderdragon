@@ -25,7 +25,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useTranslation } from 'react-i18next';
 
 interface ResourceDetailDialogProps {
   resource: Resource | null;
@@ -34,9 +33,9 @@ interface ResourceDetailDialogProps {
   downloadCount: number;
   loadedFonts: string[];
   setLoadedFonts: (fonts: string[]) => void;
-  filteredResources: Resource[]; 
-  onSelectResource: (resource: Resource) => void; 
-  isFavoritesView?: boolean; 
+  filteredResources: Resource[]; // Add this prop
+  onSelectResource: (resource: Resource) => void; // Add this prop
+  isFavoritesView?: boolean; // Added prop to indicate favorites view
 }
 
 const ResourceDetailDialog = ({ 
@@ -48,9 +47,8 @@ const ResourceDetailDialog = ({
   setLoadedFonts,
   filteredResources,
   onSelectResource,
-  isFavoritesView = false
+  isFavoritesView = false // Added prop to indicate favorites view
 }: ResourceDetailDialogProps) => {
-  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const isMobile = useIsMobile();
 
@@ -85,6 +83,7 @@ const ResourceDetailDialog = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [resource, hasPrevious, hasNext, handlePrevious, handleNext, isFavoritesView]);
 
+  // Update the font URL logic to append '__{creditName}' for resources with credit
   useEffect(() => {
     if (resource?.category === 'fonts' && resource.title && !loadedFonts.includes(resource.title)) {
       const titleLowered = resource.title
@@ -152,10 +151,10 @@ const ResourceDetailDialog = ({
   const copyCredit = () => {
     if (!resource?.credit) return;
 
-    const creditText = t('credit_text', { author: resource.credit });
+    const creditText = `Music by ${resource.credit}`;
     navigator.clipboard.writeText(creditText);
     setCopied(true);
-    toast.success(t('credit_copied'));
+    toast.success('Credit copied to clipboard!');
 
     setTimeout(() => {
       setCopied(false);
@@ -196,7 +195,7 @@ const ResourceDetailDialog = ({
               
               <Badge variant="outline" className="bg-blue-500/10 text-blue-500">
                 <Download className="h-3 w-3 mr-1" />
-                {downloadCount || 0} {t('resourceFilters.downloads')}
+                {downloadCount || 0} downloads
               </Badge>
             </div>
           </DialogDescription>
@@ -204,18 +203,18 @@ const ResourceDetailDialog = ({
 
         <div className="space-y-5 py-2">
           <div className="border border-border rounded-md p-4">
-            <h4 className="font-vt323 text-lg mb-1">{t('resourceFilters.attribution')}</h4>
+            <h4 className="font-vt323 text-lg mb-1">Attribution</h4>
 
             {resource.credit ? (
               <div className="space-y-2">
                 <p className="text-sm text-orange-500 flex items-center">
                   <span className="mr-2">⚠️</span>
-                  <span>{t('resourceFilters.credit_warning')}</span>
+                  Please credit this author in your description:
                 </p>
 
                 <div className="flex items-center">
                   <code className="bg-muted px-2 py-1 rounded text-sm flex-grow">
-                    {t('resourceFilters.credit_text', { author: resource.credit })}
+                    Credit: {resource.credit}
                   </code>
 
                   <Button
@@ -227,12 +226,12 @@ const ResourceDetailDialog = ({
                     {copied ? (
                       <>
                         <Check className="h-3.5 w-3.5" />
-                        <span>{t('resourceFilters.copied')}</span>
+                        <span>Copied</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3.5 w-3.5" />
-                        <span>{t('resourceFilters.copy')}</span>
+                        <span>Copy</span>
                       </>
                     )}
                   </Button>
@@ -241,7 +240,10 @@ const ResourceDetailDialog = ({
             ) : (
               <div className="flex items-center text-green-500">
                 <Check className="h-5 w-5 mr-2" />
-                <span>{t('resourceFilters.no_attribution_required')}</span>
+                <span>
+                  No attribution required! You're free to use this resource
+                  without crediting.
+                </span>
               </div>
             )}
           </div>
@@ -257,8 +259,8 @@ const ResourceDetailDialog = ({
                 disabled={!hasPrevious}
               >
                 <ChevronLeft className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:inline">{t('resourceFilters.previous')}</span>
-                <span className="sr-only">{t('resourceFilters.previous_resource')}</span>
+                <span className="hidden md:inline">Previous</span>
+                <span className="sr-only">Previous resource</span>
               </Button>
 
               <Button
@@ -266,7 +268,7 @@ const ResourceDetailDialog = ({
                 className="pixel-btn-primary flex items-center justify-center gap-2"
               >
                 <Download className="h-5 w-5" />
-                <span>{t('resourceFilters.download_resource')}</span>
+                <span>Download Resource</span>
               </Button>
 
               <Button
@@ -275,15 +277,16 @@ const ResourceDetailDialog = ({
                 onClick={handleNext}
                 disabled={!hasNext}
               >
-                <span className="hidden md:inline">{t('next')}</span>
+                <span className="hidden md:inline">Next</span>
                 <ChevronRight className="h-4 w-4 md:ml-2" />
-                <span className="sr-only">{t('next_resource')}</span>
+                <span className="sr-only">Next resource</span>
               </Button>
             </div>
           )}
 
           <p className="text-xs text-center text-muted-foreground">
-            {t('resourceFilters.download_agreement')}
+            By downloading, you agree to our terms of use. Crediting
+            "Renderdragon" is optional but appreciated!
           </p>
         </div>
       </DialogContent>

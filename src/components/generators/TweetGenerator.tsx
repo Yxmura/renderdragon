@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,13 +8,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import html2canvas from 'html2canvas';
 
 const TweetGenerator = () => {
-  const { t } = useTranslation();
   const [profilePicUrl, setProfilePicUrl] = useState('https://placehold.co/500?text=renderdragon');
-  const [userName, setUserName] = useState(t('tweetGenerator.defaultValues.userName', { defaultValue: 'Renderdragon_' }));
-  const [userHandle, setUserHandle] = useState(t('tweetGenerator.defaultValues.userHandle', { defaultValue: 'Renderdragon_' }));
-  const [tweetText, setTweetText] = useState(t('tweetGenerator.defaultValues.tweetText', { defaultValue: 'just use renderdragon.org' }));
-  const [timestamp, setTimestamp] = useState(t('tweetGenerator.defaultValues.timestamp', { defaultValue: '2:30 PM · Jun 13, 2025' }));
-  const [viewsCount, setViewsCount] = useState(t('tweetGenerator.defaultValues.viewsCount', { defaultValue: '99.9K Views' }));
+  const [userName, setUserName] = useState('Renderdragon_');
+  const [userHandle, setUserHandle] = useState('Renderdragon_');
+  const [tweetText, setTweetText] = useState('just use renderdragon.org');
+  const [timestamp, setTimestamp] = useState('2:30 PM · Jun 13, 2025');
+  const [viewsCount, setViewsCount] = useState('99.9K Views');
   const [showStats, setShowStats] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const tweetPreviewRef = useRef<HTMLDivElement>(null);
@@ -44,71 +42,71 @@ const TweetGenerator = () => {
       <div className="space-y-6">
         <div className="space-y-4">
           <div>
-            <Label htmlFor="profilePicUrl">{t('tweetGenerator.labels.profilePicUrl')}</Label>
+            <Label htmlFor="profilePicUrl">Profile Picture URL</Label>
             <Input
               id="profilePicUrl"
               value={profilePicUrl}
               onChange={(e) => setProfilePicUrl(e.target.value)}
-              placeholder={t('tweetGenerator.placeholders.profilePicUrl')}
+              placeholder="e.g., https://via.placeholder.com/48"
               className="pixel-corners"
             />
           </div>
 
           <div>
-            <Label htmlFor="userName">{t('tweetGenerator.labels.userName')}</Label>
+            <Label htmlFor="userName">User Name</Label>
             <Input
               id="userName"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               maxLength={50}
-              placeholder={t('tweetGenerator.placeholders.userName')}
+              placeholder="e.g., Elon Musk"
               className="pixel-corners"
             />
           </div>
 
           <div>
-            <Label htmlFor="userHandle">{t('tweetGenerator.labels.userHandle')}</Label>
+            <Label htmlFor="userHandle">User Handle</Label>
             <Input
               id="userHandle"
               value={userHandle}
               onChange={(e) => setUserHandle(e.target.value)}
               maxLength={15}
-              placeholder={t('tweetGenerator.placeholders.userHandle')}
+              placeholder="e.g., elonmusk"
               className="pixel-corners"
             />
           </div>
 
           <div>
-            <Label htmlFor="tweetText">{t('tweetGenerator.labels.tweetText')}</Label>
+            <Label htmlFor="tweetText">Tweet Text</Label>
             <Textarea
               id="tweetText"
               value={tweetText}
               onChange={(e) => setTweetText(e.target.value)}
               maxLength={280}
-              placeholder={t('tweetGenerator.placeholders.tweetText')}
+              placeholder="What's happening?"
               className="pixel-corners"
               rows={3}
             />
           </div>
 
           <div>
-            <Label htmlFor="timestamp">{t('tweetGenerator.labels.timestamp')}</Label>
+            <Label htmlFor="timestamp">Timestamp</Label>
             <Input
               id="timestamp"
               value={timestamp}
               onChange={(e) => setTimestamp(e.target.value)}
-              placeholder={t('tweetGenerator.placeholders.timestamp')}
+              placeholder="e.g., 3m ago"
               className="pixel-corners"
             />
           </div>
 
           <div>
-            <Label htmlFor="viewsCount">{t('tweetGenerator.labels.viewsCount')}</Label>
+            <Label htmlFor="viewsCount">Views Count</Label>
             <Input
               id="viewsCount"
               value={viewsCount}
               onChange={(e) => setViewsCount(e.target.value)}
-              placeholder={t('tweetGenerator.placeholders.viewsCount')}
+              placeholder="e.g., 1.5M Views"
               className="pixel-corners"
             />
           </div>
@@ -119,28 +117,28 @@ const TweetGenerator = () => {
               checked={showStats}
               onCheckedChange={(checked) => setShowStats(checked as boolean)}
             />
-            <Label htmlFor="toggleStats">{t('tweetGenerator.labels.showStats')}</Label>
+            <Label htmlFor="toggleStats">Show Timestamp & Views</Label>
           </div>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-vt323">{t('tweetGenerator.preview.title')}</h2>
+        <h2 className="text-xl font-vt323">Twitter Preview</h2>
         <div
           ref={tweetPreviewRef}
           className="w-full max-w-xl"
-          style={{
-            background: isDarkMode ? '#000' : '#fff',
-            borderRadius: 16,
-            border: isDarkMode ? '1px solid #2f3336' : '1px solid #e1e8ed',
-            padding: 20,
-            boxShadow: isDarkMode ? 'none' : '0 1px 3px rgba(0,0,0,0.04)',
+          style={{ 
+            background: isDarkMode ? '#000' : '#fff', 
+            borderRadius: 16, 
+            border: isDarkMode ? '1px solid #2f3336' : '1px solid #e1e8ed', 
+            padding: 20, 
+            boxShadow: isDarkMode ? 'none' : '0 1px 3px rgba(0,0,0,0.04)' 
           }}
         >
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
             <img
               src={profilePicUrl}
-              alt={t('tweetGenerator.preview.alt.profilePicture')}
+              alt="Profile Picture"
               style={{ width: 48, height: 48, borderRadius: '50%' }}
             />
             <div style={{ flex: 1 }}>
@@ -174,10 +172,10 @@ const TweetGenerator = () => {
         </div>
         <div className="flex gap-4 mt-4">
           <Button onClick={() => setIsDarkMode(!isDarkMode)} className="flex-1 pixel-btn-primary">
-            {t('tweetGenerator.buttons.toggleTheme')}
+            Toggle Theme
           </Button>
           <Button onClick={exportAsPNG} className="flex-1 pixel-btn-primary">
-            {t('tweetGenerator.buttons.exportPng')}
+            Export as PNG
           </Button>
         </div>
       </div>
@@ -185,4 +183,4 @@ const TweetGenerator = () => {
   );
 };
 
-export default TweetGenerator;
+export default TweetGenerator; 

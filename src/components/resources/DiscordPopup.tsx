@@ -10,7 +10,6 @@ interface DiscordPopupProps {
 }
 
 const DiscordPopup = ({ isOpen, onClose, onNeverShowAgain }: DiscordPopupProps) => {
-  const { t } = useTranslation();
   if (!isOpen) return null;
 
   return (
@@ -22,9 +21,9 @@ const DiscordPopup = ({ isOpen, onClose, onNeverShowAgain }: DiscordPopupProps) 
           transition={{ duration: 0.3 }}
         >
           <DialogHeader>
-            <DialogTitle className="font-vt323 text-2xl text-primary">{t('join_title')}</DialogTitle>
+            <DialogTitle className="font-vt323 text-2xl text-primary">Join our Discord</DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              {t('join_desc')}
+              Join our Discord server to get the latest updates, share your creations, and connect with other creators.
             </DialogDescription>
           </DialogHeader>
           <div className="my-4 flex justify-center">
@@ -35,10 +34,10 @@ const DiscordPopup = ({ isOpen, onClose, onNeverShowAgain }: DiscordPopupProps) 
               onClick={() => window.open('https://discord.renderdragon.org', '_blank')}
               className="pixel-corners bg-cow-purple hover:bg-cow-purple-dark"
             >
-              {t('join_now')}
+              Join Now
             </Button>
             <Button onClick={onNeverShowAgain} variant="outline" className="pixel-corners">
-              {t('never_show')}
+              Never Show Again
             </Button>
           </DialogFooter>
         </motion.div>

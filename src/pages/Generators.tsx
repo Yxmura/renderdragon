@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,19 +10,17 @@ import YouTubeCommentGenerator from '@/components/generators/YouTubeCommentGener
 import MinecraftNametagGenerator from '@/components/generators/MinecraftNametagGenerator';
 
 const Generators = () => {
-  const { t } = useTranslation();
-  
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>{t('generators.seo.title')}</title>
-        <meta name="description" content={t('generators.seo.description')} />
-        <meta property="og:title" content={t('generators.seo.ogTitle')} />
-        <meta property="og:description" content={t('generators.seo.ogDescription')} />
+        <title>Content Generators - Renderdragon</title>
+        <meta name="description" content="Generate social media content, YouTube comments, and Minecraft nametags with our easy-to-use generators." />
+        <meta property="og:title" content="Content Generators - Renderdragon" />
+        <meta property="og:description" content="Generate social media content, YouTube comments, and Minecraft nametags with our easy-to-use generators." />
         <meta property="og:image" content="https://renderdragon.org/ogimg/generators.png" />
         <meta property="og:url" content="https://renderdragon.org/generators" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={t('generators.seo.twitterTitle')} />
+        <meta name="twitter:title" content="Content Generators - Renderdragon" />
         <meta name="twitter:image" content="https://renderdragon.org/ogimg/generators.png" />
       </Helmet>
       
@@ -33,26 +30,27 @@ const Generators = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
-              {t('generators.title')} <span className="text-cow-purple">{t('generators.titleHighlight')}</span>
+              Content <span className="text-cow-purple">Generators</span>
             </h1>
             
             <p className="text-center text-muted-foreground mb-8 max-w-xl mx-auto">
-              {t('generators.description')}
+              Create social media content, YouTube comments, and Minecraft nametags with our easy-to-use generators.
+              Perfect for content creators and Minecraft players.
             </p>
 
             <Tabs defaultValue="tweet" className="w-full">
               <TabsList className="grid w-full grid-cols-3 mb-8">
                 <TabsTrigger value="tweet" className="flex items-center gap-2">
                   <Twitter className="h-4 w-4" />
-                  {t('generators.tabs.tweet')}
+                  Tweet Generator
                 </TabsTrigger>
                 <TabsTrigger value="comment" className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
-                  {t('generators.tabs.comment')}
+                  YouTube Comment
                 </TabsTrigger>
                 <TabsTrigger value="nametag" className="flex items-center gap-2">
                   <Tag className="h-4 w-4" />
-                  {t('generators.tabs.nametag')}
+                  Minecraft Nametag
                 </TabsTrigger>
               </TabsList>
 

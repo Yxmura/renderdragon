@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,7 +6,6 @@ import { Card } from '@/components/ui/card';
 import html2canvas from 'html2canvas';
 
 const MinecraftNametagGenerator = () => {
-  const { t } = useTranslation();
   const [playerName, setPlayerName] = useState('');
   const nametagContainerRef = useRef<HTMLDivElement>(null);
 
@@ -39,12 +37,12 @@ const MinecraftNametagGenerator = () => {
       <div className="space-y-6">
         <div className="space-y-4">
           <div>
-            <Label htmlFor="playerName">{t('minecraftNametag.labels.playerName')}</Label>
+            <Label htmlFor="playerName">Player Name</Label>
             <Input
               id="playerName"
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
-              placeholder={t('minecraftNametag.placeholders.playerName')}
+              placeholder="Enter player name"
               maxLength={16}
               className="pixel-corners"
             />
@@ -53,7 +51,7 @@ const MinecraftNametagGenerator = () => {
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-vt323">{t('minecraftNametag.preview.title')}</h2>
+        <h2 className="text-xl font-vt323">Rendered Nametag</h2>
         <div className="flex flex-col items-center gap-4">
           <Card 
             ref={nametagContainerRef}
@@ -79,7 +77,7 @@ const MinecraftNametagGenerator = () => {
                   {playerName}
                 </span>
               ) : (
-                <span className="text-muted-foreground">{t('minecraftNametag.preview.placeholder')}</span>
+                <span className="text-muted-foreground">Enter a name to render</span>
               )}
             </div>
           </Card>
@@ -89,7 +87,7 @@ const MinecraftNametagGenerator = () => {
               className="flex-1 pixel-btn-primary"
               disabled={!playerName}
             >
-              {t('minecraftNametag.buttons.exportPng')}
+              Export as PNG
             </Button>
           </div>
         </div>

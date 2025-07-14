@@ -6,11 +6,10 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import DonateButton from '@/components/DonateButton';
 import { Helmet } from 'react-helmet-async';
-import { useTranslation } from 'react-i18next';
 
 interface TeamMember {
   name: string;
-  roleKey: string;
+  role: string;
   avatar: string;
   socials?: {
     github?: string;
@@ -22,7 +21,7 @@ interface TeamMember {
 const teamMembers: TeamMember[] = [
   {
     name: 'Coder-soft',
-    roleKey: 'founder',
+    role: 'Founder',
     avatar: '/assets/codersoft.png',
     socials: {
       github: 'https://github.com/coder-soft',
@@ -32,7 +31,7 @@ const teamMembers: TeamMember[] = [
   },
   {
     name: 'Clover',
-    roleKey: 'projectLead',
+    role: 'Project Lead',
     avatar: '/assets/clover.jpeg',
     socials: {
       github: 'https://github.com/CloverTheBunny',
@@ -41,7 +40,7 @@ const teamMembers: TeamMember[] = [
   },
   {
     name: 'Yamura',
-    roleKey: 'leadProgrammer',
+    role: 'Lead Programmer',
     avatar: '/assets/yamura.png',
     socials: {
       github: 'https://github.com/Yxmura',
@@ -50,7 +49,7 @@ const teamMembers: TeamMember[] = [
   },
   {
     name: 'TomatoKing',
-    roleKey: 'kingOfYapping',
+    role: 'King of Yapping',
     avatar: '/assets/tomatoking.png',
     socials: {
       discord: 'https://discordapp.com/users/1279190506126966847',
@@ -59,7 +58,7 @@ const teamMembers: TeamMember[] = [
   },
   {
     name: 'Denji',
-    roleKey: 'guideWriter',
+    role: 'Guides writer',
     avatar: '/assets/denji.png',
     socials: {
       discord: 'https://discordapp.com/users/1114195537093201992',
@@ -68,7 +67,7 @@ const teamMembers: TeamMember[] = [
   },
   {
     name: 'IDoTheHax',
-    roleKey: 'originalCreator',
+    role: 'Original Gappa co-creator',
     avatar: 'https://cdn.discordapp.com/avatars/987323487343493191/3187a33efcddab3592c93ceac0a6016b.webp?size=48',
     socials: {
       github: 'https://github.com/idothehax',
@@ -77,8 +76,8 @@ const teamMembers: TeamMember[] = [
     }
   },
   {
-    name: 'VOVOplay',
-    roleKey: 'animator',
+    name :'VOVOplay',
+    role: 'Animator',
     avatar: '/assets/VOVOplay.png',
     socials: {
       website: 'https://vovomotion.com/',
@@ -88,15 +87,15 @@ const teamMembers: TeamMember[] = [
 ];
 
 const Contact = () => {
-  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [activeCard, setActiveCard] = useState<number | null>(null);
   const email = 'contact@renderdragon.org';
 
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(email);
     setCopied(true);
-    toast.success(t('contact.messages.emailCopied'));
+    toast.success("Email copied to clipboard!");
     
     setTimeout(() => {
       setCopied(false);
@@ -106,10 +105,10 @@ const Contact = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>{t('contact.seo.title')}</title>
-        <meta name="description" content={t('contact.seo.description')} />
-        <meta property="og:title" content={t('contact.seo.title')} />
-        <meta property="og:description" content={t('contact.seo.description')} />
+        <title>Contact - Renderdragon</title>
+        <meta name="description" content="Get in touch with the Renderdragon team for support, feedback, or business inquiries. We're here to help Minecraft content creators succeed." />
+        <meta property="og:title" content="Contact - Renderdragon" />
+        <meta property="og:description" content="Get in touch with the Renderdragon team for support, feedback, or business inquiries. We're here to help Minecraft content creators succeed." />
         <meta property="og:image" content="https://renderdragon.org/ogimg/contact.png" />
         <meta property="og:url" content="https://renderdragon.org/contact" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -122,14 +121,14 @@ const Contact = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-vt323 mb-8 text-center">
-              <span className="text-cow-purple">{t('contact.pageTitle')}</span>
+              <span className="text-cow-purple">Contact</span> Us
             </h1>
             
             <div className="bg-card pixel-corners border-2 border-primary/50 p-8 mb-12">
               <div className="mb-8">
-                <h2 className="text-2xl font-vt323 mb-4">{t('contact.sections.getInTouch')}</h2>
+                <h2 className="text-2xl font-vt323 mb-4">Get In Touch</h2>
                 <p className="text-muted-foreground mb-6">
-                  {t('contact.messages.welcome')}
+                  Have questions, feedback, or just want to say hello? We'd love to hear from you!
                 </p>
                 
                 <div className="flex items-center space-x-4">
@@ -144,12 +143,12 @@ const Contact = () => {
                     {copied ? (
                       <>
                         <Check className="h-3.5 w-3.5" />
-                        <span>{t('contact.buttons.copied')}</span>
+                        <span>Copied</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3.5 w-3.5" />
-                        <span>{t('contact.buttons.copy')}</span>
+                        <span>Copy</span>
                       </>
                     )}
                   </Button>
@@ -157,9 +156,9 @@ const Contact = () => {
               </div>
               
               <div className="mb-8">
-                <h2 className="text-2xl font-vt323 mb-4">{t('contact.sections.joinCommunity')}</h2>
+                <h2 className="text-2xl font-vt323 mb-4">Join Our Community</h2>
                 <p className="text-muted-foreground mb-4">
-                  {t('contact.messages.connect')}
+                  Connect with other creators and our team on Discord.
                 </p>
                 
                 <a 
@@ -168,21 +167,21 @@ const Contact = () => {
                   rel="noopener noreferrer"
                   className="pixel-btn-primary inline-flex items-center space-x-2"
                 >
-                  <span>{t('contact.buttons.joinDiscord')}</span>
+                  <span>join discord</span>
                   <img className="w-4 h-4" src="/assets/discord_icon.png" alt="Discord" />
                 </a>
               </div>
               
               <div>
-                <h2 className="text-2xl font-vt323 mb-4">{t('contact.sections.supportHours')}</h2>
+                <h2 className="text-2xl font-vt323 mb-4">Support Hours</h2>
                 <p className="text-muted-foreground">
-                  {t('contact.messages.support')}
+                  Well, we do what we can! We're all volunteers, not benefiting from the project, but if you join our Discord, we'll really try to get you an answer within 48 hours.
                 </p>
               </div>
             </div>
             
             <div>
-              <h2 className="text-2xl font-vt323 mb-6 text-center">{t('contact.sections.meetTeam')}</h2>
+              <h2 className="text-2xl font-vt323 mb-6 text-center">Meet The Team</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {teamMembers.map((member, index) => (
@@ -202,9 +201,7 @@ const Contact = () => {
                       />
                     </div>
                     <h3 className="text-lg font-medium">{member.name}</h3>
-                    <p className="text-sm text-cow-purple font-bold mb-2">
-                      {t(`contact.team.roles.${member.roleKey}`)}
-                    </p>
+                    <p className="text-sm text-cow-purple font-bold mb-2">{member.role}</p>
                     
                     {/* socials */}
                     {member.socials && (
@@ -215,7 +212,7 @@ const Contact = () => {
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="bg-secondary hover:bg-primary hover:text-primary-foreground p-2 rounded-md transition-colors"
-                            aria-label={`${member.name} ${t('contact.socials.github')}`}
+                            aria-label={`${member.name}'s GitHub`}
                           >
                             <img className="w-4 h-4" src="/assets/github_icon.png" alt="GitHub" loading="lazy" />
                           </a>
@@ -226,7 +223,7 @@ const Contact = () => {
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="bg-secondary hover:bg-primary hover:text-primary-foreground p-2 rounded-md transition-colors"
-                            aria-label={`${member.name} ${t('contact.socials.website')}`}
+                            aria-label={`${member.name}'s Website`}
                           >
                             <img className="w-4 h-4" src="/assets/domain_icon.png" alt="Website" loading="lazy" />
                           </a>
@@ -237,7 +234,7 @@ const Contact = () => {
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="bg-secondary hover:bg-primary hover:text-primary-foreground p-2 rounded-md transition-colors"
-                            aria-label={`${member.name} ${t('contact.socials.discord')}`}
+                            aria-label={`${member.name}'s Discord`}
                           >
                             <img className="w-4 h-4" src="/assets/discord_icon.png" alt="Discord" loading="lazy" />
                           </a>
