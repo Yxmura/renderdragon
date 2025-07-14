@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 
 // Type for our translation resources
 type TranslationResources = {
-  translation: Record<string, any>;
+  translation: Record<string, unknown>;
 };
 
 type I18nResources = {
@@ -49,7 +49,7 @@ const createLanguageDetector = () => ({
     }
 
     // Check browser language
-    const browserLng = navigator.language || (navigator as any).userLanguage;
+    const browserLng = navigator.language || (navigator as Navigator & { userLanguage?: string }).userLanguage;
     if (browserLng) {
       const browserLngCode = browserLng.split('-')[0];
       if (supportedLngs.includes(browserLngCode)) {
@@ -84,7 +84,7 @@ const initializeI18n = async (): Promise<I18nType> => {
   try {
     await i18n
       .use(initReactI18next)
-      .use(createLanguageDetector() as any)
+      .use(createLanguageDetector() as import('i18next').Module)
       .init({
         resources: {
           en: { 
@@ -455,6 +455,8 @@ export const getI18n = (): Promise<I18nType> => {
   }
   return initializationPromise;
 };
+
+export { initializeI18n };
 
 // Re-export useTranslation with proper typing
 export const useTranslation = useI18nTranslation;
