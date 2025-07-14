@@ -225,8 +225,7 @@ export const useResources = () => {
       const filetype = resource.filetype;
 
       if (resource.category === 'presets') {
-        let subcategory = resource.subcategory?.toLowerCase();
-        if (subcategory === 'davinci resolve') subcategory = 'davinci';
+        const subcategory = resource.subcategory;
         if (subcategory === 'adobe' || subcategory === 'davinci') {
           fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/presets/${subcategory}/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
         } else {
