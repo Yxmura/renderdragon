@@ -225,11 +225,12 @@ export const useResources = () => {
       const filetype = resource.filetype;
 
       if (resource.category === 'presets') {
-        const subcategory = resource.subcategory;
+        const subcategory = resource.subcategory?.toLowerCase().trim();
         if (subcategory === 'adobe' || subcategory === 'davinci') {
           fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/presets/${subcategory}/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
         } else {
-          fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/presets/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
+          alert('Preset resource is missing a valid subcategory (adobe or davinci).');
+          return false;
         }
       } else if (resource.credit) {
         fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/${resource.category}/${titleLowered}__${creditName}.${filetype}`;
