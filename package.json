@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "prebuild": "mkdir -p dist",
+    "prebuild": "mkdir dist || true",
     "dev": "concurrently \"pnpm run dev:vite\" \"pnpm run dev:server\"",
     "dev:vite": "vite",
     "dev:server": "node server.js",
-    "build": "vite build",
+    "build": "pnpm run prebuild && vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview"
