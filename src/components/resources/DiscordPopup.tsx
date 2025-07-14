@@ -12,6 +12,8 @@ interface DiscordPopupProps {
 
 const DiscordPopup = ({ isOpen, onClose, onNeverShowAgain }: DiscordPopupProps) => {
   const { t } = useTranslation();
+  
+  // Don't render anything if not open
   if (!isOpen) return null;
 
   return (
