@@ -2,11 +2,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
-import { getI18n } from './i18n';
+import i18n, { getI18n } from './i18n';
 import './index.css';
 import './global.css';
-import { Loader2 } from 'lucide-react';
 import { I18nextProvider } from 'react-i18next';
+import { Loader2 } from 'lucide-react';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 
