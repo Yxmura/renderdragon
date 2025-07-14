@@ -43,7 +43,8 @@ const YouTubeDownloader: React.FC = () => {
   const [isLoadingInfo, setIsLoadingInfo] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [urlError, setUrlError] = useState(false);
-  const [downloadType, setDownloadType] = useState<'video' | 'audio'>(t('defaults.downloadType', { returnObjects: true }));
+  const defaultDownloadType = t('defaults.downloadType') as 'video' | 'audio';
+const [downloadType, setDownloadType] = useState<'video' | 'audio'>(defaultDownloadType || 'video');
   const [filteredOptions, setFilteredOptions] = useState<DownloadOption[]>([]);
   const [isDownloadingThumb, setIsDownloadingThumb] = useState(false);
 
