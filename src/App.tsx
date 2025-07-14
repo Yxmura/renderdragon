@@ -48,42 +48,6 @@ const LoadingFallback = ({ message = 'Loading...' }: { message?: string }) => (
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
-  const [i18nInitialized, setI18nInitialized] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const init = async () => {
-      try {
-        await getI18n();
-        setI18nInitialized(true);
-      } catch (err) {
-        console.error('Failed to initialize app:', err);
-        setError(err instanceof Error ? err : new Error('Failed to initialize application'));
-      }
-    };
-
-    init();
-  }, []);
-
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
-        <h1 className="mb-4 text-2xl font-bold text-red-500">Error Initializing Application</h1>
-        <p className="mb-4 text-white/80">{error.message}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 text-white rounded-md bg-cow-purple hover:bg-cow-purple/80 transition-colors"
-        >
-          Reload Page
-        </button>
-      </div>
-    );
-  }
-
-  if (!i18nInitialized) {
-    return <LoadingFallback message="Initializing..." />;
-  }
-
   const { isPopupOpen, closePopup, neverShowPopupAgain } = useDiscordPopup();
 
   return (
