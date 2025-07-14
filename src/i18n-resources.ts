@@ -8,6 +8,76 @@ export const en = {
       success: 'Success!',
       april: 'April'
     },
+
+    // Hero Section
+    hero: {
+      unlockYour: 'Unlock Your',
+      creationPotential: 'Creation Potential',
+      description: 'Access thousands of free Minecraft resources, tools, and guides to elevate your content creation journey.',
+      browseResources: 'Browse Resources',
+      checkMusicCopyright: 'Check Music Copyright',
+      freeBadge: '100% Free Resources'
+    },
+
+    // Featured Resources Section
+    featuredResources: {
+      title: 'Featured',
+      titleHighlight: 'Resources',
+      description: 'Discover our most popular and high-quality resources curated for content creators.',
+      viewAll: 'View All Resources'
+    },
+
+    // Popular Tools Section
+    popularTools: {
+      title: 'Popular',
+      titleHighlight: 'Tools',
+      description: 'Powerful tools to enhance your Minecraft content creation workflow.',
+      tryItNow: 'Try It Now',
+      tools: {
+        musicCopyright: {
+          title: 'Music Copyright Checker',
+          description: 'Check if your music is copyright-free and safe to use in your content.'
+        },
+        videoDownloader: {
+          title: 'Video Downloader',
+          description: 'Download videos from various platforms for your content creation needs.'
+        },
+        backgroundGenerator: {
+          title: 'Background Generator',
+          description: 'Create stunning backgrounds and thumbnails for your Minecraft content.'
+        },
+        playerRenderer: {
+          title: 'Player Renderer',
+          description: 'Generate high-quality 3D renders of Minecraft players and skins.'
+        }
+      }
+    },
+
+    // Testimonials Section
+    testimonials: {
+      whatCreatorsSay: 'What Creators Say About Us',
+      dontTakeOurWord: 'Don\'t take our word for it',
+      yFuryRole: 'Content Creator',
+      yFuryContent: 'Renderdragon has been a game-changer for my content creation. The resources are top-notch and completely free!',
+      jkingnickRole: 'YouTuber',
+      jkingnickContent: 'Amazing platform with incredible tools. The copyright checker alone has saved me countless headaches.',
+      alphaReturnsRole: 'Twitch Streamer',
+      alphaReturnsContent: 'The quality of resources here is unmatched. Perfect for streamers who want professional-looking content.',
+      itsProgerRole: 'Content Creator',
+      itsProgerContent: 'Renderdragon provides everything I need for creating engaging Minecraft content. Highly recommended!'
+    },
+
+    // Partnership Section
+    partnership: {
+      title: 'Our Partners',
+      description: 'Working together with amazing creators and organizations to bring you the best resources.',
+      partners: {
+        creatorsKingdom: {
+          name: 'Creators Kingdom',
+          description: 'Premium Minecraft content creation community and resources.'
+        }
+      }
+    },
     
     // FAQ Page
     faq: {
@@ -113,6 +183,76 @@ export const es = {
       error: 'Ocurrió un error',
       success: '¡Éxito!',
       april: 'Abril'
+    },
+
+    // Hero Section
+    hero: {
+      unlockYour: 'Desbloquea Tu',
+      creationPotential: 'Potencial Creativo',
+      description: 'Accede a miles de recursos gratuitos de Minecraft, herramientas y guías para elevar tu viaje de creación de contenido.',
+      browseResources: 'Explorar Recursos',
+      checkMusicCopyright: 'Verificar Copyright Musical',
+      freeBadge: 'Recursos 100% Gratuitos'
+    },
+
+    // Featured Resources Section
+    featuredResources: {
+      title: 'Recursos',
+      titleHighlight: 'Destacados',
+      description: 'Descubre nuestros recursos más populares y de alta calidad seleccionados para creadores de contenido.',
+      viewAll: 'Ver Todos los Recursos'
+    },
+
+    // Popular Tools Section
+    popularTools: {
+      title: 'Herramientas',
+      titleHighlight: 'Populares',
+      description: 'Herramientas poderosas para mejorar tu flujo de trabajo de creación de contenido de Minecraft.',
+      tryItNow: 'Pruébalo Ahora',
+      tools: {
+        musicCopyright: {
+          title: 'Verificador de Copyright Musical',
+          description: 'Verifica si tu música está libre de copyright y es segura para usar en tu contenido.'
+        },
+        videoDownloader: {
+          title: 'Descargador de Video',
+          description: 'Descarga videos de varias plataformas para tus necesidades de creación de contenido.'
+        },
+        backgroundGenerator: {
+          title: 'Generador de Fondos',
+          description: 'Crea fondos impresionantes y miniaturas para tu contenido de Minecraft.'
+        },
+        playerRenderer: {
+          title: 'Renderizador de Jugador',
+          description: 'Genera renders 3D de alta calidad de jugadores y skins de Minecraft.'
+        }
+      }
+    },
+
+    // Testimonials Section
+    testimonials: {
+      whatCreatorsSay: 'Lo Que Dicen Los Creadores Sobre Nosotros',
+      dontTakeOurWord: 'No te fíes solo de nuestra palabra',
+      yFuryRole: 'Creador de Contenido',
+      yFuryContent: 'Renderdragon ha sido un cambio revolucionario para mi creación de contenido. ¡Los recursos son de primera clase y completamente gratuitos!',
+      jkingnickRole: 'YouTuber',
+      jkingnickContent: 'Plataforma increíble con herramientas fantásticas. Solo el verificador de copyright me ha ahorrado incontables dolores de cabeza.',
+      alphaReturnsRole: 'Streamer de Twitch',
+      alphaReturnsContent: 'La calidad de los recursos aquí es incomparable. Perfecto para streamers que quieren contenido de aspecto profesional.',
+      itsProgerRole: 'Creador de Contenido',
+      itsProgerContent: '¡Renderdragon proporciona todo lo que necesito para crear contenido atractivo de Minecraft. Muy recomendado!'
+    },
+
+    // Partnership Section
+    partnership: {
+      title: 'Nuestros Socios',
+      description: 'Trabajando juntos con creadores y organizaciones increíbles para traerte los mejores recursos.',
+      partners: {
+        creatorsKingdom: {
+          name: 'Reino de Creadores',
+          description: 'Comunidad premium de creación de contenido de Minecraft y recursos.'
+        }
+      }
     },
     
     // FAQ Page
@@ -220,6 +360,76 @@ export const fr = {
       success: 'Succès !',
       april: 'Avril'
     },
+
+    // Hero Section
+    hero: {
+      unlockYour: 'Libérez Votre',
+      creationPotential: 'Potentiel Créatif',
+      description: 'Accédez à des milliers de ressources Minecraft gratuites, d\'outils et de guides pour élever votre parcours de création de contenu.',
+      browseResources: 'Parcourir les Ressources',
+      checkMusicCopyright: 'Vérifier le Copyright Musical',
+      freeBadge: 'Ressources 100% Gratuites'
+    },
+
+    // Featured Resources Section
+    featuredResources: {
+      title: 'Ressources',
+      titleHighlight: 'En Vedette',
+      description: 'Découvrez nos ressources les plus populaires et de haute qualité sélectionnées pour les créateurs de contenu.',
+      viewAll: 'Voir Toutes les Ressources'
+    },
+
+    // Popular Tools Section
+    popularTools: {
+      title: 'Outils',
+      titleHighlight: 'Populaires',
+      description: 'Des outils puissants pour améliorer votre flux de travail de création de contenu Minecraft.',
+      tryItNow: 'Essayez Maintenant',
+      tools: {
+        musicCopyright: {
+          title: 'Vérificateur de Copyright Musical',
+          description: 'Vérifiez si votre musique est libre de droits et sûre à utiliser dans votre contenu.'
+        },
+        videoDownloader: {
+          title: 'Téléchargeur de Vidéo',
+          description: 'Téléchargez des vidéos de diverses plateformes pour vos besoins de création de contenu.'
+        },
+        backgroundGenerator: {
+          title: 'Générateur d\'Arrière-plan',
+          description: 'Créez des arrière-plans époustouflants et des vignettes pour votre contenu Minecraft.'
+        },
+        playerRenderer: {
+          title: 'Rendu de Joueur',
+          description: 'Générez des rendus 3D de haute qualité de joueurs et de skins Minecraft.'
+        }
+      }
+    },
+
+    // Testimonials Section
+    testimonials: {
+      whatCreatorsSay: 'Ce Que Disent Les Créateurs À Propos De Nous',
+      dontTakeOurWord: 'Ne nous croyez pas sur parole',
+      yFuryRole: 'Créateur de Contenu',
+      yFuryContent: 'Renderdragon a révolutionné ma création de contenu. Les ressources sont de première qualité et entièrement gratuites !',
+      jkingnickRole: 'YouTubeur',
+      jkingnickContent: 'Plateforme incroyable avec des outils fantastiques. Le vérificateur de copyright seul m\'a épargné d\'innombrables maux de tête.',
+      alphaReturnsRole: 'Streameur Twitch',
+      alphaReturnsContent: 'La qualité des ressources ici est inégalée. Parfait pour les streameurs qui veulent du contenu d\'apparence professionnelle.',
+      itsProgerRole: 'Créateur de Contenu',
+      itsProgerContent: 'Renderdragon fournit tout ce dont j\'ai besoin pour créer du contenu Minecraft engageant. Hautement recommandé !'
+    },
+
+    // Partnership Section
+    partnership: {
+      title: 'Nos Partenaires',
+      description: 'Travaillant ensemble avec des créateurs et organisations incroyables pour vous apporter les meilleures ressources.',
+      partners: {
+        creatorsKingdom: {
+          name: 'Royaume des Créateurs',
+          description: 'Communauté premium de création de contenu Minecraft et ressources.'
+        }
+      }
+    },
     
     // FAQ Page
     faq: {
@@ -325,6 +535,76 @@ export const nl = {
       error: 'Er is een fout opgetreden',
       success: 'Gelukt!',
       april: 'April'
+    },
+
+    // Hero Section
+    hero: {
+      unlockYour: 'Ontgrendel Je',
+      creationPotential: 'Creatieve Potentieel',
+      description: 'Toegang tot duizenden gratis Minecraft-bronnen, tools en gidsen om je contentcreatiereis naar een hoger niveau te tillen.',
+      browseResources: 'Bronnen Bekijken',
+      checkMusicCopyright: 'Muziek Copyright Controleren',
+      freeBadge: '100% Gratis Bronnen'
+    },
+
+    // Featured Resources Section
+    featuredResources: {
+      title: 'Uitgelichte',
+      titleHighlight: 'Bronnen',
+      description: 'Ontdek onze meest populaire en hoogwaardige bronnen samengesteld voor contentmakers.',
+      viewAll: 'Alle Bronnen Bekijken'
+    },
+
+    // Popular Tools Section
+    popularTools: {
+      title: 'Populaire',
+      titleHighlight: 'Tools',
+      description: 'Krachtige tools om je Minecraft contentcreatie workflow te verbeteren.',
+      tryItNow: 'Probeer Nu',
+      tools: {
+        musicCopyright: {
+          title: 'Muziek Copyright Checker',
+          description: 'Controleer of je muziek auteursrechtvrij is en veilig te gebruiken in je content.'
+        },
+        videoDownloader: {
+          title: 'Video Downloader',
+          description: 'Download video\'s van verschillende platforms voor je contentcreatie behoeften.'
+        },
+        backgroundGenerator: {
+          title: 'Achtergrond Generator',
+          description: 'Creëer verbluffende achtergronden en thumbnails voor je Minecraft content.'
+        },
+        playerRenderer: {
+          title: 'Speler Renderer',
+          description: 'Genereer hoogwaardige 3D renders van Minecraft spelers en skins.'
+        }
+      }
+    },
+
+    // Testimonials Section
+    testimonials: {
+      whatCreatorsSay: 'Wat Makers Zeggen Over Ons',
+      dontTakeOurWord: 'Geloof ons niet op ons woord',
+      yFuryRole: 'Content Creator',
+      yFuryContent: 'Renderdragon is een game-changer geweest voor mijn contentcreatie. De bronnen zijn eersteklas en volledig gratis!',
+      jkingnickRole: 'YouTuber',
+      jkingnickContent: 'Geweldig platform met fantastische tools. Alleen al de copyright checker heeft me talloze hoofdpijn bespaard.',
+      alphaReturnsRole: 'Twitch Streamer',
+      alphaReturnsContent: 'De kwaliteit van bronnen hier is ongeëvenaard. Perfect voor streamers die professioneel uitziende content willen.',
+      itsProgerRole: 'Content Creator',
+      itsProgerContent: 'Renderdragon biedt alles wat ik nodig heb voor het maken van boeiende Minecraft content. Sterk aanbevolen!'
+    },
+
+    // Partnership Section
+    partnership: {
+      title: 'Onze Partners',
+      description: 'Samenwerken met geweldige makers en organisaties om je de beste bronnen te brengen.',
+      partners: {
+        creatorsKingdom: {
+          name: 'Creators Kingdom',
+          description: 'Premium Minecraft contentcreatie gemeenschap en bronnen.'
+        }
+      }
     },
     
     // FAQ Page
