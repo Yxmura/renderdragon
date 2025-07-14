@@ -184,7 +184,31 @@ const initializeI18n = async (): Promise<I18nType> => {
                 sortOptions: {
                   newest: 'Newest',
                   popular: 'Popular',
-                }
+                },
+                downloads: 'downloads',
+                attribution: 'Attribution',
+                credit_warning: 'Please credit the creator when using this resource',
+                credit_text: 'Resource by {{author}}',
+                credit_copied: 'Credit copied to clipboard!',
+                copied: 'Copied',
+                copy: 'Copy',
+                no_attribution_required: 'No attribution required',
+                previous: 'Previous',
+                next: 'Next',
+                previous_resource: 'Previous resource',
+                next_resource: 'Next resource',
+                download_resource: 'Download Resource',
+                download_agreement: 'By downloading, you agree to our Terms of Service',
+                credit_required: 'Credit required',
+                no_credit_needed: 'No credit needed',
+                play_preview: 'Play preview',
+                pause_preview: 'Pause preview',
+                no_preview_available: 'No preview available',
+                font: 'Font',
+                no_preset_preview: 'Sorry, there\'s no preview for this preset.',
+                help_create_previews: 'You can help out creating previews for presets by joining our Discord!',
+                preview_not_available: 'Preview not available for this type.',
+                join_our_discord: 'Join our Discord'
               }
             }
           },

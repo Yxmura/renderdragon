@@ -196,7 +196,7 @@ const ResourceDetailDialog = ({
               
               <Badge variant="outline" className="bg-blue-500/10 text-blue-500">
                 <Download className="h-3 w-3 mr-1" />
-                {downloadCount || 0} {t('downloads')}
+                {downloadCount || 0} {t('resourceFilters.downloads')}
               </Badge>
             </div>
           </DialogDescription>
@@ -204,18 +204,18 @@ const ResourceDetailDialog = ({
 
         <div className="space-y-5 py-2">
           <div className="border border-border rounded-md p-4">
-            <h4 className="font-vt323 text-lg mb-1">{t('attribution')}</h4>
+            <h4 className="font-vt323 text-lg mb-1">{t('resourceFilters.attribution')}</h4>
 
             {resource.credit ? (
               <div className="space-y-2">
                 <p className="text-sm text-orange-500 flex items-center">
                   <span className="mr-2">⚠️</span>
-                  {t('credit_warning')}
+                  <span>{t('resourceFilters.credit_warning')}</span>
                 </p>
 
                 <div className="flex items-center">
                   <code className="bg-muted px-2 py-1 rounded text-sm flex-grow">
-                    {t('credit_text', { author: resource.credit })}
+                    {t('resourceFilters.credit_text', { author: resource.credit })}
                   </code>
 
                   <Button
@@ -227,12 +227,12 @@ const ResourceDetailDialog = ({
                     {copied ? (
                       <>
                         <Check className="h-3.5 w-3.5" />
-                        <span>{t('copied')}</span>
+                        <span>{t('resourceFilters.copied')}</span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3.5 w-3.5" />
-                        <span>{t('copy')}</span>
+                        <span>{t('resourceFilters.copy')}</span>
                       </>
                     )}
                   </Button>
@@ -241,7 +241,7 @@ const ResourceDetailDialog = ({
             ) : (
               <div className="flex items-center text-green-500">
                 <Check className="h-5 w-5 mr-2" />
-                <span>{t('no_attribution_required')}</span>
+                <span>{t('resourceFilters.no_attribution_required')}</span>
               </div>
             )}
           </div>
@@ -257,8 +257,8 @@ const ResourceDetailDialog = ({
                 disabled={!hasPrevious}
               >
                 <ChevronLeft className="h-4 w-4 md:mr-2" />
-                <span className="hidden md:inline">{t('previous')}</span>
-                <span className="sr-only">{t('previous_resource')}</span>
+                <span className="hidden md:inline">{t('resourceFilters.previous')}</span>
+                <span className="sr-only">{t('resourceFilters.previous_resource')}</span>
               </Button>
 
               <Button
@@ -266,7 +266,7 @@ const ResourceDetailDialog = ({
                 className="pixel-btn-primary flex items-center justify-center gap-2"
               >
                 <Download className="h-5 w-5" />
-                <span>{t('download_resource')}</span>
+                <span>{t('resourceFilters.download_resource')}</span>
               </Button>
 
               <Button
@@ -283,7 +283,7 @@ const ResourceDetailDialog = ({
           )}
 
           <p className="text-xs text-center text-muted-foreground">
-            {t('download_agreement')}
+            {t('resourceFilters.download_agreement')}
           </p>
         </div>
       </DialogContent>

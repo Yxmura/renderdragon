@@ -16,6 +16,7 @@ import { Resource } from '@/types/resources';
 import { cn } from '@/lib/utils';
 import { useUserFavorites } from '@/hooks/useUserFavorites';
 import { useAuth } from '@/hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 interface ResourceCardProps {
   resource: Resource;
@@ -24,6 +25,7 @@ interface ResourceCardProps {
 }
 
 const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) => {
+  const { t } = useTranslation();
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -177,7 +179,7 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             <button
               onClick={handlePlayPause}
               className="z-10 p-2 bg-black/50 rounded-full text-white hover:bg-black/75 transition-colors"
-              aria-label={isPlaying ? 'Pause preview' : 'Play preview'}
+              aria-label={isPlaying ? t('resourceFilters.pause_preview') : t('resourceFilters.play_preview')}
             >
               {isPlaying ? <Pause className="h-8 w-8" /> : <Play className="h-8 w-8" />}
             </button>
@@ -248,7 +250,7 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             className="text-xs bg-orange-500/10 text-orange-500 px-2 py-1 rounded-md inline-flex items-center"
             whileHover={{ scale: 1.05 }}
           >
-            <span>Credit required</span>
+            <span>{t('resourceFilters.credit_required')}</span>
           </motion.div>
         ) : (
           <motion.div 
@@ -256,7 +258,7 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
             whileHover={{ scale: 1.05 }}
           >
             <Check className="h-3 w-3 mr-1" />
-            <span>No credit needed</span>
+            <span>{t('resourceFilters.no_credit_needed')}</span>
           </motion.div>
         )}
       </div>

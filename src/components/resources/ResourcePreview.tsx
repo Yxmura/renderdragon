@@ -2,12 +2,14 @@
 import { Resource } from '@/types/resources';
 import AudioPlayer from '@/components/AudioPlayer';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface ResourcePreviewProps {
   resource: Resource;
 }
 
 const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
+  const { t } = useTranslation();
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
@@ -48,7 +50,7 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
   const downloadURL = getDownloadURL(resource);
 
   if (!downloadURL) {
-    return <p>No preview available</p>;
+    return <p>{t('resourceFilters.no_preview_available')}</p>;
   }
 
   if (resource.category === 'music' || resource.category === 'sfx') {
@@ -93,7 +95,7 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
       >
         The quick brown fox jumps over the lazy dog.
         <div className="text-xs mt-2 opacity-70">
-          Font: {resource.title}
+          {t('resourceFilters.font')}: {resource.title}
         </div>
       </div>
     );
@@ -103,9 +105,9 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
     if (hasError) {
       return (
         <div className="p-4 text-center rounded-md bg-muted/20 border border-border">
-          <p>Sorry, there's no preview for this preset.</p>
+          <p>{t('resourceFilters.no_preset_preview')}</p>
           <p className="text-sm text-muted-foreground mt-2">
-            You can help out creating previews for presets by joining our Discord!
+            {t('resourceFilters.help_create_previews')}
           </p>
           <div className="flex gap-4 justify-center mt-4 pt-3">
               <a
@@ -114,8 +116,8 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
                   rel="noopener"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
               >
-                <img className='w-5 h-5' src="/assets/discord_icon.png" alt="Discord"></img>
-                  Join our Discord
+                <img className='w-5 h-5' src="/assets/discord_icon.png" alt="Discord" />
+                {t('join_our_discord')}
               </a>
           </div>
         </div>
@@ -132,7 +134,7 @@ const ResourcePreview = ({ resource }: ResourcePreviewProps) => {
     );
   }
 
-  return <p>Preview not available for this type.</p>;
+  return <p>{t('resourceFilters.preview_not_available')}</p>;
 };
 
 export default ResourcePreview;

@@ -72,9 +72,9 @@ export const useResources = () => {
       if (selectedCategory && selectedCategory !== 'favorites') {
         query = query.eq('category', selectedCategory);
       }
-      // Use ilike for partial & case-insensitive match so that values like "davinci resolve" are supported
-      if (selectedSubcategory) {
-        query = query.ilike('subcategory', `%${selectedSubcategory}%`);
+      // Use eq for exact match on subcategory since we know the exact values we're looking for
+      if (selectedSubcategory && selectedSubcategory !== 'all') {
+        query = query.eq('subcategory', selectedSubcategory);
       }
 
       switch (sortOrder) {
@@ -174,7 +174,7 @@ export const useResources = () => {
     setTimeout(() => setIsLoading(false), 300);
   }, []);
 
-  const handleSubcategoryChange = useCallback((subcategory: Subcategory | null) => {
+  const handleSubcategoryChange = useCallback((subcategory: Subcategory | 'all' | null) => {
     setIsLoading(true);
     setSelectedSubcategory(subcategory);
     setLastAction('subcategory');

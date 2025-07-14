@@ -5,13 +5,15 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
-import i18n, { initializeI18n } from '@/i18n';
+import i18n, { getI18n } from '@/i18n';
 import VercelAnalytics from '@/components/VercelAnalytics';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { AuthProvider } from '@/hooks/useAuth';
 import { HelmetProvider } from 'react-helmet-async';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { Loader2 } from 'lucide-react';
+import DiscordPopup from '@/components/resources/DiscordPopup';
+import { useDiscordPopup } from '@/hooks/useDiscordPopup';
 
 const Index = lazy(() => import('@/pages/Index'));
 const ResourcesHub = lazy(() => import('@/pages/ResourcesHub'));
@@ -52,7 +54,7 @@ const App = () => {
   useEffect(() => {
     const init = async () => {
       try {
-        await initializeI18n();
+        await getI18n();
         setI18nInitialized(true);
       } catch (err) {
         console.error('Failed to initialize app:', err);
@@ -81,6 +83,8 @@ const App = () => {
   if (!i18nInitialized) {
     return <LoadingFallback message="Initializing..." />;
   }
+
+  const { isPopupOpen, closePopup, neverShowPopupAgain } = useDiscordPopup();
 
   return (
     <ErrorBoundary>
@@ -121,6 +125,11 @@ const App = () => {
                 <Sonner />
                 <VercelAnalytics />
                 <SpeedInsights />
+                <DiscordPopup 
+                  isOpen={isPopupOpen}
+                  onClose={closePopup}
+                  onNeverShowAgain={neverShowPopupAgain}
+                />
               </TooltipProvider>
             </HelmetProvider>
           </AuthProvider>
