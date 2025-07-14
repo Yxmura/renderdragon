@@ -19,10 +19,12 @@ const createLanguageDetector = () => ({
   type: 'languageDetector' as const,
   async: true,
   detect: (callback: (lng: string) => void) => {
+    console.log('Detecting language...');
     const supportedLngs = ['en', 'es', 'fr', 'nl'];
     let detectedLng = 'en';
 
     if (typeof window === 'undefined') {
+      console.log('No window object, defaulting to "en"');
       return callback(detectedLng);
     }
 
@@ -30,6 +32,7 @@ const createLanguageDetector = () => ({
     const params = new URLSearchParams(window.location.search);
     const urlLng = params.get('lng');
     if (urlLng && supportedLngs.includes(urlLng)) {
+      console.log(`Language detected from URL parameter: ${urlLng}`);
       detectedLng = urlLng;
       return callback(detectedLng);
     }
@@ -37,6 +40,7 @@ const createLanguageDetector = () => ({
     // Check localStorage
     const localStorageLng = localStorage.getItem('i18nextLng');
     if (localStorageLng && supportedLngs.some(lng => localStorageLng.startsWith(lng))) {
+      console.log(`Language detected from localStorage: ${localStorageLng}`);
       detectedLng = localStorageLng.split('-')[0];
       return callback(detectedLng);
     }
@@ -44,6 +48,7 @@ const createLanguageDetector = () => ({
     // Check cookie
     const cookieLng = Cookies.get('i18next');
     if (cookieLng && supportedLngs.some(lng => cookieLng.startsWith(lng))) {
+      console.log(`Language detected from cookie: ${cookieLng}`);
       detectedLng = cookieLng.split('-')[0];
       return callback(detectedLng);
     }
@@ -51,12 +56,14 @@ const createLanguageDetector = () => ({
     // Check browser language
     const browserLng = navigator.language || (navigator as any).userLanguage;
     if (browserLng) {
+      console.log(`Browser language: ${browserLng}`);
       const browserLngCode = browserLng.split('-')[0];
       if (supportedLngs.includes(browserLngCode)) {
         detectedLng = browserLngCode;
       }
     }
 
+    console.log(`Falling back to language: ${detectedLng}`);
     callback(detectedLng);
   },
   init: () => {},
@@ -81,13 +88,14 @@ const createLanguageDetector = () => ({
 
 // Initialize i18next
 const initializeI18n = async (): Promise<I18nType> => {
+  console.log('Initializing i18n...');
   try {
     await i18n
       .use(initReactI18next)
       .use(createLanguageDetector() as any)
       .init({
         resources: {
-          en: { 
+          en: {
             translation: {
               noFavoritesMessage: "You haven't favorited any resources yet. Click the heart on a resource to save it here!",
               noResourcesInCategory: 'There are currently no resources in the {{category}} category.',
