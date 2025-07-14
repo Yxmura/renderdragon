@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Resource } from '@/types/resources';
 import { useDownloadCounts } from '@/hooks/useDownloadCounts';
@@ -72,9 +73,15 @@ export const useResources = () => {
       if (selectedCategory && selectedCategory !== 'favorites') {
         query = query.eq('category', selectedCategory);
       }
-      // Use eq for exact match on subcategory since we know the exact values we're looking for
-      if (selectedSubcategory && selectedSubcategory !== 'all') {
-        query = query.eq('subcategory', selectedSubcategory);
+      // Use eq for exact match on subcategory, ensuring correct type for Supabase query
+      if (
+        selectedSubcategory &&
+        selectedSubcategory !== 'all' &&
+        // Ensure selectedSubcategory is a valid subcategory type
+        (['davinci', 'adobe'] as const).includes(selectedSubcategory as any)
+      ) {
+        // Cast to the correct literal type for Supabase
+        query = query.eq('subcategory', selectedSubcategory as 'davinci' | 'adobe');
       }
 
       switch (sortOrder) {
@@ -135,7 +142,7 @@ export const useResources = () => {
 
   useEffect(() => {
     fetchResources(true);
-  }, [searchQuery, selectedCategory, selectedSubcategory, sortOrder]);
+  }, [searchQuery, selectedCategory, selectedSubcategory, sortOrder, fetchResources]);
   
   const loadMoreResources = () => {
     if (isLoading || !hasMore) return;
@@ -146,7 +153,7 @@ export const useResources = () => {
     if (page > 0) {
       fetchResources();
     }
-  }, [page]);
+  }, [page, fetchResources]);
 
 
   const handleSearchSubmit = useCallback((e?: React.FormEvent) => {
@@ -217,9 +224,10 @@ export const useResources = () => {
       const creditName = resource.credit ? encodeURIComponent(resource.credit) : '';
       const filetype = resource.filetype;
 
-            if (resource.category === 'presets') {
-        const subcategory = resource.subcategory?.toLowerCase() === 'davinci resolve' ? 'davinci' : resource.subcategory?.toLowerCase();
-        if (subcategory) {
+      if (resource.category === 'presets') {
+        let subcategory = resource.subcategory?.toLowerCase();
+        if (subcategory === 'davinci resolve') subcategory = 'davinci';
+        if (subcategory === 'adobe' || subcategory === 'davinci') {
           fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/presets/${subcategory}/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
         } else {
           fileUrl = `https://raw.githubusercontent.com/Yxmura/resources_renderdragon/main/presets/${titleLowered}${creditName ? `__${creditName}` : ''}.${filetype}`;
