@@ -23,7 +23,9 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       sitemap({
-        hostname: 'https://renderdragon.org'
+        hostname: 'https://renderdragon.org',
+        outputDir: 'dist',
+        robotsTxt: true
       }),
       react(),
     ].filter(Boolean),
