@@ -1,7 +1,6 @@
 import React from 'react';
 import { Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useTranslation, Trans } from 'react-i18next';
 
 interface Testimonial {
   id: number;
@@ -11,32 +10,30 @@ interface Testimonial {
 }
 
 const Testimonials = () => {
-  const { t } = useTranslation();
-
   const testimonialsData: Testimonial[] = [
     {
       id: 1,
       name: "yFury",
-      role: t('testimonials.yFuryRole'),
-      content: t('testimonials.yFuryContent'),
+      role: 'YouTuber',
+      content: 'RenderDragon is a fantastic resource for any creator. I use it all the time for my videos!',
     },
     {
       id: 2,
       name: "Jkingnick",
-      role: t('testimonials.jkingnickRole'),
-      content: t('testimonials.jkingnickContent'),
+      role: 'Designer',
+      content: 'The assets on RenderDragon are top-notch. They save me a ton of time and effort.',
     },
     {
       id: 3,
       name: "AlphaReturns",
-      role: t('testimonials.alphaReturnsRole'),
-      content: t('testimonials.alphaReturnsContent'),
+      role: 'Editor',
+      content: 'I love the variety of resources available. It\'s my go-to for all my editing needs.',
     },
     {
       id: 4,
       name: "ItsProger",
-      role: t('testimonials.itsProgerRole'),
-      content: t('testimonials.itsProgerContent'),
+      role: 'Developer',
+      content: 'As a developer, I appreciate the quality of the code and the ease of use of the tools.',
     }
   ];
 
@@ -79,9 +76,7 @@ const Testimonials = () => {
           transition={{ duration: 0.5 }}
           className="text-3xl md:text-4xl font-bold text-center mb-2 animate-glow font-vt323"
         >
-          <Trans i18nKey="testimonials.whatCreatorsSay">
-            What <span className="text-cow-purple">Creators</span> Say About Us
-          </Trans>
+          What <span className="text-cow-purple">Creators</span> Say About Us
         </motion.h2>
         
         <motion.p 
@@ -91,7 +86,7 @@ const Testimonials = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-center text-muted-foreground mb-12 max-w-xl mx-auto"
         >
-          {t('testimonials.dontTakeOurWord')}
+          Don't just take our word for it - here's what our community has to say.
         </motion.p>
         
         <motion.div 

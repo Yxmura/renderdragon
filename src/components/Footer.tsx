@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { ShoppingCart, ChevronDown, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
@@ -17,7 +16,6 @@ const languageOptions = [
 ];
 
 const Footer = () => {
-  const { t, i18n } = useTranslation();
   const [cartClicked, setCartClicked] = useState(false);
   const cartButtonRef = useRef<HTMLButtonElement>(null);
   const currentYear = new Date().getFullYear();
@@ -49,8 +47,8 @@ const Footer = () => {
       document.body.removeChild(canvas);
     }, 3000);
     
-    toast(t('footer.madeByToastTitle'), {
-      description: t('footer.madeByToastDescription'),
+    toast('Made with ❤️ by Yamura!', {
+      description: 'And a little help from the community.',
       position: "bottom-center",
       duration: 3000,
     });
@@ -78,7 +76,7 @@ const Footer = () => {
             </Link>
             
             <p className="text-white/70 mb-6 max-w-md">
-              {t('footer.description')}
+              The ultimate hub for creators. Find free resources for your next project, including music, sound effects, images, and more.
             </p>
             
             <div className="flex space-x-4 mb-3">
@@ -125,87 +123,87 @@ const Footer = () => {
           </div>
           
           <div>
-            <h3 className="text-lg font-vt323 mb-4">{t('footer.legal')}</h3>
+            <h3 className="text-lg font-vt323 mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/tos" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.termsOfService')}
+                  Terms of Service
                 </Link>
               </li>
               <li>
                 <Link to="/privacy" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.privacyPolicy')}
+                  Privacy Policy
                 </Link>
               </li>
             </ul>
             
-            <h3 className="text-lg font-vt323 mb-4 mt-6">{t('footer.navigate')}</h3>
+            <h3 className="text-lg font-vt323 mb-4 mt-6">Navigate</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.home')}
+                  Home
                 </Link>
               </li>
               <li>
                 <Link to="/resources" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.resourcesHub')}
+                  Resources Hub
                 </Link>
               </li>
               <li>
                 <Link to="/guides" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.guides')}
+                  Guides
                 </Link>
               </li>
               <li>
                 <Link to="/utilities" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.utilities')}
+                  Utilities
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.contact')}
+                  Contact
                 </Link>
               </li>
             </ul>
           </div>
           
           <div>
-            <h3 className="text-lg font-vt323 mb-4">{t('footer.tools')}</h3>
+            <h3 className="text-lg font-vt323 mb-4">Tools</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/gappa" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.musicCopyrightChecker')}
+                  Music Copyright Checker
                 </Link>
               </li>
               <li>
                 <Link to="/background-generator" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.backgroundGenerator')}
+                  Background Generator
                 </Link>
               </li>
               <li>
                 <Link to="/player-renderer" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.playerRenderer')}
+                  Player Renderer
                 </Link>
               </li>
               <li>
                 <Link to="/renderbot" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.renderbot')}
+                  Renderbot
                 </Link>
               </li>
               <li>
                 <Link to="/text-generator" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.textGenerator')}
+                  Text Generator
                 </Link>
               </li>
               <li>
                 <Link to="/generators" className="text-white/70 hover:text-white transition-colors">
-                  {t('footer.contentGenerators')}
+                  Content Generators
                 </Link>
               </li>
               <li>
                 <Link to="/youtube-downloader" className="text-white/70 hover:text-white transition-colors flex items-center">
-                  <span>{t('footer.youtubeDownloader')}</span>
-                  <span className="ml-1 px-1.5 py-0.5 bg-cow-purple text-white text-[10px] rounded align-middle">{t('footer.newTag')}</span>
+                  <span>YouTube Downloader</span>
+                  <span className="ml-1 px-1.5 py-0.5 bg-cow-purple text-white text-[10px] rounded align-middle">NEW</span>
                 </Link>
               </li>
             </ul>
@@ -215,92 +213,33 @@ const Footer = () => {
         <div className="pt-8 mt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
             <Link to="/faq" className="text-white/70 hover:text-white transition-colors text-sm relative">
-              {t('footer.faq')}
+              FAQ
             </Link>
             
             <Link to="/tos" className="text-white/70 hover:text-white transition-colors text-sm">
-              {t('footer.terms')}
+              Terms
             </Link>
             
             <Link to="/privacy" className="text-white/70 hover:text-white transition-colors text-sm">
-              {t('footer.privacy')}
+              Privacy
             </Link>
 
             <Link to="/renderbot" className="text-white/70 hover:text-white transition-colors text-sm">
-              {t('footer.renderbot')}
+              Renderbot
             </Link>
 
             <HyperpingBadge status="online" />
 
             <div className="text-white/70 text-sm">
-              <span className="mr-4">{t('footer.notAssociated')}</span>
-              <a href="https://www.flaticon.com/free-icons/pixel" title="pixel icons" className="hover:text-white transition-colors">{t('footer.iconCredit')}</a>
+              <span className="mr-4">Not associated with Mojang, AB.</span>
+              <a href="https://www.flaticon.com/free-icons/pixel" title="pixel icons" className="hover:text-white transition-colors">Pixel icons created by Freepik - Flaticon</a>
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
             <p className="text-white/70 text-sm">
-              {t('footer.copyright', { year: currentYear })}
+              &copy; {currentYear} RenderDragon. All rights reserved.
             </p>
-
-            {/* Language Switcher Dropdown */}
-            <Menu as="div" className="relative ml-4">
-              {({ open }) => (
-                <>
-                  <Menu.Button 
-                    className="flex items-center justify-between px-3 py-1.5 text-sm rounded-md bg-white/10 text-white/90 hover:bg-white/20 transition-colors border border-white/20 focus:outline-none focus:ring-2 focus:ring-cow-purple focus:ring-offset-2 focus:ring-offset-cow-dark min-w-[120px]"
-                    aria-label="Select language"
-                  >
-                    <span className="flex items-center">
-                      <span className="mr-2">
-                        {languageOptions.find(lang => lang.code === i18n.language)?.flag}
-                      </span>
-                      <span className="truncate">
-                        {languageOptions.find(lang => lang.code === i18n.language)?.name}
-                      </span>
-                    </span>
-                    <ChevronDown 
-                      className={`ml-2 h-4 w-4 transition-transform duration-200 ${open ? 'transform rotate-180' : ''}`} 
-                      aria-hidden="true"
-                    />
-                  </Menu.Button>
-                  <AnimatePresence>
-                    {open && (
-                      <Menu.Items 
-                        as={motion.div}
-                        static
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.15, ease: "easeInOut" }}
-                        className="absolute bottom-full mb-2 left-0 w-full rounded-md bg-gray-800 shadow-lg ring-1 ring-black/5 focus:outline-none z-50 overflow-hidden"
-                      >
-                        <div className="py-1">
-                          {languageOptions.map((language) => (
-                            <Menu.Item key={language.code}>
-                              {({ active }) => (
-                                <button
-                                  onClick={() => i18n.changeLanguage(language.code)}
-                                  className={`flex items-center w-full px-4 py-2 text-sm text-left ${
-                                    active ? 'bg-cow-purple/20 text-white' : 'text-white/90'
-                                  } ${i18n.language === language.code ? 'bg-cow-purple/10' : ''}`}
-                                >
-                                  <span className="mr-2">{language.flag}</span>
-                                  <span className="flex-1">{language.name}</span>
-                                  {i18n.language === language.code && (
-                                    <Check className="h-4 w-4 text-cow-purple" />
-                                  )}
-                                </button>
-                              )}
-                            </Menu.Item>
-                          ))}
-                        </div>
-                      </Menu.Items>
-                    )}
-                  </AnimatePresence>
-                </>
-              )}
-            </Menu>
 
             <button 
               ref={cartButtonRef}

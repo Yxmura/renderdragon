@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
@@ -18,24 +17,22 @@ const cardVariants: any = {
 };
 
 const Partnership = () => {
-  const { t } = useTranslation();
-
   const partners = [
     {
-      name: t('partnership.partners.creatorsKingdom.name'),
-      description: t('partnership.partners.creatorsKingdom.description'),
+      name: "Creators' Kingdom",
+      description: 'A community for creators to collaborate and grow together.',
       logo: "https://cdn.bsky.app/img/avatar/plain/did:plc:2v6n63ayh4zfevupgxrkufx4/bafkreibufdbu2k76p5mdnwo64bmptl6g2wnl6imd3wxm3nvkstoqgjkz2q@jpeg",
       url: "https://bsky.app/profile/creatorskingdom.bsky.social",
     },
     {
-      name: t('partnership.partners.progersKitchen.name'),
-      description: t('partnership.partners.progersKitchen.description'),
+      name: "Proger's Kitchen",
+      description: 'A place for developers to share their creations and get feedback.',
       logo: "/assets/progerskitchen.webp",
       url: "https://discord.gg/wXhHe5bVgz",
     },
     {
-      name: t('partnership.partners.decourSmp.name'),
-      description: t('partnership.partners.decourSmp.description'),
+      name: "Decour SMP",
+      description: 'A friendly and welcoming Minecraft SMP server.',
       logo: "/assets/Decour.jpg",
       url: "https://dsc.gg/decoursmp",
     },
@@ -51,10 +48,10 @@ const Partnership = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-vt323 mb-4 tracking-wider">
-            {t('partnership.title')}
+            Our Partners
           </h2>
           <p className="text-muted-foreground text-lg max-w-3xl mx-auto">
-            {t('partnership.description')}
+            We are proud to partner with these amazing communities.
           </p>
         </motion.div>
 
@@ -108,7 +105,7 @@ const Partnership = () => {
                 href="/contact"
                 className="font-vt323 inline-block bg-transparent border-2 border-cow-purple text-cow-purple font-bold text-lg py-3 px-8 rounded-lg hover:bg-cow-purple hover:text-white transition-all duration-300 transform hover:scale-105"
             >
-                {t('partnership.becomePartner')}
+                Become a Partner
             </a>
         </motion.div>
       </div>
