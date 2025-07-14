@@ -52,53 +52,51 @@ const App = () => {
 
   return (
     <ErrorBoundary>
-      <I18nextProvider i18n={i18n}>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <HelmetProvider>
-              <TooltipProvider>
-                <BrowserRouter>
-                  <Suspense fallback={<LoadingFallback />}>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/resources" element={<ResourcesHub />} />
-                      <Route path="/contact" element={<Contact />} />
-                      <Route path="/background-generator" element={<BackgroundGenerator />} />
-                      <Route path="/music-copyright" element={<MusicCopyright />} />
-                      <Route path="/gappa" element={<Navigate to="/music-copyright" replace />} />
-                      <Route path="/guides" element={<Guides />} />
-                      <Route path="/community" element={<Community />} />
-                      <Route path="/ai-title-helper" element={<AiTitleHelper />} />
-                      <Route path="/utilities" element={<Utils />} />
-                      <Route path="/player-renderer" element={<PlayerRenderer />} />
-                      <Route path="/renderbot" element={<Renderbot />} />
-                      <Route path="/account" element={<Account />} />
-                      <Route path="/admin" element={<Admin />} />
-                      <Route path="/faq" element={<FAQ />} />
-                      <Route path="/tos" element={<TOS />} />
-                      <Route path="/privacy" element={<Privacy />} />
-                      <Route path="/construction" element={<Construction />} />
-                      <Route path="/text-generator" element={<TextGenerator />} />
-                      <Route path="/generators" element={<Generators />} />
-                      <Route path="/youtube-downloader" element={<YouTubeDownloader />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </BrowserRouter>
-                <Toaster />
-                <Sonner />
-                <VercelAnalytics />
-                <SpeedInsights />
-                <DiscordPopup 
-                  isOpen={isPopupOpen}
-                  onClose={closePopup}
-                  onNeverShowAgain={neverShowPopupAgain}
-                />
-              </TooltipProvider>
-            </HelmetProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </I18nextProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <HelmetProvider>
+            <TooltipProvider>
+              <BrowserRouter>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/resources" element={<ResourcesHub />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/background-generator" element={<BackgroundGenerator />} />
+                    <Route path="/music-copyright" element={<MusicCopyright />} />
+                    <Route path="/gappa" element={<Navigate to="/music-copyright" replace />} />
+                    <Route path="/guides" element={<Guides />} />
+                    <Route path="/community" element={<Community />} />
+                    <Route path="/ai-title-helper" element={<AiTitleHelper />} />
+                    <Route path="/utilities" element={<Utils />} />
+                    <Route path="/player-renderer" element={<PlayerRenderer />} />
+                    <Route path="/renderbot" element={<Renderbot />} />
+                    <Route path="/account" element={<Account />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="/tos" element={<TOS />} />
+                    <Route path="/privacy" element={<Privacy />} />
+                    <Route path="/construction" element={<Construction />} />
+                    <Route path="/text-generator" element={<TextGenerator />} />
+                    <Route path="/generators" element={<Generators />} />
+                    <Route path="/youtube-downloader" element={<YouTubeDownloader />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </BrowserRouter>
+              <Toaster />
+              <Sonner />
+              <VercelAnalytics />
+              <SpeedInsights />
+              <DiscordPopup
+                isOpen={isPopupOpen}
+                onClose={closePopup}
+                onNeverShowAgain={neverShowPopupAgain}
+              />
+            </TooltipProvider>
+          </HelmetProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 };
