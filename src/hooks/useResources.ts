@@ -216,11 +216,12 @@ export const useResources = () => {
     if (!resource) return false;
 
     // Use the download_url from the database if available, otherwise construct it
-    let fileUrl = resource.download_url;
+    // let fileUrl = resource.download_url;
+    let fileUrl = '';
     
     if (!fileUrl) {
       // Fallback to the old URL construction method
-            const titleLowered = normalize(resource.title.toLowerCase());
+      const titleLowered = normalize(resource.title.toLowerCase());
       const creditName = resource.credit ? encodeURIComponent(resource.credit) : '';
       const filetype = resource.filetype;
 
