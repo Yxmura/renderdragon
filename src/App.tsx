@@ -80,11 +80,11 @@ const App = () => {
     );
   }
 
+  const { isPopupOpen, closePopup, neverShowPopupAgain } = useDiscordPopup();
+
   if (!i18nInitialized) {
     return <LoadingFallback message="Initializing..." />;
   }
-
-  const { isPopupOpen, closePopup, neverShowPopupAgain } = useDiscordPopup();
 
   return (
     <ErrorBoundary>
