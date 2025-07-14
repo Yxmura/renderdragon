@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Download, Music, Bot, Image, PersonStanding } from 'lucide-react';
@@ -15,37 +14,35 @@ interface Tool {
 }
 
 const PopularTools = () => {
-  const { t } = useTranslation();
-
   const tools: Tool[] = [
     {
       id: 1,
-      title: t('popularTools.tools.musicCopyright.title'),
-      description: t('popularTools.tools.musicCopyright.description'),
+      title: 'Music Copyright Checker',
+      description: 'Check if a song is copyrighted before using it in your videos.',
       icon: Music,
       path: '/gappa',
       color: 'from-blue-500/80 to-blue-600/80'
     },
     {
       id: 2,
-      title: t('popularTools.tools.videoDownloader.title'),
-      description: t('popularTools.tools.videoDownloader.description'),
+      title: 'YouTube Video Downloader',
+      description: 'Download YouTube videos in various formats and resolutions.',
       icon: Download,
       path: '/youtube-downloader',
       color: 'from-purple-500/80 to-purple-600/80'
     },
     {
       id: 3,
-      title: t('popularTools.tools.backgroundGenerator.title'),
-      description: t('popularTools.tools.backgroundGenerator.description'),
+      title: 'Background Generator',
+      description: 'Create unique and stunning backgrounds for your thumbnails.',
       icon: Image,
       path: '/background-generator',
       color: 'from-green-500/80 to-green-600/80'
     },
     {
       id: 4,
-      title: t('popularTools.tools.playerRenderer.title'),
-      description: t('popularTools.tools.playerRenderer.description'),
+      title: 'Player Renderer',
+      description: 'Render a 3D model of a Minecraft player skin.',
       icon: PersonStanding,
       path: '/player-renderer',
       color: 'from-red-500/80 to-red-600/80'
@@ -86,10 +83,10 @@ const PopularTools = () => {
           transition={{ duration: 0.5 }}
         >
           <h2 className="text-3xl md:text-4xl font-vt323 mb-4">
-            {t('popularTools.title')} <span className="text-cow-purple">{t('popularTools.titleHighlight')}</span>
+            Popular <span className="text-cow-purple">Tools</span>
           </h2>
           <p className=" max-w-2xl mx-auto">
-            {t('popularTools.description')}
+            A collection of our most used tools to help you with your content creation.
           </p>
         </motion.div>
 
@@ -141,7 +138,7 @@ const PopularTools = () => {
                     )}
                     whileHover={{ x: 5 }}
                   >
-                    {t('popularTools.tryItNow')}
+                    Try it now
                   </motion.div>
                 </div>
               </Link>
