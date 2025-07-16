@@ -110,6 +110,7 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
     "wavesurfer.js": "^7.9.5",
+    "yt-dlp-wrap": "^2.3.12",
     "zod": "^3.24.4"
   },
   "devDependencies": {
