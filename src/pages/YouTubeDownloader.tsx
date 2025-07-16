@@ -88,48 +88,154 @@ const YouTubeDownloader: React.FC = () => {
     setSelectedOptionId('');
     setUrlError(false);
 
-    try {
-      const res = await fetch(`/api/info?url=${encodeURIComponent(youtubeUrl)}`);
-      const responseText = await res.text(); // Read the body ONCE as text.
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 2000;
 
-      if (!res.ok) {
-        // Try to parse it as JSON, but fall back to the raw text if it fails.
-        let errorMessage = responseText;
-        try {
-            const errorJson = JSON.parse(errorMessage);
-            errorMessage = errorJson.error || errorJson.message || errorMessage;
-        } catch(e) {
-            // It wasn't JSON, just use the text.
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+        const res = await fetch(`/api/info?url=${encodeURIComponent(youtubeUrl)}`, {
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        clearTimeout(timeoutId);
+        const responseText = await res.text();
+
+        if (!res.ok) {
+          // Handle specific HTTP status codes
+          if (res.status === 504) {
+            throw new Error('Server timeout - The service is temporarily unavailable. Please try again in a few minutes.');
+          } else if (res.status === 503) {
+            throw new Error('Service unavailable - The server is temporarily overloaded. Please try again later.');
+          } else if (res.status === 429) {
+            throw new Error('Rate limit exceeded - Please wait a moment before trying again.');
+          } else if (res.status === 403) {
+            throw new Error('Access denied - YouTube may be blocking requests. Please try again later.');
+          }
+
+          // Try to parse error response
+          let errorMessage = responseText;
+          try {
+            const errorJson = JSON.parse(responseText);
+            errorMessage = errorJson.error || errorJson.message || responseText;
+          } catch (e) {
+            // If it's HTML (like the 504 error page), provide a user-friendly message
+            if (responseText.includes('<!DOCTYPE html>')) {
+              errorMessage = `Server error (${res.status}) - Please try again in a few minutes.`;
+            }
+          }
+          
+          throw new Error(errorMessage);
         }
-        throw new Error(errorMessage);
-      }
 
-      // If we are here, res.ok was true.
-      const data = JSON.parse(responseText); // We can now safely parse the text we already have.
-      setVideoInfo(data);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`Failed to fetch video info: ${msg}`);
-      console.error(err);
-    } finally {
-      setIsLoadingInfo(false);
+        const data = JSON.parse(responseText);
+        setVideoInfo(data);
+        toast.success('Video information loaded successfully!');
+        return; // Success, exit retry loop
+
+      } catch (err: unknown) {
+        console.error(`Attempt ${attempt} failed:`, err);
+
+        if (err instanceof Error) {
+          // Handle AbortError (timeout)
+          if (err.name === 'AbortError') {
+            const timeoutMsg = 'Request timed out - The server is taking too long to respond. Please try again.';
+            
+            if (attempt === MAX_RETRIES) {
+              toast.error(timeoutMsg);
+              break;
+            } else {
+              toast.warning(`${timeoutMsg} Retrying... (${attempt}/${MAX_RETRIES})`);
+            }
+          } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+            // Network errors
+            const networkMsg = 'Network error - Please check your internet connection and try again.';
+            
+            if (attempt === MAX_RETRIES) {
+              toast.error(networkMsg);
+              break;
+            } else {
+              toast.warning(`${networkMsg} Retrying... (${attempt}/${MAX_RETRIES})`);
+            }
+          } else {
+            // Other errors
+            if (attempt === MAX_RETRIES) {
+              toast.error(`Failed to fetch video info: ${err.message}`);
+              break;
+            } else {
+              toast.warning(`Attempt ${attempt} failed: ${err.message}. Retrying...`);
+            }
+          }
+        } else {
+          const genericMsg = 'An unexpected error occurred. Please try again.';
+          
+          if (attempt === MAX_RETRIES) {
+            toast.error(genericMsg);
+            break;
+          } else {
+            toast.warning(`${genericMsg} Retrying... (${attempt}/${MAX_RETRIES})`);
+          }
+        }
+
+        // Wait before retrying (except on the last attempt)
+        if (attempt < MAX_RETRIES) {
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * attempt));
+        }
+      }
     }
+
+    setIsLoadingInfo(false);
   };
 
   const handleDownloadThumbnail = async () => {
     if (!videoInfo) return;
     setIsDownloadingThumb(true);
     toast.info('Preparing thumbnail download...');
+    
     try {
       const title = encodeURIComponent(videoInfo.title);
       const thumbnailUrl = encodeURIComponent(videoInfo.thumbnail);
       const url = `/api/downloadThumbnail?url=${thumbnailUrl}&title=${title}`;
       
-      const res = await fetch(url);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+
+      const res = await fetch(url, {
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      clearTimeout(timeoutId);
       
       if (!res.ok) {
-        const errJson = await res.json().catch(() => ({}));
-        throw new Error(errJson.error || `Download failed: ${res.statusText}`);
+        // Handle specific HTTP status codes
+        if (res.status === 504) {
+          throw new Error('Thumbnail download timeout - The server is taking too long to process your request. Please try again.');
+        } else if (res.status === 503) {
+          throw new Error('Service unavailable - The thumbnail service is temporarily overloaded. Please try again later.');
+        } else if (res.status === 404) {
+          throw new Error('Thumbnail not found - The video thumbnail may not be available.');
+        } else if (res.status === 403) {
+          throw new Error('Access denied - The thumbnail may be restricted. Please try again later.');
+        }
+
+        // Try to parse error response
+        let errorMessage = `Thumbnail download failed (${res.status})`;
+        try {
+          const errJson = await res.json();
+          errorMessage = errJson.error || errJson.message || errorMessage;
+        } catch (e) {
+          errorMessage = `Thumbnail download failed: ${res.statusText}`;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const blob = await res.blob();
@@ -153,8 +259,17 @@ const YouTubeDownloader: React.FC = () => {
       window.URL.revokeObjectURL(blobUrl);
       toast.success('Thumbnail download started!');
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`Thumbnail download failed: ${msg}`);
+      if (err instanceof Error) {
+        if (err.name === 'AbortError') {
+          toast.error('Thumbnail download timed out - Please try again.');
+        } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+          toast.error('Network error during thumbnail download - Please check your internet connection.');
+        } else {
+          toast.error(`Thumbnail download failed: ${err.message}`);
+        }
+      } else {
+        toast.error('An unexpected error occurred during thumbnail download.');
+      }
       console.error(err);
     } finally {
       setIsDownloadingThumb(false);
@@ -176,43 +291,126 @@ const YouTubeDownloader: React.FC = () => {
     setIsDownloading(true);
     toast.info('Preparing download...', { duration: 5000 });
 
-    try {
-      const title = encodeURIComponent(videoInfo.title);
-      let url = `/api/download?url=${encodeURIComponent(youtubeUrl)}&itag=${selectedOptionId}&title=${title}`;
-      
-      if (selectedOption.hasVideo && !selectedOption.isMuxed) {
-        const audioOptions = videoInfo.options.filter(o => o.hasAudio && !o.hasVideo);
-        if (audioOptions.length > 0) {
-          audioOptions.sort((a, b) => (b.audioBitrate || 0) - (a.audioBitrate || 0));
-          const bestAudio = audioOptions[0];
-          url += `&audioItag=${bestAudio.id}`;
+    const MAX_RETRIES = 2;
+    const RETRY_DELAY = 3000;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const title = encodeURIComponent(videoInfo.title);
+        let url = `/api/download?url=${encodeURIComponent(youtubeUrl)}&itag=${selectedOptionId}&title=${title}`;
+        
+        if (selectedOption.hasVideo && !selectedOption.isMuxed) {
+          const audioOptions = videoInfo.options.filter(o => o.hasAudio && !o.hasVideo);
+          if (audioOptions.length > 0) {
+            audioOptions.sort((a, b) => (b.audioBitrate || 0) - (a.audioBitrate || 0));
+            const bestAudio = audioOptions[0];
+            url += `&audioItag=${bestAudio.id}`;
+          }
+        }
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout for downloads
+
+        const res = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        clearTimeout(timeoutId);
+        
+        if (!res.ok) {
+          // Handle specific HTTP status codes
+          if (res.status === 504) {
+            throw new Error('Download timeout - The server is taking too long to process your request. Please try again.');
+          } else if (res.status === 503) {
+            throw new Error('Service unavailable - The download service is temporarily overloaded. Please try again later.');
+          } else if (res.status === 429) {
+            throw new Error('Rate limit exceeded - Please wait a moment before trying to download again.');
+          } else if (res.status === 403) {
+            throw new Error('Access denied - YouTube may be blocking download requests. Please try again later.');
+          }
+
+          // Try to parse error response
+          let errorMessage = `Download failed (${res.status})`;
+          try {
+            const errJson = await res.json();
+            errorMessage = errJson.error || errJson.message || errorMessage;
+          } catch (e) {
+            // If parsing fails, use the status text
+            errorMessage = `Download failed: ${res.statusText}`;
+          }
+          
+          throw new Error(errorMessage);
+        }
+
+        const blob = await res.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = `${videoInfo.title}.mp4`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(blobUrl);
+        toast.success('Download started!', { description: `Downloading ${selectedOption.label}` });
+        
+        setIsDownloading(false);
+        return; // Success, exit retry loop
+
+      } catch (err: unknown) {
+        console.error(`Download attempt ${attempt} failed:`, err);
+
+        if (err instanceof Error) {
+          // Handle AbortError (timeout)
+          if (err.name === 'AbortError') {
+            const timeoutMsg = 'Download timed out - The server is taking too long to process your request.';
+            
+            if (attempt === MAX_RETRIES) {
+              toast.error(timeoutMsg);
+              break;
+            } else {
+              toast.warning(`${timeoutMsg} Retrying... (${attempt}/${MAX_RETRIES})`);
+            }
+          } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+            // Network errors
+            const networkMsg = 'Network error during download - Please check your internet connection.';
+            
+            if (attempt === MAX_RETRIES) {
+              toast.error(networkMsg);
+              break;
+            } else {
+              toast.warning(`${networkMsg} Retrying... (${attempt}/${MAX_RETRIES})`);
+            }
+          } else {
+            // Other errors
+            if (attempt === MAX_RETRIES) {
+              toast.error(`Download failed: ${err.message}`);
+              break;
+            } else {
+              toast.warning(`Download attempt ${attempt} failed: ${err.message}. Retrying...`);
+            }
+          }
+        } else {
+          const genericMsg = 'An unexpected error occurred during download.';
+          
+          if (attempt === MAX_RETRIES) {
+            toast.error(genericMsg);
+            break;
+          } else {
+            toast.warning(`${genericMsg} Retrying... (${attempt}/${MAX_RETRIES})`);
+          }
+        }
+
+        // Wait before retrying (except on the last attempt)
+        if (attempt < MAX_RETRIES) {
+          await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * attempt));
         }
       }
-
-      const res = await fetch(url);
-      
-      if (!res.ok) {
-        const errJson = await res.json().catch(() => ({}));
-        throw new Error(errJson.error || `Download failed: ${res.statusText}`);
-      }
-
-      const blob = await res.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = `${videoInfo.title}.mp4`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(blobUrl);
-      toast.success('Download started!', { description: `Downloading ${selectedOption.label}` });
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      toast.error(`Download failed: ${msg}`);
-      console.error(err);
-    } finally {
-      setIsDownloading(false);
     }
+
+    setIsDownloading(false);
   };
 
   return (
