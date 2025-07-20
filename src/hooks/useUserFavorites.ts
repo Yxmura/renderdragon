@@ -6,20 +6,12 @@ import { toast } from 'sonner';
 export const useUserFavorites = () => {
   const { user } = useAuth();
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      fetchFavorites();
-    } else {
-      setFavorites([]);
-    }
-  }, [user]);
-
-  const fetchFavorites = async () => {
+  const fetchFavorites = useCallback(async () => {
     if (!user) return;
-    
-    setLoading(true);
+
+    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('user_favorites')
@@ -27,15 +19,23 @@ export const useUserFavorites = () => {
         .eq('user_id', user.id);
 
       if (error) throw error;
-      
+
       setFavorites(data?.map(fav => fav.resource_id) || []);
     } catch (error) {
       console.error('Error fetching favorites:', error);
       toast.error('Failed to load favorites');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchFavorites();
+    } else {
+      setFavorites([]);
+    }
+  }, [user, fetchFavorites]);
 
   const toggleFavorite = useCallback(async (resourceId: string) => {
     if (!user) {
@@ -77,7 +77,7 @@ export const useUserFavorites = () => {
 
   return {
     favorites,
-    loading,
+    isLoading,
     toggleFavorite,
     isFavorited,
   };

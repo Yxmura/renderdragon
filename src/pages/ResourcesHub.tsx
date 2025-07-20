@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowUp, Heart, Grid, Search } from 'lucide-react';
 import { Helmet } from "react-helmet-async";
 import DonateButton from '@/components/DonateButton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import DiscordPopup from '@/components/resources/DiscordPopup';
 import FavoritesTab from '@/components/resources/FavoritesTab';
 import { useDiscordPopup } from '@/hooks/useDiscordPopup';
@@ -33,7 +33,7 @@ const ResourcesHub = () => {
   const { isPopupOpen, closePopup, neverShowPopupAgain } = useDiscordPopup();
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('browse');
+  const [showFavorites, setShowFavorites] = useState(false);
   
   const {
     resources,
@@ -72,7 +72,7 @@ const ResourcesHub = () => {
     };
 
     const handleShowFavorites = () => {
-      setActiveTab('favorites');
+      setShowFavorites(true);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -88,7 +88,7 @@ const ResourcesHub = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('tab') === 'favorites') {
-      setActiveTab('favorites');
+      setShowFavorites(true);
     }
   }, []);
 
@@ -143,67 +143,62 @@ const ResourcesHub = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.5 }}
             >
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-1 mb-6 pixel-corners">
-                  <TabsTrigger value="browse" className="flex items-center gap-2">
-                    <Grid className="h-4 w-4" />
-                    Browse Resources
-                  </TabsTrigger>
-                  <TabsTrigger value="favorites" className="flex items-center gap-2">
-                    <Heart className="h-4 w-4" />
-                    Favorites
-                  </TabsTrigger>
-                </TabsList>
+              <AnimatePresence mode="wait">
+                {showFavorites ? (
+                  <motion.div
+                    key="favorites"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Button onClick={() => setShowFavorites(false)} className="mb-4">
+                      Back to Resources
+                    </Button>
+                    <Suspense fallback={<LoadingSpinner />}>
+                      <FavoritesTab />
+                    </Suspense>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="browse"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ResourceFilters
+                      searchQuery={searchQuery}
+                      selectedCategory={selectedCategory}
+                      selectedSubcategory={selectedSubcategory}
+                      onSearch={handleSearch}
+                      onClearSearch={handleClearSearch}
+                      onSearchSubmit={handleSearchSubmit}
+                      onCategoryChange={handleCategoryChange}
+                      onSubcategoryChange={handleSubcategoryChange}
+                      sortOrder={sortOrder}
+                      onSortOrderChange={handleSortOrderChange}
+                      isMobile={isMobile}
+                      inputRef={inputRef}
+                    />
 
-                <TabsContent value="browse" className="mt-6">
-                  <AnimatePresence mode="wait">
-                    {
-                      <motion.div
-                        key="browse"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <ResourceFilters
-                          searchQuery={searchQuery}
-                          selectedCategory={selectedCategory}
-                          selectedSubcategory={selectedSubcategory}
-                          onSearch={handleSearch}
-                          onClearSearch={handleClearSearch}
-                          onSearchSubmit={handleSearchSubmit}
-                          onCategoryChange={handleCategoryChange}
-                          onSubcategoryChange={handleSubcategoryChange}
-                          sortOrder={sortOrder}
-                          onSortOrderChange={handleSortOrderChange}
-                          isMobile={isMobile}
-                          inputRef={inputRef}
-                        />
-
-                        <ResourcesList
-                          resources={resources}
-                          filteredResources={filteredResources}
-                          isLoading={isLoading}
-                          isSearching={isSearching}
-                          selectedCategory={selectedCategory}
-                          searchQuery={searchQuery}
-                          downloadCounts={downloadCounts}
-                          onSelectResource={setSelectedResource}
-                          onClearFilters={handleClearSearch}
-                          hasCategoryResources={hasCategoryResources}
-                          loadMoreResources={loadMoreResources}
-                          hasMore={hasMore}
-                        />
-                      </motion.div>
-                    }
-                  </AnimatePresence>
-                </TabsContent>
-                <TabsContent value="favorites" className="mt-6">
-                  <Suspense fallback={<LoadingSpinner />}>
-                    <FavoritesTab />
-                  </Suspense>
-                </TabsContent>
-              </Tabs>
+                    <ResourcesList
+                      resources={resources}
+                      filteredResources={filteredResources}
+                      isLoading={isLoading}
+                      isSearching={isSearching}
+                      selectedCategory={selectedCategory}
+                      searchQuery={searchQuery}
+                      downloadCounts={downloadCounts}
+                      onSelectResource={setSelectedResource}
+                      onClearFilters={handleClearSearch}
+                      hasCategoryResources={hasCategoryResources}
+                      loadMoreResources={loadMoreResources}
+                      hasMore={hasMore}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           </div>
         </div>
@@ -222,7 +217,7 @@ const ResourcesHub = () => {
           setLoadedFonts={setLoadedFonts}
           filteredResources={filteredResources}
           onSelectResource={setSelectedResource}
-          isFavoritesView={activeTab === 'favorites'}
+          isFavoritesView={showFavorites}
         />
       </Suspense>
 
