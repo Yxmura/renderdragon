@@ -98,13 +98,17 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
     toggleFavorite(String(resource.id));
   }, [toggleFavorite, resource.id]);
 
+  const handlePreviewClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   const renderPreview = () => {
     const previewUrl = getPreviewUrl(resource);
 
     switch (resource.category) {
       case 'images':
         return (
-          <div className="relative aspect-video bg-muted/20 rounded-md overflow-hidden mb-3">
+          <div onClick={handlePreviewClick} className="relative aspect-video bg-muted/20 rounded-md overflow-hidden mb-3 cursor-default">
             <img
               src={previewUrl}
               alt={resource.title}
@@ -124,13 +128,33 @@ const ResourceCard = ({ resource, downloadCount, onClick }: ResourceCardProps) =
         );
       case 'fonts':
         return (
-          <div className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3">
+          <div onClick={handlePreviewClick} className="relative aspect-[4/1] bg-muted/20 rounded-md overflow-hidden mb-3 cursor-default">
             <div
               className="absolute inset-0 flex items-center justify-center text-lg font-medium"
               style={{ fontFamily: resource.title }}
             >
               Aa Bb Cc
             </div>
+          </div>
+        );
+      case 'music':
+      case 'sfx':
+        return (
+          <div onClick={handlePreviewClick} className="relative aspect-video bg-muted/20 rounded-md overflow-hidden mb-3 cursor-default flex items-center justify-center p-2">
+            <audio src={previewUrl} controls className="w-full" />
+          </div>
+        );
+      case 'animations':
+        return (
+          <div onClick={handlePreviewClick} className="relative aspect-video bg-muted/20 rounded-md overflow-hidden mb-3 cursor-default">
+            <video
+              src={previewUrl}
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            />
           </div>
         );
       default:
