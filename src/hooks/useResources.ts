@@ -46,11 +46,10 @@ export const useResources = () => {
   const [downloadCounts, setDownloadCounts] = useState<Record<number, number>>({});
   const [lastAction, setLastAction] = useState<string>('');
   const [loadedFonts, setLoadedFonts] = useState<string[]>([]);
-  const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const RESOURCES_PER_PAGE = 20;
 
-  const fetchResources = useCallback(async (isNewSearch = false) => {
+  const fetchResources = useCallback(async (isNewSearch = false, pageToFetch = 0) => {
     try {
       setIsLoading(true);
 
@@ -59,7 +58,7 @@ export const useResources = () => {
         return;
       }
 
-      const from = isNewSearch ? 0 : page * RESOURCES_PER_PAGE;
+      const from = isNewSearch ? 0 : pageToFetch * RESOURCES_PER_PAGE;
       const to = from + RESOURCES_PER_PAGE - 1;
 
       let query = supabase
@@ -114,7 +113,10 @@ export const useResources = () => {
       
       // Merge new resources with previous ones while ensuring uniqueness by `id`
       setResources(prevResources => {
-        const combined = isNewSearch ? newResources : [...prevResources, ...newResources];
+        if (isNewSearch) {
+          return newResources;
+        }
+        const combined = [...prevResources, ...newResources];
         const seenIds = new Set<number>();
         return combined.filter(res => {
           if (seenIds.has(res.id)) return false;
@@ -122,13 +124,10 @@ export const useResources = () => {
           return true;
         });
       });
-      
-      if (isNewSearch) {
-        setPage(1);
-      }
 
       if (count !== null) {
-        setHasMore(count > (isNewSearch ? 0 : page) * RESOURCES_PER_PAGE + newResources.length);
+        const totalLoaded = isNewSearch ? newResources.length : (pageToFetch + 1) * RESOURCES_PER_PAGE;
+        setHasMore(count > totalLoaded);
       } else {
         setHasMore(newResources.length === RESOURCES_PER_PAGE);
       }
@@ -138,22 +137,26 @@ export const useResources = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, hasMore, searchQuery, selectedCategory, selectedSubcategory, sortOrder]);
+  }, [hasMore, searchQuery, selectedCategory, selectedSubcategory, sortOrder]);
 
+  // Track current page for load more functionality
+  const [currentPage, setCurrentPage] = useState(0);
+
+  // Initial load and filter changes
   useEffect(() => {
-    fetchResources(true);
+    setCurrentPage(0);
+    setHasMore(true);
+    fetchResources(true, 0);
   }, [searchQuery, selectedCategory, selectedSubcategory, sortOrder, fetchResources]);
   
-  const loadMoreResources = () => {
+  // Stable load more function that prevents race conditions
+  const loadMoreResources = useCallback(() => {
     if (isLoading || !hasMore) return;
-    setPage(prevPage => prevPage + 1);
-  };
-
-  useEffect(() => {
-    if (page > 0) {
-      fetchResources();
-    }
-  }, [page, fetchResources]);
+    
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    fetchResources(false, nextPage);
+  }, [isLoading, hasMore, currentPage, fetchResources]);
 
 
   const handleSearchSubmit = useCallback((e?: React.FormEvent) => {

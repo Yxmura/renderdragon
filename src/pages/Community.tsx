@@ -152,6 +152,12 @@ const defaultVideoCategories: VideoCategory[] = [
         'ItsProger',
         '7:08'
       ),
+      generateVideoData(
+        'tTuldtj4Y9U',
+        'The COMPLETE Guide To Making The BEST Minecraft Player Renders.. (PC and Mobile)',
+        'Jorge Makes Thumbnails',
+        '19:32'
+      ),
     ],
   },
   {

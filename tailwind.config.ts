@@ -21,6 +21,8 @@ export default {
 		extend: {
 			fontFamily: {
 				geist: ['Geist', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+				minecraftia: ['Minecraftia', 'monospace'],
+				vt323: ['VT323', 'monospace'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
