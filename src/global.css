@@ -1,325 +1,373 @@
-/* Custom scrollbar */
-html {
-  scroll-behavior: smooth;
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+@import url("https://fonts.cdnfonts.com/css/minecraftia");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 222.2 84% 4.9%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
+
+        --primary: 222.2 47.4% 11.2%;
+        --primary-foreground: 210 40% 98%;
+
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+
+        --accent: 210 40% 96.1%;
+        --accent-foreground: 222.2 47.4% 11.2%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 222.2 84% 4.9%;
+
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+
+        --secondary: 217.2 32.6% 17.5%;
+        --secondary-foreground: 210 40% 98%;
+
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+
+        --accent: 217.2 32.6% 17.5%;
+        --accent-foreground: 210 40% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 212.7 26.8% 83.9%;
+    }
 }
 
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* Custom scrollbar styling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Enhanced custom scrollbar with cow-purple theme */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+    width: 8px;
+    height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
+    background: hsl(var(--muted) / 0.1);
+    border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--cow-purple, #9b87f5);
-  border-radius: 3px;
+    background: hsl(var(--cow-purple, #9b87f5));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--cow-purple, #9b87f5) / 0.2);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--cow-purple-dark, #7E69AB);
+    background: hsl(var(--cow-purple-dark, #7e69ab));
+    border-color: hsl(var(--cow-purple-dark, #7e69ab) / 0.3);
 }
 
-/* For Firefox */
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: var(--cow-purple, #9b87f5) rgba(0, 0, 0, 0.1);
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+    background: hsl(var(--cow-purple-dark, #6b5a97));
+    border-color: hsl(var(--cow-purple-dark, #6b5a97) / 0.4);
 }
 
-/* Add this to your global styles */
-html, body {
-  scrollbar-width: thin;
-  scrollbar-color: var(--cow-purple, #9b87f5) rgba(0, 0, 0, 0.1);
-  overflow-x: hidden;
-  height: 100%;
+/* Custom scrollbar corner */
+.custom-scrollbar::-webkit-scrollbar-corner {
+    background: hsl(var(--muted) / 0.05);
 }
 
+/* Horizontal scrollbar specific styling */
+.custom-scrollbar::-webkit-scrollbar-horizontal {
+    height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-horizontal:track {
+    background: hsl(var(--muted) / 0.1);
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-horizontal:thumb {
+    background: hsl(var(--cow-purple, #9b87f5));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--cow-purple, #9b87f5) / 0.2);
+}
+
+/* Global scrollbar styling for all elements */
+html,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--cow-purple, #9b87f5)) hsl(var(--muted) / 0.1);
+    overflow-x: hidden;
+    height: 100%;
+}
+
+/* Body scrollbar styling */
 body::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+    width: 8px;
+    height: 8px;
 }
 
 body::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
+    background: hsl(var(--muted) / 0.1);
+    border-radius: 4px;
 }
 
 body::-webkit-scrollbar-thumb {
-  background: var(--cow-purple, #9b87f5);
-  border-radius: 3px;
+    background: hsl(var(--cow-purple, #9b87f5));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--cow-purple, #9b87f5) / 0.2);
 }
 
 body::-webkit-scrollbar-thumb:hover {
-  background: var(--cow-purple-dark, #7E69AB);
+    background: hsl(var(--cow-purple-dark, #7e69ab));
+    border-color: hsl(var(--cow-purple-dark, #7e69ab) / 0.3);
 }
 
-/* Pixel corners utility class */
-.pixel-corners {
-  clip-path: polygon(
-    0% 4px, 4px 4px, 4px 0%, calc(100% - 4px) 0%, calc(100% - 4px) 4px, 100% 4px, 
-    100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 
-    4px calc(100% - 4px), 0% calc(100% - 4px)
-  );
+body::-webkit-scrollbar-thumb:active {
+    background: hsl(var(--cow-purple-dark, #6b5a97));
+    border-color: hsl(var(--cow-purple-dark, #6b5a97) / 0.4);
 }
 
-/* Pixel cards */
-.pixel-card {
-  @apply bg-card border border-border rounded-md p-4 shadow-sm hover:shadow-md transition-shadow pixel-corners;
+body::-webkit-scrollbar-corner {
+    background: hsl(var(--muted) / 0.05);
 }
 
-/* Pixel buttons - Fixed to remove font-pixel class */
-.pixel-btn-primary {
-  @apply bg-cow-purple hover:bg-cow-purple-dark text-white font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
+/* Textarea scrollbar styling */
+textarea::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-.pixel-btn-secondary {
-  @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium px-4 py-2 rounded-md transition-colors pixel-corners;
+textarea::-webkit-scrollbar-track {
+    background: hsl(var(--muted) / 0.1);
+    border-radius: 4px;
 }
 
-.pixel-input {
-  @apply bg-background border border-input rounded-md px-3 py-2 pixel-corners;
+textarea::-webkit-scrollbar-thumb {
+    background: hsl(var(--cow-purple, #9b87f5));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--cow-purple, #9b87f5) / 0.2);
 }
 
-/* Animation for mobile dropdown */
-@keyframes accordion-down {
-  from {
-    height: 0;
-    opacity: 0;
-  }
-  to {
-    height: var(--radix-collapsible-content-height);
-    opacity: 1;
-  }
+textarea::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--cow-purple-dark, #7e69ab));
+    border-color: hsl(var(--cow-purple-dark, #7e69ab) / 0.3);
 }
 
-@keyframes accordion-up {
-  from {
-    height: var(--radix-collapsible-content-height);
-    opacity: 1;
-  }
-  to {
-    height: 0;
-    opacity: 0;
-  }
+textarea::-webkit-scrollbar-thumb:active {
+    background: hsl(var(--cow-purple-dark, #6b5a97));
+    border-color: hsl(var(--cow-purple-dark, #6b5a97) / 0.4);
 }
 
-.animate-accordion-down {
-  animation: accordion-down 0.4s ease-in-out;
+/* Select dropdown scrollbar styling */
+select::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-.animate-accordion-up {
-  animation: accordion-up 0.4s ease-in-out;
+select::-webkit-scrollbar-track {
+    background: hsl(var(--muted) / 0.1);
+    border-radius: 4px;
 }
 
-/* Grid background */
-.cow-grid-bg {
-  background-image: 
-    linear-gradient(to right, rgba(155, 135, 245, 0.1) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(155, 135, 245, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-position: 0 0;
+select::-webkit-scrollbar-thumb {
+    background: hsl(var(--cow-purple, #9b87f5));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--cow-purple, #9b87f5) / 0.2);
 }
 
-/* Animation glow */
-@keyframes animate-glow {
-  0%, 100% {
-    text-shadow: 0 0 10px rgba(155, 135, 245, 0.5), 0 0 20px rgba(155, 135, 245, 0.3);
-  }
-  50% {
-    text-shadow: 0 0 20px rgba(155, 135, 245, 0.8), 0 0 30px rgba(155, 135, 245, 0.5);
-  }
+select::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--cow-purple-dark, #7e69ab));
+    border-color: hsl(var(--cow-purple-dark, #7e69ab) / 0.3);
 }
 
-.animate-glow {
-  animation: animate-glow 2s infinite;
+/* Modal/dialog scrollbar styling */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-/* Float animation */
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
+.modal-content::-webkit-scrollbar-track {
+    background: hsl(var(--muted) / 0.1);
+    border-radius: 4px;
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+.modal-content::-webkit-scrollbar-thumb {
+    background: hsl(var(--cow-purple, #9b87f5));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--cow-purple, #9b87f5) / 0.2);
 }
 
-/* Audio player styles with WaveSurfer */
-.audio-player-container {
-  @apply bg-background/60 backdrop-blur-sm rounded-md p-3 border border-border;
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--cow-purple-dark, #7e69ab));
+    border-color: hsl(var(--cow-purple-dark, #7e69ab) / 0.3);
 }
 
-.wavesurfer-container {
-  @apply h-24 w-full bg-background/30 rounded-md overflow-hidden;
+/* Utility classes for scrollbar control */
+.scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--cow-purple, #9b87f5)) hsl(var(--muted) / 0.1);
 }
 
-.audio-controls {
-  @apply flex items-center space-x-3 mt-2;
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-.audio-play-pause {
-  @apply p-2 rounded-full bg-cow-purple text-white hover:bg-cow-purple-dark transition-colors;
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
 }
 
-.audio-time {
-  @apply text-sm text-muted-foreground;
+/* Smooth scrolling for all elements */
+.smooth-scroll {
+    scroll-behavior: smooth;
 }
 
-/* Fix nav dropdown issue */
-.dropdown-menu-fix {
-  transform: translateZ(0);
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-/* FAQ page text size increase */
-.faq-content {
-  @apply text-lg;
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
 }
 
-/* Hide filter and categories in Discord servers */
-.discord-filter, .discord-categories {
-  display: none !important;
+/* Custom scrollbar for specific containers */
+.enhanced-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--cow-purple, #9b87f5)) hsl(var(--muted) / 0.1);
 }
 
-/* Fix search bar in resource pages */
-.resource-search-container {
-  @apply flex items-center justify-between w-full;
+.enhanced-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-.resource-search-wrapper {
-  @apply flex items-center flex-1 mr-2;
+.enhanced-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--muted) / 0.1);
+    border-radius: 4px;
 }
 
-.resource-search-input {
-  @apply w-full;
+.enhanced-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--cow-purple, #9b87f5));
+    border-radius: 4px;
+    border: 1px solid hsl(var(--cow-purple, #9b87f5) / 0.2);
+    transition: all 0.2s ease;
 }
 
-.resource-filter-button {
-  @apply flex-shrink-0;
+.enhanced-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--cow-purple-dark, #7e69ab));
+    border-color: hsl(var(--cow-purple-dark, #7e69ab) / 0.3);
+    transform: scale(1.1);
 }
 
-/* Guide complete button styles */
-.guide-complete-button {
-  @apply bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition-colors;
+.enhanced-scrollbar::-webkit-scrollbar-thumb:active {
+    background: hsl(var(--cow-purple-dark, #6b5a97));
+    border-color: hsl(var(--cow-purple-dark, #6b5a97) / 0.4);
+    transform: scale(0.95);
 }
 
-/* Fix searchbar active issue */
-.search-active {
-  max-width: 100% !important;
-  overflow: hidden;
+/* Dark mode scrollbar adjustments */
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--muted) / 0.2);
 }
 
-.search-active input:focus {
-  box-shadow: none;
-  outline: none;
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--cow-purple, #9b87f5));
+    border: 1px solid hsl(var(--cow-purple, #9b87f5) / 0.3);
 }
 
-/* Add pixel animation */
-@keyframes pixel-spin {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(0.5deg); }
-  50% { transform: rotate(0deg); }
-  75% { transform: rotate(-0.5deg); }
-  100% { transform: rotate(0deg); }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--cow-purple-light, #b8a8ff));
+    border-color: hsl(var(--cow-purple-light, #b8a8ff) / 0.4);
 }
 
-.animate-pixel-spin {
-  animation: pixel-spin 3s ease-in-out infinite;
+/* Horizontal scrollbar specific enhancements */
+.horizontal-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--cow-purple, #9b87f5)) hsl(var(--muted) / 0.1);
 }
 
-/* Float vertical animation */
-@keyframes float-vertical {
-  0%, 100% { transform: translateY(0) rotate(45deg); }
-  50% { transform: translateY(-5px) rotate(45deg); }
+.horizontal-scrollbar::-webkit-scrollbar-horizontal {
+    height: 10px;
 }
 
-.animate-float-vertical {
-  animation: float-vertical 6s ease-in-out infinite;
+.horizontal-scrollbar::-webkit-scrollbar-track {
+    background: hsl(var(--muted) / 0.1);
+    border-radius: 5px;
 }
 
-/* Spin slow animation */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.horizontal-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--cow-purple, #9b87f5));
+    border-radius: 5px;
+    border: 1px solid hsl(var(--cow-purple, #9b87f5) / 0.2);
+    min-height: 20px;
 }
 
-.animate-spin-slow {
-  animation: spin-slow 10s linear infinite;
+.horizontal-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--cow-purple-dark, #7e69ab));
+    border-color: hsl(var(--cow-purple-dark, #7e69ab) / 0.3);
 }
 
-/* Countdown overlay styles */
-body.countdown-active {
-  overflow: hidden;
-  height: 100vh;
-  width: 100vw;
+/* Animation for scrollbar thumb */
+@keyframes scrollbarPulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
 }
 
-#countdown-overlay {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 9999 !important;
-  display: flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: all !important;
-  user-select: none !important;
+.enhanced-scrollbar::-webkit-scrollbar-thumb {
+    animation: scrollbarPulse 2s ease-in-out infinite;
 }
 
-/* Scroll to top button */
-.scroll-to-top-enter {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.scroll-to-top-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 200ms, transform 200ms;
-}
-
-.scroll-to-top-exit {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.scroll-to-top-exit-active {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 200ms, transform 200ms;
-}
-
-/* Scroll to top button animations */
-@keyframes slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slide-out {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-}
-
-.scroll-button-enter {
-  animation: slide-in 0.4s ease-in-out forwards;
-}
-
-.scroll-button-exit {
-  animation: slide-out 0.4s ease-in-out forwards;
+/* Remove animation on hover for better UX */
+.enhanced-scrollbar::-webkit-scrollbar-thumb:hover {
+    animation: none;
 }
