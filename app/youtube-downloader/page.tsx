@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import YouTubeDownloader from '@/pages/YouTubeDownloader';
 
 export default function YouTubeDownloaderPage() {

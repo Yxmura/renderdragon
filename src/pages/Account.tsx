@@ -20,7 +20,7 @@ import AccountPageSkeleton from "@/components/skeletons/AccountPageSkeleton";
 import { supabase } from "@/integrations/supabase/client";
 
 const Account = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, refreshUser } = useAuth();
   const { profile, updateProfile, loading: profileLoading } = useProfile();
   const [displayName, setDisplayName] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -172,9 +172,7 @@ const Account = () => {
                 <CardTitle className="flex items-center gap-3">
                   <Avatar className="h-16 w-16">
                     <AvatarImage
-                      src={
-                        user.user_metadata?.avatar_url || profile?.avatar_url
-                      }
+                      src={user.user_metadata?.avatar_url}
                     />
                     <AvatarFallback className="bg-cow-purple text-white font-bold text-lg">
                       {getInitials(currentDisplayName)}

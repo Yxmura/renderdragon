@@ -109,6 +109,7 @@ const Navbar = () => {
     string | null
   >(null);
   const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === 'undefined') return 'dark';
     return (
       (localStorage.getItem("theme") as "light" | "dark") ||
       (window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -170,7 +171,9 @@ const Navbar = () => {
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("theme", newTheme);
+    }
     document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 

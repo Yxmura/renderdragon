@@ -32,6 +32,7 @@ const MusicCopyright = () => {
   const LOCALSTORAGE_KEY = 'gappa-checks';
 
   function getRecentChecks() {
+    if (typeof window === 'undefined') return [];
     const raw = localStorage.getItem(LOCALSTORAGE_KEY);
     if (!raw) return [];
     try {
@@ -46,6 +47,7 @@ const MusicCopyright = () => {
   }
 
   function logCheck() {
+    if (typeof window === 'undefined') return;
     const now = Date.now();
     const arr = getRecentChecks();
     arr.push(now);

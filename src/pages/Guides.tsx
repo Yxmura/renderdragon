@@ -321,7 +321,8 @@ const GuidesPage = () => {
                       {children}
                     </blockquote>
                   ),
-                  code: ({ inline, children }) => {
+                  code: ({ children, ...props }: any) => {
+                    const inline = !props.className;
                     if (inline) {
                       return (
                         <code className="bg-accent/50 px-1.5 py-0.5 rounded text-sm font-mono">

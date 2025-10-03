@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import BackgroundGenerator from '@/pages/BackgroundGenerator';
 
 export default function BackgroundGeneratorPage() {

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import ResourcesHub from '@/pages/ResourcesHub';
 
 export default function ResourcesPage() {
