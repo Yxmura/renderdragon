@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/navigation';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Resource } from '@/types/resources';
@@ -23,7 +25,6 @@ const FeaturedResources = () => {
 
         const allResources: Resource[] = Object.entries(resourcesData).flatMap(
           ([category, resources]) =>
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (resources as any[]).map((resource) => ({ 
               ...resource, 
               category: category as 'music' | 'sfx' | 'images' | 'animations' | 'fonts' | 'presets',

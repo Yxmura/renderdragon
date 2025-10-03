@@ -1,6 +1,8 @@
 
+'use client';
+
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "@/lib/navigation";
 import { ChevronDown, Menu, X, Sun, Moon, Skull } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -37,6 +39,7 @@ interface NavDropdown {
   name: string;
   icon: string;
   links: NavLink[];
+  tag?: string;
 }
 
 // Helper function to get display name consistently
