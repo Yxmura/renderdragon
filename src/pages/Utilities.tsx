@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, PenTool, Film, Code, Gamepad } from 'lucide-react';

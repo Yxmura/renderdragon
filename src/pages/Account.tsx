@@ -1,7 +1,9 @@
+'use client';
+
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfile } from "@/hooks/useProfile";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "@/lib/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +20,7 @@ import AccountPageSkeleton from "@/components/skeletons/AccountPageSkeleton";
 import { supabase } from "@/integrations/supabase/client";
 
 const Account = () => {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, refreshUser } = useAuth();
   const { profile, updateProfile, loading: profileLoading } = useProfile();
   const [displayName, setDisplayName] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -170,9 +172,7 @@ const Account = () => {
                 <CardTitle className="flex items-center gap-3">
                   <Avatar className="h-16 w-16">
                     <AvatarImage
-                      src={
-                        user.user_metadata?.avatar_url || profile?.avatar_url
-                      }
+                      src={user.user_metadata?.avatar_url}
                     />
                     <AvatarFallback className="bg-cow-purple text-white font-bold text-lg">
                       {getInitials(currentDisplayName)}

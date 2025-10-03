@@ -1,5 +1,7 @@
+'use client';
+
 import React, { Fragment, useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/navigation';
 import { ShoppingCart, ChevronDown, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import confetti from 'canvas-confetti';
