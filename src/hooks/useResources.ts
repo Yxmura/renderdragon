@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Resource } from '@/types/resources';
 import { useDownloadCounts } from '@/hooks/useDownloadCounts';

@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from "react";
 import { Copy, Mail, Check, Github, Globe, ExternalLink } from "lucide-react";
 import Navbar from "@/components/Navbar";

@@ -8,6 +8,8 @@ export const useDiscordPopup = () => {
   const [hasShown, setHasShown] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
     const checkAndShowPopup = () => {
       // Check if user has explicitly chosen "never show again"
       const cookie = Cookies.get(POPUP_COOKIE_NAME);
@@ -41,6 +43,8 @@ export const useDiscordPopup = () => {
   };
 
   const handleNeverShowAgain = () => {
+    if (typeof window === 'undefined') return;
+    
     // Set cookie with explicit path and domain to ensure it works across all pages
     Cookies.set(POPUP_COOKIE_NAME, "true", {
       expires: 365,

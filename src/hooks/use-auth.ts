@@ -17,6 +17,10 @@ export const useAuth = () => {
   // Initialize auth state
   useEffect(() => {
     const initAuth = async () => {
+      if (typeof window === 'undefined') {
+        setLoading(false);
+        return;
+      }
       try {
         // Check if user is authenticated
         const token = localStorage.getItem('auth_token');
@@ -49,8 +53,10 @@ export const useAuth = () => {
         displayName: email.split('@')[0],
       };
       
-      localStorage.setItem('auth_token', 'mock-auth-token');
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('auth_token', 'mock-auth-token');
+        localStorage.setItem('user', JSON.stringify(mockUser));
+      }
       setUser(mockUser);
       
       return { user: mockUser, error: null };
@@ -73,8 +79,10 @@ export const useAuth = () => {
         displayName,
       };
       
-      localStorage.setItem('auth_token', 'mock-auth-token');
-      localStorage.setItem('user', JSON.stringify(mockUser));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('auth_token', 'mock-auth-token');
+        localStorage.setItem('user', JSON.stringify(mockUser));
+      }
       setUser(mockUser);
       
       return { user: mockUser, error: null };
@@ -87,8 +95,10 @@ export const useAuth = () => {
   }, []);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
+    }
     setUser(null);
     navigate('/');
   }, [navigate]);

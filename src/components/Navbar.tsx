@@ -1,6 +1,8 @@
 
+'use client';
+
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "@/lib/navigation";
 import { ChevronDown, Menu, X, Sun, Moon, Skull } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -37,6 +39,7 @@ interface NavDropdown {
   name: string;
   icon: string;
   links: NavLink[];
+  tag?: string;
 }
 
 // Helper function to get display name consistently
@@ -106,6 +109,7 @@ const Navbar = () => {
     string | null
   >(null);
   const [theme, setTheme] = useState<"light" | "dark">(() => {
+    if (typeof window === 'undefined') return 'dark';
     return (
       (localStorage.getItem("theme") as "light" | "dark") ||
       (window.matchMedia("(prefers-color-scheme: dark)").matches
@@ -167,7 +171,9 @@ const Navbar = () => {
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("theme", newTheme);
+    }
     document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 

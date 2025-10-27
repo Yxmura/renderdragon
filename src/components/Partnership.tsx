@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const cardVariants: any = {
   hidden: { opacity: 0, y: 20 },
   visible: (i: number) => ({

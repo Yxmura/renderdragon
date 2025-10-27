@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 import { Bot, Command } from 'lucide-react';
 import Navbar from '@/components/Navbar';

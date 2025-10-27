@@ -1,6 +1,8 @@
+'use client';
+
 import { useEffect, useState, lazy, Suspense } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from '@/lib/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Helmet } from 'react-helmet-async';

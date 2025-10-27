@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Copy, RefreshCw, Loader2 } from 'lucide-react';

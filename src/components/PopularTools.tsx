@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@/lib/navigation';
 import { motion } from 'framer-motion';
 import { Download, Music, Bot, Image, PersonStanding } from 'lucide-react';
 import { cn } from '@/lib/utils';
